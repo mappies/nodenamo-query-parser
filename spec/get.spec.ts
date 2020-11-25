@@ -34,7 +34,7 @@ describe('Get Statement', function ()
     ]
     .forEach(test => 
     {
-        it(`'${test.statement}' is invalid.`, async () =>
+        it(`'${test.statement}' is invalid because '${test.expected.message}'`, async () =>
         {
             let error = undefined;
             try
