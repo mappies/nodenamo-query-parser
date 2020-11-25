@@ -1,13 +1,17 @@
 import { CstParser, TokenVocabulary, IParserConfig } from 'chevrotain';
 import { Token } from '../entities/token';
+import { ErrorMessage } from '../entities/errorMessage';
+import { ParserErrorProvider } from '../errorProviders/parserErrorProvider';
 
 export class StatementParser extends CstParser
 {
     statement = this.RULE('statement', ()=>
                 {
-                    this.OR([
-                        { ALT: () => this.SUBRULE(this.getStatement) }
-                    ])
+                    this.OR({
+                        DEF: [
+                            { ALT: () => this.SUBRULE(this.getStatement) }
+                        ]
+                    })
                 });
 
     /**
@@ -27,16 +31,19 @@ export class StatementParser extends CstParser
     getClause = this.RULE("getClause", () =>
                 {
                     this.CONSUME(Token.Get);
-                    this.OR([
-                        { ALT: () => this.CONSUME(Token.String)},
-                        { ALT: () => this.CONSUME(Token.Integer) }
-                    ])
+                    this.OR({
+                        DEF: [
+                            { ALT: () => this.CONSUME(Token.String)},
+                            { ALT: () => this.CONSUME(Token.Integer) }
+                        ],
+                        ERR_MSG: ErrorMessage.GET_MISSING_ID
+                    })
                 })
 
     getFromClause = this.RULE("getFromClause", () =>
                 {
-                    this.CONSUME(Token.From)
-                    this.CONSUME(Token.Identifier)
+                    this.CONSUME(Token.From, {ERR_MSG: ErrorMessage.GET_MISSING_FROM})
+                    this.CONSUME(Token.Identifier, {ERR_MSG: ErrorMessage.GET_MISSING_TABLE})
                 })
 
     getStronglyConsistentClause = this.RULE('getStronglyConsistentClause', () =>
@@ -46,7 +53,7 @@ export class StatementParser extends CstParser
 
     constructor(tokenVocabulary: TokenVocabulary = Token.AllTokens, config?: IParserConfig)
     {
-        super(tokenVocabulary, config)
+        super(tokenVocabulary, Object.assign({errorMessageProvider: new ParserErrorProvider()}, config))
         this.performSelfAnalysis()
     }
 }

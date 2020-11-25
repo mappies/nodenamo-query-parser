@@ -1,4 +1,5 @@
 import {assert as assert} from 'chai';
+import { ErrorMessage } from '../src/entities/errorMessage';
 import { parse } from '../src/parser';
 
 describe('Get Statement', function () 
@@ -19,23 +20,35 @@ describe('Get Statement', function ()
     });
 
     [
-        { statement: 'Get ', expected: "NoViableAltException"},
-        { statement: 'Get 42', expected: "MismatchedTokenException"},
-        { statement: 'Get a123', expected: "NoViableAltException"},
-        { statement: 'Get "a123"', expected: "MismatchedTokenException"},
-        { statement: 'Get "a123" From', expected: "MismatchedTokenException"},
-        { statement: 'Get "a123", "a123" From table', expected: "MismatchedTokenException"},
-        { statement: 'Get "a123" From table table', expected: "NotAllInputParsedException"},
-        { statement: 'get "a123" from user strongly', expected: "NotAllInputParsedException"},
-        { statement: 'GET 42 FROM table_12 Strongly consistent', expected: "NotAllInputParsedException"},
-        { statement: 'GET 42 FROM table_12 StronglyConsistent Where', expected: "NotAllInputParsedException"},
-        { statement: 'G ET 42 FROM table_12 StronglyConsistent Where', expected: "NoViableAltException"}
+        { statement: 'Get ', expected: {error: "NoViableAltException", message: ErrorMessage.GET_MISSING_ID}},
+        { statement: 'Get 42', expected: {error: "MismatchedTokenException", message: ErrorMessage.GET_MISSING_FROM}},
+        { statement: 'Get a123', expected: {error: "NoViableAltException", message: ErrorMessage.GET_MISSING_ID}},
+        { statement: 'Get "a123"', expected: {error: "MismatchedTokenException", message: ErrorMessage.GET_MISSING_FROM}},
+        { statement: 'Get "a123" From', expected: {error: "MismatchedTokenException", message: ErrorMessage.GET_MISSING_TABLE}},
+        { statement: 'Get "a123", "a123" From table', expected: {error: "MismatchedTokenException", message: ErrorMessage.GET_MISSING_FROM}},
+        { statement: 'Get "a123" From table table', expected: {error: "NotAllInputParsedException", message: ErrorMessage.UNEXPECTED_TOKEN.replace('?', 'table')}},
+        { statement: 'get "a123" from user strongly', expected: {error: "NotAllInputParsedException", message: ErrorMessage.UNEXPECTED_TOKEN.replace('?', 'strongly')}},
+        { statement: 'GET 42 FROM table_12 Strongly consistent', expected: {error: "NotAllInputParsedException", message: ErrorMessage.UNEXPECTED_TOKEN.replace('?', 'Strongly')}},
+        { statement: 'GET 42 FROM table_12 StronglyConsistent Where', expected: {error: "NotAllInputParsedException", message: ErrorMessage.UNEXPECTED_TOKEN.replace('?', 'Where')}},
+        { statement: 'G ET 42 FROM table_12 StronglyConsistent Where', expected: {error: "NoViableAltException", message: ErrorMessage.UNRECOGNIZED_COMMAND.replace('?', 'G')}}
     ]
     .forEach(test => 
     {
         it(`'${test.statement}' is invalid.`, async () =>
         {
-            assert.throws(()=>parse(test.statement), test.expected);
+            let error = undefined;
+            try
+            {
+                parse(test.statement);
+            }
+            catch(e)
+            {
+                error = JSON.parse(e.message);
+            }
+
+            assert.isDefined(error);
+            assert.equal(error[0].name, test.expected.error);
+            assert.equal(error[0].message, test.expected.message);
         })
     });
 });
