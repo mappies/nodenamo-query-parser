@@ -1,3 +1,4 @@
+import { RuleName } from '../entities/ruleName';
 import { StatementParser } from './statementParser';
 
 const statementParser = new StatementParser()
@@ -16,25 +17,25 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
      * 
      * Syntax: "GET" String|Number "FROM" Identifier "StronglyConsistent"? 
      */
-    statement(ctx)
+    [RuleName.Statement](ctx)
     {
-        if (ctx.getStatement)
+        if (ctx[RuleName.GetStatement])
         {
-            return this.visit(ctx.getStatement)
+            return this.visit(ctx[RuleName.GetStatement])
         }
     }
 
-    getStatement(ctx) 
+    [RuleName.GetStatement](ctx) 
     {
         return {
             type: "get",
-            get: this.visit(ctx.getClause),
-            from: this.visit(ctx.getFromClause),
-            stronglyConsistent: this.visit(ctx.getStronglyConsistentClause)
+            get: this.visit(ctx[RuleName.GetClause]),
+            from: this.visit(ctx[RuleName.GetFromClause]),
+            stronglyConsistent: this.visit(ctx[RuleName.GetStronglyConsistentClause])
         }
     }
 
-    getClause(ctx) 
+    [RuleName.GetClause](ctx) 
     {
         if (ctx.String)
         {
@@ -47,12 +48,12 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         }
     }
 
-    getFromClause(ctx) 
+    [RuleName.GetFromClause](ctx) 
     {
         return ctx.Identifier[0].image
     }
 
-    getStronglyConsistentClause(ctx) 
+    [RuleName.GetStronglyConsistentClause](ctx) 
     {
         return true
     }

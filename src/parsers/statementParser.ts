@@ -2,10 +2,11 @@ import { CstParser, TokenVocabulary, IParserConfig } from 'chevrotain';
 import { Token } from '../entities/token';
 import { ErrorMessage } from '../entities/errorMessage';
 import { ParserErrorProvider } from '../errorProviders/parserErrorProvider';
+import { RuleName } from '../entities/ruleName';
 
 export class StatementParser extends CstParser
 {
-    statement = this.RULE('statement', ()=>
+    statement = this.RULE(RuleName.Statement, ()=>
                 {
                     this.OR({
                         DEF: [
@@ -19,7 +20,7 @@ export class StatementParser extends CstParser
      * 
      * Syntax: "GET" String|Number "FROM" Identifier "StronglyConsistent"? 
      */
-    getStatement = this.RULE("getStatement", () =>
+    getStatement = this.RULE(RuleName.GetStatement, () =>
                 {
                     this.SUBRULE(this.getClause)
                     this.SUBRULE(this.getFromClause)
@@ -28,7 +29,7 @@ export class StatementParser extends CstParser
                     })
                 })
 
-    getClause = this.RULE("getClause", () =>
+    getClause = this.RULE(RuleName.GetClause, () =>
                 {
                     this.CONSUME(Token.Get);
                     this.OR({
@@ -40,13 +41,13 @@ export class StatementParser extends CstParser
                     })
                 })
 
-    getFromClause = this.RULE("getFromClause", () =>
+    getFromClause = this.RULE(RuleName.GetFromClause, () =>
                 {
                     this.CONSUME(Token.From, {ERR_MSG: ErrorMessage.GET_MISSING_FROM})
                     this.CONSUME(Token.Identifier, {ERR_MSG: ErrorMessage.GET_MISSING_TABLE})
                 })
 
-    getStronglyConsistentClause = this.RULE('getStronglyConsistentClause', () =>
+    getStronglyConsistentClause = this.RULE(RuleName.GetStronglyConsistentClause, () =>
                 {
                     this.CONSUME(Token.StronglyConsistent)
                 });
