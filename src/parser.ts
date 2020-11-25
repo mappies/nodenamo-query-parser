@@ -14,7 +14,7 @@ export function parse(text)
 
     if (statementParser.errors.length > 0) 
     {
-        throw Error(JSON.stringify(statementParser.errors))
+        throw statementParser.errors[0]
     }
 
     return new StatementSemanticVisitor().visit(cst)

@@ -43,12 +43,12 @@ describe('Get Statement', function ()
             }
             catch(e)
             {
-                error = JSON.parse(e.message);
+                error = e;
             }
 
             assert.isDefined(error);
-            assert.equal(error[0].name, test.expected.error);
-            assert.equal(error[0].message, test.expected.message);
+            assert.equal(error.name, test.expected.error);
+            assert.equal(error.message, test.expected.message);
         })
     });
 });
