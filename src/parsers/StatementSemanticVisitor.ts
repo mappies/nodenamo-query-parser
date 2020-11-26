@@ -22,6 +22,10 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         {
             return this.visit(ctx[RuleName.CreateTableStatement])
         }
+        else if(ctx[RuleName.DeleteTableStatement])
+        {
+            return this.visit(ctx[RuleName.DeleteTableStatement])
+        }
     }
 
 
@@ -66,12 +70,10 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
     /**
      * CREATE TABLE Statement
      * 
-     * Syntax: CREATE TABLE identifier FOR identifier WITH CAPACITY OF number number
+     * Syntax: CREATE TABLE FOR identifier WITH CAPACITY OF number number
      */
     [RuleName.CreateTableStatement](ctx)
     {
-        ctx[RuleName.CreateTableClause]
-
         return {
             type: "create_table",
             for: this.visit(ctx[RuleName.CreateTableForClause]),
@@ -95,5 +97,28 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
             readCapacity: Number(ctx.Integer[0].image),
             writeCapacity: Number(ctx.Integer[1].image)
         }
+    }
+
+    /**
+     * DELETE TABLE Statement
+     * 
+     * Syntax: DELETE TABLE FOR identifier
+     */
+    [RuleName.DeleteTableStatement](ctx)
+    {
+        return {
+            type: "delete_table",
+            for: this.visit(ctx[RuleName.DeleteTableForClause])
+        }
+    }
+
+    [RuleName.DeleteTableClause](ctx)
+    {
+        return
+    }
+
+    [RuleName.DeleteTableForClause](ctx)
+    {
+        return ctx.Identifier[0].image;
     }
 }

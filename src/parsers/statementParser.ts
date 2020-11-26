@@ -11,7 +11,8 @@ export class StatementParser extends CstParser
                     this.OR({
                         DEF: [
                             { ALT: () => this.SUBRULE(this.getStatement) },
-                            { ALT: () => this.SUBRULE(this.createTableStatement) }
+                            { ALT: () => this.SUBRULE(this.createTableStatement) },
+                            { ALT: () => this.SUBRULE(this.deleteTableStatement) }
                         ]
                     })
                 });
@@ -84,6 +85,29 @@ export class StatementParser extends CstParser
                                 this.CONSUME1(Token.Integer, { ERR_MSG: ErrorMessage.CREATE_TABLE_MISSING_READ_CAPACITY })
                                 this.CONSUME2(Token.Integer, { ERR_MSG: ErrorMessage.CREATE_TABLE_MISSING_WRITE_CAPACITY })
                             })
+
+    /**
+     * DELETE TABLE Statement
+     * 
+     * Syntax: DELETE TABLE FOR identifier
+     */
+    deleteTableStatement = this.RULE(RuleName.DeleteTableStatement, () =>
+                            {
+                                this.SUBRULE(this.deleteTableClause)
+                                this.SUBRULE(this.deleteTableForClause)
+                            })
+
+    deleteTableClause = this.RULE(RuleName.DeleteTableClause, () =>
+                            {
+                                this.CONSUME(Token.DeleteTable)
+                            })
+
+    deleteTableForClause = this.RULE(RuleName.DeleteTableForClause, () =>
+                            {
+                                this.CONSUME(Token.For, { ERR_MSG: ErrorMessage.DELETE_TABLE_MISSING_FOR })
+                                this.CONSUME(Token.Identifier, { ERR_MSG: ErrorMessage.DELETE_TABLE_MISSING_ENTITY_NAME })
+                            })
+    
 
     constructor(tokenVocabulary: TokenVocabulary = Token.AllTokens, config?: IParserConfig)
     {

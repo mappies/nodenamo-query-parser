@@ -16,5 +16,12 @@ export enum RuleName
     CreateTableStatement = "createTableStatement",
     CreateTableClause = "createTableClauseRuleName",
     CreateTableForClause = "createTableForClauseRuleName",
-    CreateTableWithCapacityOfClause = "withCapacityOfClauseRuleName"
+    CreateTableWithCapacityOfClause = "withCapacityOfClauseRuleName",
+
+    /**
+     * DELETE TABLE statement
+     */
+    DeleteTableStatement = "deleteTableStatement",
+    DeleteTableClause = "deleteTableClauseRuleName",
+    DeleteTableForClause = "deleteTableForClauseRuleName"
 }
