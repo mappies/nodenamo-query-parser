@@ -23,5 +23,13 @@ export enum RuleName
      */
     DeleteTableStatement = "deleteTableStatement",
     DeleteTableClause = "deleteTableClauseRuleName",
-    DeleteTableForClause = "deleteTableForClauseRuleName"
+    DeleteTableForClause = "deleteTableForClauseRuleName",
+
+    /**
+     * DELETE statement
+     */
+    DeleteStatement = "DeleteStatementRuleName",
+    DeleteClause = "DeleteClauseRuleName",
+    DeleteFromClause = "DeleteFromClauseRuleName",
+    DeleteWhereClause = "DeleteWhereClauseRuleName"
 }

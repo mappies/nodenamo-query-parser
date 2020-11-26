@@ -11,6 +11,7 @@ export class StatementParser extends CstParser
                     this.OR({
                         DEF: [
                             { ALT: () => this.SUBRULE(this.getStatement) },
+                            { ALT: () => this.SUBRULE(this.deleteStatement) },
                             { ALT: () => this.SUBRULE(this.createTableStatement) },
                             { ALT: () => this.SUBRULE(this.deleteTableStatement) }
                         ]
@@ -53,6 +54,35 @@ export class StatementParser extends CstParser
                 {
                     this.CONSUME(Token.StronglyConsistent)
                 });
+
+    /**
+     * DELETE Statement
+     * 
+     * Syntax: DELETE string|number FROM identifier (WHERE condition)?
+     */
+    deleteStatement = this.RULE(RuleName.DeleteStatement, () =>
+                            {
+                                this.SUBRULE(this.deleteClause)
+                                this.SUBRULE(this.deleteFromClause)
+                            })
+
+    deleteClause = this.RULE(RuleName.DeleteClause, () =>
+                            {
+                                this.CONSUME(Token.Delete)
+                                this.OR({
+                                    DEF: [
+                                        { ALT: () => this.CONSUME(Token.String)},
+                                        { ALT: () => this.CONSUME(Token.Integer) }
+                                    ],
+                                    ERR_MSG: ErrorMessage.DELETE_MISSING_ID
+                                })
+                            })
+
+    deleteFromClause = this.RULE(RuleName.DeleteFromClause, () =>
+                            {
+                                this.CONSUME(Token.From, { ERR_MSG: ErrorMessage.DELETE_MISSING_FROM })
+                                this.CONSUME(Token.Identifier, { ERR_MSG: ErrorMessage.DELETE_MISSING_ENTITY_NAME })
+                            })
 
     /**
      * CREATE TABLE Statement
@@ -107,7 +137,6 @@ export class StatementParser extends CstParser
                                 this.CONSUME(Token.For, { ERR_MSG: ErrorMessage.DELETE_TABLE_MISSING_FOR })
                                 this.CONSUME(Token.Identifier, { ERR_MSG: ErrorMessage.DELETE_TABLE_MISSING_ENTITY_NAME })
                             })
-    
 
     constructor(tokenVocabulary: TokenVocabulary = Token.AllTokens, config?: IParserConfig)
     {

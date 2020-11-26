@@ -18,7 +18,6 @@ describe('Delete Table Statement', function ()
     });
 
     [
-        { statement: 'DELETE', expected: {error: "NoViableAltException", message: ErrorMessage.UNRECOGNIZED_COMMAND.replace('?', 'DELETE')}},
         { statement: 'DELETE TABLE', expected: {error: "MismatchedTokenException", message: ErrorMessage.DELETE_TABLE_MISSING_FOR}},
         { statement: 'DELETE TABLE "12"', expected: {error: "MismatchedTokenException", message: ErrorMessage.DELETE_TABLE_MISSING_FOR}},
         { statement: 'DELETE TABLE 12', expected: {error: "MismatchedTokenException", message: ErrorMessage.DELETE_TABLE_MISSING_FOR}},

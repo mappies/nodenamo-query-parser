@@ -14,4 +14,8 @@ export class ErrorMessage
 
     static readonly DELETE_TABLE_MISSING_FOR = 'Missing "FOR" clause from the DELETE TABLE statement.'
     static readonly DELETE_TABLE_MISSING_ENTITY_NAME = 'Missing an entity name from the DELETE TABLE statement.'
+
+    static readonly DELETE_MISSING_ID = 'Missing an object ID or an invalid ID is given to the DELETE statement.'
+    static readonly DELETE_MISSING_FROM = 'Missing "FROM" clause from the DELETE statement.'
+    static readonly DELETE_MISSING_ENTITY_NAME = 'Missing an entity name from the DELETE statement.'
 }

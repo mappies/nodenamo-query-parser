@@ -18,6 +18,10 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         {
             return this.visit(ctx[RuleName.GetStatement])
         }
+        else if(ctx[RuleName.DeleteStatement])
+        {
+            return this.visit(ctx[RuleName.DeleteStatement])
+        }
         else if(ctx[RuleName.CreateTableStatement])
         {
             return this.visit(ctx[RuleName.CreateTableStatement])
@@ -65,6 +69,38 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
     [RuleName.GetStronglyConsistentClause](ctx) 
     {
         return true
+    }
+
+    /**
+     * DELETE TABLE Statement
+     * 
+     * Syntax: DELETE TABLE FOR identifier
+     */
+    [RuleName.DeleteStatement](ctx)
+    {
+        return {
+            type: "delete",
+            id: this.visit(ctx[RuleName.DeleteClause]),
+            from: this.visit(ctx[RuleName.DeleteFromClause])
+        }
+    }
+
+    [RuleName.DeleteClause](ctx)
+    {
+        if (ctx.String)
+        {
+            //Remove ""
+            return ctx.String[0].image.substr(1, ctx.String[0].image.length - 2)
+        }
+        else 
+        {
+            return Number(ctx.Integer[0].image)
+        }
+    }
+
+    [RuleName.DeleteFromClause](ctx)
+    {
+        return ctx.Identifier[0].image;
     }
 
     /**

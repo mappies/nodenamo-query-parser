@@ -9,6 +9,8 @@ export class Token
     static readonly For = createToken({ name: "For", pattern: /For/i })
     static readonly WithCapacityOf = createToken({ name: "WithCapacityOf", pattern: /With\s+Capacity\s+Of/i })
     static readonly DeleteTable = createToken({ name: "DeleteTable", pattern: /Delete\s+Table/i })
+    static readonly Delete = createToken({ name: "Delete", pattern: /Delete/i })
+    static readonly Where = createToken({ name: "Where", pattern: /Where/i })
 
     static readonly Identifier = createToken({ name: "Identifier", pattern: /[a-zA-Z]\w*/ })
     static readonly String = createToken({ name: "String", pattern: /"(:?[^\\"]|\\(:?[bfnrtv"\\/]|u[0-9a-fA-F]{4}))*"/ })
@@ -34,6 +36,8 @@ export class Token
         Token.For,
         Token.WithCapacityOf,
         Token.DeleteTable,
+        Token.Delete,
+        Token.Where,
         Token.Comma,
         Token.String,
         // The Identifier must appear after the keywords because all keywords are valid identifiers.
