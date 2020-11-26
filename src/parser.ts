@@ -1,7 +1,7 @@
 import { Lexer } from 'chevrotain';
 import { Token } from './entities/token';
 import { StatementParser } from './parsers/statementParser';
-import { StatementSemanticVisitor } from './parsers/StatementSemanticVisitor';
+import { StatementSemanticVisitor } from './parsers/statementSemanticVisitor';
 
 export function parse(text) 
 {
