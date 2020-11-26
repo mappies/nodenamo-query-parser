@@ -5,10 +5,10 @@ import { parse } from '../src/parser';
 describe('Get Statement', function () 
 {
     [
-        { statement: 'get "128ecf5c-43c1-4e1c-9d46-5887a72032e9" from user strongly consistent', expected: {type: 'get', get: '128ecf5c-43c1-4e1c-9d46-5887a72032e9', from: 'user', stronglyConsistent: true}},
-        { statement: 'Get "a123" From table1', expected: {type: 'get', get: 'a123', from: 'table1', stronglyConsistent: undefined}},
-        { statement: 'GET 42 FROM table_12 STRONGLY CONSISTENT', expected: {type: 'get', get: 42, from: 'table_12', stronglyConsistent: true}},
-        { statement: '    GET    42    FROM     table_12     Strongly     Consistent      ', expected: {type: 'get', get: 42, from: 'table_12', stronglyConsistent: true}},
+        { statement: 'get "128ecf5c-43c1-4e1c-9d46-5887a72032e9" from user strongly consistent', expected: {type: 'get', id: '128ecf5c-43c1-4e1c-9d46-5887a72032e9', from: 'user', stronglyConsistent: true}},
+        { statement: 'Get "a123" From table1', expected: {type: 'get', id: 'a123', from: 'table1', stronglyConsistent: undefined}},
+        { statement: 'GET 42 FROM table_12 STRONGLY CONSISTENT', expected: {type: 'get', id: 42, from: 'table_12', stronglyConsistent: true}},
+        { statement: '    GET    42    FROM     table_12     Strongly     Consistent      ', expected: {type: 'get', id: 42, from: 'table_12', stronglyConsistent: true}},
     ]
     .forEach(test => 
     {

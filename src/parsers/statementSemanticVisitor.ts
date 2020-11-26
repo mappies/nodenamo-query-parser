@@ -42,7 +42,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
     {
         return {
             type: "get",
-            get: this.visit(ctx[RuleName.GetClause]),
+            id: this.visit(ctx[RuleName.GetClause]),
             from: this.visit(ctx[RuleName.GetFromClause]),
             stronglyConsistent: this.visit(ctx[RuleName.GetStronglyConsistentClause])
         }
