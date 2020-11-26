@@ -19,7 +19,7 @@ export class StatementParser extends CstParser
     /**
      * GET Statement
      * 
-     * Syntax: GET string|number FROM identifier StronglyConsistent? 
+     * Syntax: GET string|number FROM identifier (Strongly Consistent)? 
      */
     getStatement = this.RULE(RuleName.GetStatement, () =>
                 {

@@ -28,7 +28,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
     /**
      * GET Statement
      * 
-     * Syntax: GET string|number FROM identifier StronglyConsistent? 
+     * Syntax: GET string|number FROM identifier (Strongly Consistent)? 
      */
     [RuleName.GetStatement](ctx) 
     {

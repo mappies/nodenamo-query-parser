@@ -4,7 +4,7 @@ export class Token
 {
     static readonly Get = createToken({ name: "Get", pattern: /GET/i })
     static readonly From = createToken({ name: "From", pattern: /From/i })
-    static readonly StronglyConsistent = createToken({ name: "StronglyConsistent", pattern: /StronglyConsistent/i })
+    static readonly StronglyConsistent = createToken({ name: "StronglyConsistent", pattern: /Strongly\s+Consistent/i })
     static readonly CreateTable = createToken({ name: "CreateTable", pattern: /Create\s+Table/i })
     static readonly For = createToken({ name: "For", pattern: /For/i })
     static readonly WithCapacityOf = createToken({ name: "WithCapacityOf", pattern: /With\s+Capacity\s+Of/i })
