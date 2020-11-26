@@ -12,19 +12,24 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         this.validateVisitor()
     }
 
-    /**
-     * GET Statement
-     * 
-     * Syntax: "GET" String|Number "FROM" Identifier "StronglyConsistent"? 
-     */
     [RuleName.Statement](ctx)
     {
         if (ctx[RuleName.GetStatement])
         {
             return this.visit(ctx[RuleName.GetStatement])
         }
+        else if(ctx[RuleName.CreateTableStatement])
+        {
+            return this.visit(ctx[RuleName.CreateTableStatement])
+        }
     }
 
+
+    /**
+     * GET Statement
+     * 
+     * Syntax: GET string|number FROM identifier StronglyConsistent? 
+     */
     [RuleName.GetStatement](ctx) 
     {
         return {
@@ -56,5 +61,39 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
     [RuleName.GetStronglyConsistentClause](ctx) 
     {
         return true
+    }
+
+    /**
+     * CREATE TABLE Statement
+     * 
+     * Syntax: CREATE TABLE identifier FOR identifier WITH CAPACITY OF number number
+     */
+    [RuleName.CreateTableStatement](ctx)
+    {
+        ctx[RuleName.CreateTableClause]
+
+        return {
+            type: "create_table",
+            for: this.visit(ctx[RuleName.CreateTableForClause]),
+            withCapacityOf: this.visit(ctx[RuleName.CreateTableWithCapacityOfClause])
+        }
+    }
+
+    [RuleName.CreateTableClause](ctx)
+    {
+        return
+    }
+
+    [RuleName.CreateTableForClause](ctx)
+    {
+        return ctx.Identifier[0].image;
+    }
+
+    [RuleName.CreateTableWithCapacityOfClause](ctx)
+    {
+        return {
+            readCapacity: Number(ctx.Integer[0].image),
+            writeCapacity: Number(ctx.Integer[1].image)
+        }
     }
 }

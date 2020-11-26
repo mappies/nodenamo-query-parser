@@ -6,4 +6,9 @@ export class ErrorMessage
     static readonly GET_MISSING_ID = 'Missing an object ID or an invalid ID is given to the GET statement.'
     static readonly GET_MISSING_FROM = 'Missing "FROM" clause from the GET statement.'
     static readonly GET_MISSING_TABLE = 'Missing a table name from the GET statement.'
+
+    static readonly CREATE_TABLE_MISSING_FOR = 'Missing "FOR" clause from the CREATE TABLE statement.'
+    static readonly CREATE_TABLE_MISSING_ENTITY_NAME = 'Missing an entity name from the CREATE TABLE statement.'
+    static readonly CREATE_TABLE_MISSING_READ_CAPACITY = 'Missing a read capacity number from the CREATE TABLE statement.'
+    static readonly CREATE_TABLE_MISSING_WRITE_CAPACITY = 'Missing a read capacity number from the CREATE TABLE statement.'
 }

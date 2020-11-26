@@ -10,7 +10,8 @@ export class StatementParser extends CstParser
                 {
                     this.OR({
                         DEF: [
-                            { ALT: () => this.SUBRULE(this.getStatement) }
+                            { ALT: () => this.SUBRULE(this.getStatement) },
+                            { ALT: () => this.SUBRULE(this.createTableStatement) }
                         ]
                     })
                 });
@@ -18,7 +19,7 @@ export class StatementParser extends CstParser
     /**
      * GET Statement
      * 
-     * Syntax: "GET" String|Number "FROM" Identifier "StronglyConsistent"? 
+     * Syntax: GET string|number FROM identifier StronglyConsistent? 
      */
     getStatement = this.RULE(RuleName.GetStatement, () =>
                 {
@@ -51,6 +52,38 @@ export class StatementParser extends CstParser
                 {
                     this.CONSUME(Token.StronglyConsistent)
                 });
+
+    /**
+     * CREATE TABLE Statement
+     * 
+     * Syntax: CREATE TABLE FOR identifier WITH CAPACITY OF number number
+     */
+    createTableStatement = this.RULE(RuleName.CreateTableStatement, () =>
+                            {
+                                this.SUBRULE(this.createTableClause)
+                                this.SUBRULE(this.createTableForClause)
+                                this.OPTION(() => {
+                                    this.SUBRULE(this.createTableWithCapacityOf)
+                                })
+                            })
+
+    createTableClause = this.RULE(RuleName.CreateTableClause, () =>
+                            {
+                                this.CONSUME(Token.CreateTable)
+                            })
+
+    createTableForClause = this.RULE(RuleName.CreateTableForClause, () =>
+                            {
+                                this.CONSUME(Token.For, { ERR_MSG: ErrorMessage.CREATE_TABLE_MISSING_FOR })
+                                this.CONSUME(Token.Identifier, { ERR_MSG: ErrorMessage.CREATE_TABLE_MISSING_ENTITY_NAME })
+                            })
+    
+    createTableWithCapacityOf = this.RULE(RuleName.CreateTableWithCapacityOfClause, () =>
+                            {
+                                this.CONSUME(Token.WithCapacityOf)
+                                this.CONSUME1(Token.Integer, { ERR_MSG: ErrorMessage.CREATE_TABLE_MISSING_READ_CAPACITY })
+                                this.CONSUME2(Token.Integer, { ERR_MSG: ErrorMessage.CREATE_TABLE_MISSING_WRITE_CAPACITY })
+                            })
 
     constructor(tokenVocabulary: TokenVocabulary = Token.AllTokens, config?: IParserConfig)
     {

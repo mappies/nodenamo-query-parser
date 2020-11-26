@@ -8,5 +8,13 @@ export enum RuleName
     GetStatement = "getStatementRuleName",
     GetClause = "getClauseRuleName",
     GetFromClause = "getFromClauseRuleName",
-    GetStronglyConsistentClause ="getStronglyConsistentClauseRuleName"
+    GetStronglyConsistentClause ="getStronglyConsistentClauseRuleName",
+
+    /**
+     * CREATE TABLE statement
+     */
+    CreateTableStatement = "createTableStatement",
+    CreateTableClause = "createTableClauseRuleName",
+    CreateTableForClause = "createTableForClauseRuleName",
+    CreateTableWithCapacityOfClause = "withCapacityOfClauseRuleName"
 }
