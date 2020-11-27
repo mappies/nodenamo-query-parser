@@ -93,12 +93,20 @@ export class StatementParser extends CstParser
     whereClause = this.RULE(RuleName.WhereClause, () =>
                             {
                                 this.CONSUME(Token.Where)
-                                this.SUBRULE(this.whereAndOrExpression)
+                                this.SUBRULE(this.keyConditionExpression)
                             })
-    
-    whereAndOrExpression = this.RULE(RuleName.WhereAndOrExpression, () =>
+
+    keyConditionExpression = this.RULE(RuleName.KeyConditionExpression, () =>
                             {
-                                this.SUBRULE1(this.whereExpression, { LABEL: "lhs" });
+                                this.SUBRULE(this.andOrExpression)
+                            });
+
+    /**
+     * Expressions
+     */
+    andOrExpression = this.RULE(RuleName.AndOrExpression, () =>
+                            {
+                                this.SUBRULE1(this.highPrecedenceExpression, { LABEL: "lhs" });
                                 this.MANY(() => {
                                     this.OR({
                                         DEF: [
@@ -106,33 +114,21 @@ export class StatementParser extends CstParser
                                             {ALT: () => { this.CONSUME(Token.Or); }}
                                         ]
                                     })        
-                                    this.SUBRULE2(this.whereExpression,{LABEL: "rhs" });
+                                    this.SUBRULE2(this.highPrecedenceExpression,{LABEL: "rhs" });
                                 });
                             })  
 
-    whereExpression = this.RULE(RuleName.WhereExpression, () => 
+    highPrecedenceExpression = this.RULE(RuleName.HighPrecedenceExpression, () => 
                             {
                                 this.OR({
                                     DEF: [
-                                       // { ALT: () => this.SUBRULE(this.whereAndOrExpression) },
-                                        { ALT: () => this.SUBRULE(this.whereComparisonExpression) }
+                                        { ALT: () => this.SUBRULE(this.parenthesisExpression) },
+                                        { ALT: () => this.SUBRULE(this.comparisonExpression) }
                                     ]
                                 })
                             })
-/*
-    whereAndOrExpression = this.RULE(RuleName.WhereAndOrExpression, () => 
-                            {                 
-                                this.SUBRULE1(this.whereAndOrExpression, { LABEL: 'lhs' })
-                                this.MANY(() => {
-                                    this.OR([
-                                        { ALT: () => { this.CONSUME(Token.And)} },
-                                        { ALT: () => { this.CONSUME(Token.Or)} }
-                                    ])
-                                    this.SUBRULE2(this.whereAndOrExpression, { LABEL: 'rhs' })
-                                })
-                            })
-*/
-    whereComparisonExpression = this.RULE(RuleName.WhereComparisonExpression, () => 
+
+    comparisonExpression = this.RULE(RuleName.ComparisonExpression, () => 
                             {
                                 this.CONSUME(Token.Identifier);
                                 this.OR([
@@ -143,10 +139,10 @@ export class StatementParser extends CstParser
                                     { ALT:() => { this.CONSUME(Token.LessThanEqual) }},
                                     { ALT:() => { this.CONSUME(Token.LessThan) }},
                                 ]);
-                                this.SUBRULE(this.whereAtomicExpression);
+                                this.SUBRULE(this.atomicExpression);
                             })
 
-    whereAtomicExpression = this.RULE(RuleName.WhereAtomicExpression, () => 
+    atomicExpression = this.RULE(RuleName.AtomicExpression, () => 
                             {
                                 this.OR({
                                     DEF: [
@@ -156,10 +152,10 @@ export class StatementParser extends CstParser
                                 });
                             });
 
-    whereParenthesisExpression = this.RULE(RuleName.WhereParenthesisExpression, () => 
+    parenthesisExpression = this.RULE(RuleName.ParenthesisExpression, () => 
                             {
                                 this.CONSUME(Token.LeftParenthesis)
-                                this.SUBRULE(this.whereExpression)
+                                this.SUBRULE(this.andOrExpression)
                                 this.CONSUME(Token.RightParenthesis)
                             })
 

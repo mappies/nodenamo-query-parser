@@ -110,31 +110,58 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
      */
     [RuleName.WhereClause](ctx)
     {
-        return this.visit(ctx[RuleName.WhereAndOrExpression])
+        return this.visit(ctx[RuleName.KeyConditionExpression])
     }
-    [RuleName.WhereAndOrExpression](ctx)
+
+    [RuleName.KeyConditionExpression](ctx)
     {
-        let operand = '';
+        return this.visit(ctx[RuleName.AndOrExpression])
+    }
+    
+    /**
+     * Expressions
+     */
+    [RuleName.AndOrExpression](ctx)
+    {
+        let operands = []
         
-        if(ctx['And'])
-        {
-            operand = 'and'
-        }
-        else if(ctx['Or'])
-        {
-            operand = 'or'
-        }
+        Object.entries(ctx).forEach(([key, value]) => {
+            if(key === Token.And.name)
+            {
+                operands.push(value[0])
+            }
+            else if(key === Token.Or.name)
+            {
+                operands.push(value[0])
+            }
+        });
+        //Ensure the location of operands are in order.
+        operands = operands.sort((a,b) => a.startOffset - b.startOffset);
 
         let lhs = this.visit(ctx.lhs)
         
         if(ctx['rhs'])
         {
-            let rhs = this.visit(ctx.rhs)
+            let rhsResults = ctx.rhs.map(i => this.visit(i))
+
+            let firstRhsResult = rhsResults.shift()
+            let firstOperand = operands.shift()
+
+            let rhsExpression = firstRhsResult.expression
+            let rhsExpressionAttributeNames = firstRhsResult.expressionAttributeNames
+            let rhsExpressionAttributeValues = firstRhsResult.expressionAttributeValues
+
+            for(let rhs of rhsResults)
+            {
+                rhsExpression = `${rhsExpression} ${operands.shift().image} ${rhs.expression}`,
+                rhsExpressionAttributeNames = Object.assign(rhsExpressionAttributeNames, rhs.expressionAttributeNames),
+                rhsExpressionAttributeValues = Object.assign(rhsExpressionAttributeValues, rhs.expressionAttributeValues)
+            }
 
             return {
-                keyConditionExpression: `${lhs.keyConditionExpression} ${operand} ${rhs.keyConditionExpression}`,
-                expressionAttributeNames: Object.assign(lhs.expressionAttributeNames, rhs.expressionAttributeNames),
-                expressionAttributeValues: Object.assign(lhs.expressionAttributeValues, rhs.expressionAttributeValues)
+                expression: `${lhs.expression} ${firstOperand.image} ${rhsExpression}`,
+                expressionAttributeNames: Object.assign(lhs.expressionAttributeNames, rhsExpressionAttributeNames),
+                expressionAttributeValues: Object.assign(lhs.expressionAttributeValues, rhsExpressionAttributeValues)
             }
         }
         else
@@ -142,29 +169,56 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
             return lhs;
         }
     }
-    [RuleName.WhereExpression](ctx)
+    [RuleName.HighPrecedenceExpression](ctx)
     {
-        return this.visit(ctx[RuleName.WhereComparisonExpression])
+        if(ctx[RuleName.ComparisonExpression])
+        {
+            return this.visit(ctx[RuleName.ComparisonExpression])
+        }
+        else if(ctx[RuleName.ParenthesisExpression])
+        {
+            return this.visit(ctx[RuleName.ParenthesisExpression])
+        }
     }
-    [RuleName.WhereComparisonExpression](ctx)
+    [RuleName.ComparisonExpression](ctx)
     {
         let operand = '';
         
-        if(ctx['Equal'])
+        if(ctx[Token.Equal.name])
         {
             operand = '='
         }
+        else if(ctx[Token.NotEqual.name])
+        {
+            operand = '<>'
+        }
+        else if(ctx[Token.GreaterThan.name])
+        {
+            operand = '>'
+        }
+        else if(ctx[Token.GreaterThanEqual.name])
+        {
+            operand = '>='
+        }
+        else if(ctx[Token.LessThan.name])
+        {
+            operand = '<'
+        }
+        else if(ctx[Token.LessThanEqual.name])
+        {
+            operand = '<='
+        }
 
         let lhs = ctx.Identifier[0].image;
-        let rhs = this.visit(ctx[RuleName.WhereAtomicExpression])
+        let rhs = this.visit(ctx[RuleName.AtomicExpression])
         
         return {
-            keyConditionExpression: `#${lhs} ${operand} :${lhs}`,
+            expression: `#${lhs} ${operand} :${lhs}`,
             expressionAttributeNames: { [`#${lhs}`]: lhs },
             expressionAttributeValues: { [`:${lhs}`]: rhs }
         }
     }
-    [RuleName.WhereAtomicExpression](ctx)
+    [RuleName.AtomicExpression](ctx)
     {
         if (ctx.String)
         {
@@ -176,9 +230,15 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
             return Number(ctx.Integer[0].image)
         }
     }
-    [RuleName.WhereParenthesisExpression](ctx)
+    [RuleName.ParenthesisExpression](ctx)
     {
-        
+        let child = this.visit(ctx[RuleName.AndOrExpression])
+
+        return {
+            expression: `(${child.expression})`,
+            expressionAttributeNames: child.expressionAttributeNames,
+            expressionAttributeValues: child.expressionAttributeValues
+        }
     }
     /**
      * CREATE TABLE Statement

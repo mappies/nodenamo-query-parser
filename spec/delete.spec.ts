@@ -16,25 +16,13 @@ describe('Delete Statement', function ()
 
         { statement: 'DELETE 42 FROM books WHERE title = "A book"', 
           expected: {type: 'delete', id: 42, from: 'books', 
-                     where: { keyConditionExpression: "#title = :title", 
+                     where: { expression: "#title = :title", 
                               expressionAttributeNames: {'#title': 'title'},
-                              expressionAttributeValues: {':title': "A book"}}}},
-
-        { statement: 'DELETE 42 FROM users WHERE age = 100', 
-          expected: {type: 'delete', id: 42, from: 'users', 
-                     where: { keyConditionExpression: "#age = :age", 
-                              expressionAttributeNames: {'#age': 'age'},
-                              expressionAttributeValues: {':age': 100}}}},     
-                         
-        { statement: 'DELETE 42 FROM users WHERE age = 100 and name = "some one"', 
-          expected: {type: 'delete', id: 42, from: 'users', 
-                     where: { keyConditionExpression: "#age = :age and #name = :name", 
-                              expressionAttributeNames: {'#age': 'age', '#name': 'name'},
-                              expressionAttributeValues: {':age': 100, ':name': 'some one'}}}},
+                              expressionAttributeValues: {':title': "A book"}}}}
     ]
     .forEach(test => 
     {
-        it.only(`'${test.statement}' is valid.`, async () =>
+        it(`'${test.statement}' is valid.`, async () =>
         {
             let result = parse(test.statement);
             assert.deepEqual(result, test.expected);

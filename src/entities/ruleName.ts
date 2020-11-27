@@ -37,9 +37,14 @@ export enum RuleName
      * Where clause
      */
     WhereClause = "whereClauseRuleName",
-    WhereExpression = "whereExpressionRuleName",
-    WhereAtomicExpression = "whereAtomicExpressionRuleName",
-    WhereAndOrExpression = "whereAndOrExpressionRuleName",
-    WhereComparisonExpression = "whereComparisonExpressionRuleName",
-    WhereParenthesisExpression = "whereParenthesisExpressionRuleName"
+
+    /**
+     * KeyCondition expression
+     */
+    KeyConditionExpression = "keyConditionExpression",
+    HighPrecedenceExpression = "whereExpressionRuleName",
+    AtomicExpression = "whereAtomicExpressionRuleName",
+    AndOrExpression = "whereAndOrExpressionRuleName",
+    ComparisonExpression = "whereComparisonExpressionRuleName",
+    ParenthesisExpression = "whereParenthesisExpressionRuleName"
 }

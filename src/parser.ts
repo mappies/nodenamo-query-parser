@@ -1,20 +1,34 @@
 import { Lexer } from 'chevrotain';
 import { Token } from './entities/token';
 import { StatementParser } from './parsers/statementParser';
-import { StatementSemanticVisitor } from './parsers/statementSemanticVisitor';
+import { StatementSemanticVisitor } from './parsers/StatementSemanticVisitor';
+
+let lexer = new Lexer(Token.AllTokens);
+let parser = new StatementParser();
 
 export function parse(text) 
 {
-    let lexResult = new Lexer(Token.AllTokens).tokenize(text);
+    parser.input = lexer.tokenize(text).tokens;
 
-    let statementParser = new StatementParser();
-    statementParser.input = lexResult.tokens;
+    let cst = parser.statement();
 
-    let cst = statementParser.statement();
-
-    if (statementParser.errors.length > 0) 
+    if (parser.errors.length > 0) 
     {
-        throw statementParser.errors[0]
+        throw parser.errors[0]
+    }
+
+    return new StatementSemanticVisitor().visit(cst)
+}
+
+export function parseKeyCondition(text) 
+{
+    parser.input = lexer.tokenize(text).tokens;
+
+    let cst = parser.keyConditionExpression();
+
+    if (parser.errors.length > 0) 
+    {
+        throw parser.errors[0]
     }
 
     return new StatementSemanticVisitor().visit(cst)
