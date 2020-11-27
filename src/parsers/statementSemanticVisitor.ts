@@ -110,15 +110,41 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
      */
     [RuleName.WhereClause](ctx)
     {
-        return this.visit(ctx[RuleName.WhereExpression])
+        return this.visit(ctx[RuleName.WhereAndOrExpression])
+    }
+    [RuleName.WhereAndOrExpression](ctx)
+    {
+        let operand = '';
+        
+        if(ctx['And'])
+        {
+            operand = 'and'
+        }
+        else if(ctx['Or'])
+        {
+            operand = 'or'
+        }
+
+        let lhs = this.visit(ctx.lhs)
+        
+        if(ctx['rhs'])
+        {
+            let rhs = this.visit(ctx.rhs)
+
+            return {
+                keyConditionExpression: `${lhs.keyConditionExpression} ${operand} ${rhs.keyConditionExpression}`,
+                expressionAttributeNames: Object.assign(lhs.expressionAttributeNames, rhs.expressionAttributeNames),
+                expressionAttributeValues: Object.assign(lhs.expressionAttributeValues, rhs.expressionAttributeValues)
+            }
+        }
+        else
+        {
+            return lhs;
+        }
     }
     [RuleName.WhereExpression](ctx)
     {
         return this.visit(ctx[RuleName.WhereComparisonExpression])
-    }
-    [RuleName.WhereAndOrExpression](ctx)
-    {
-        
     }
     [RuleName.WhereComparisonExpression](ctx)
     {

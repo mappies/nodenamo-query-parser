@@ -25,6 +25,12 @@ describe('Delete Statement', function ()
                      where: { keyConditionExpression: "#age = :age", 
                               expressionAttributeNames: {'#age': 'age'},
                               expressionAttributeValues: {':age': 100}}}},     
+                         
+        { statement: 'DELETE 42 FROM users WHERE age = 100 and name = "some one"', 
+          expected: {type: 'delete', id: 42, from: 'users', 
+                     where: { keyConditionExpression: "#age = :age and #name = :name", 
+                              expressionAttributeNames: {'#age': 'age', '#name': 'name'},
+                              expressionAttributeValues: {':age': 100, ':name': 'some one'}}}},
     ]
     .forEach(test => 
     {

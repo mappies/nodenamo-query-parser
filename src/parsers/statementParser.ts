@@ -93,14 +93,23 @@ export class StatementParser extends CstParser
     whereClause = this.RULE(RuleName.WhereClause, () =>
                             {
                                 this.CONSUME(Token.Where)
-                                this.SUBRULE(this.whereExpression)
+                                this.SUBRULE(this.whereAndOrExpression)
                             })
     
-    WhereAndOrExpression = this.RULE(RuleName.WhereAndOrExpression, () =>
-    {
+    whereAndOrExpression = this.RULE(RuleName.WhereAndOrExpression, () =>
+                            {
+                                this.SUBRULE1(this.whereExpression, { LABEL: "lhs" });
+                                this.MANY(() => {
+                                    this.OR({
+                                        DEF: [
+                                            {ALT: () => { this.CONSUME(Token.And); }},
+                                            {ALT: () => { this.CONSUME(Token.Or); }}
+                                        ]
+                                    })        
+                                    this.SUBRULE2(this.whereExpression,{LABEL: "rhs" });
+                                });
+                            })  
 
-    })  
-           
     whereExpression = this.RULE(RuleName.WhereExpression, () => 
                             {
                                 this.OR({
