@@ -28,8 +28,18 @@ export enum RuleName
     /**
      * DELETE statement
      */
-    DeleteStatement = "DeleteStatementRuleName",
-    DeleteClause = "DeleteClauseRuleName",
-    DeleteFromClause = "DeleteFromClauseRuleName",
-    DeleteWhereClause = "DeleteWhereClauseRuleName"
+    DeleteStatement = "deleteStatementRuleName",
+    DeleteClause = "deleteClauseRuleName",
+    DeleteFromClause = "deleteFromClauseRuleName",
+    DeleteWhereClause = "deleteWhereClauseRuleName",
+
+    /**
+     * Where clause
+     */
+    WhereClause = "whereClauseRuleName",
+    WhereExpression = "whereExpressionRuleName",
+    WhereAtomicExpression = "whereAtomicExpressionRuleName",
+    WhereAndOrExpression = "whereAndOrExpressionRuleName",
+    WhereComparisonExpression = "whereComparisonExpressionRuleName",
+    WhereParenthesisExpression = "whereParenthesisExpressionRuleName"
 }

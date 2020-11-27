@@ -5,13 +5,30 @@ import { parse } from '../src/parser';
 describe('Delete Statement', function () 
 {
     [
-        { statement: 'delete "128ecf5c-43c1-4e1c-9d46-5887a72032e9" from user', expected: {type: 'delete', id: '128ecf5c-43c1-4e1c-9d46-5887a72032e9', from: 'user'}},
-        { statement: 'DELETE 42 FROM table_12', expected: {type: 'delete', id: 42, from: 'table_12'}},
-        { statement: '    delete    "a123"    FROM     table_12         ', expected: {type: 'delete', id: "a123", from: 'table_12'}},
+        { statement: 'delete "128ecf5c-43c1-4e1c-9d46-5887a72032e9" from user', 
+          expected: {type: 'delete', id: '128ecf5c-43c1-4e1c-9d46-5887a72032e9', from: 'user', where: undefined}},
+
+        { statement: 'DELETE 42 FROM table_12', 
+          expected: {type: 'delete', id: 42, from: 'table_12', where: undefined}},
+
+        { statement: '    delete    "a123"    FROM     table_12         ', 
+          expected: {type: 'delete', id: "a123", from: 'table_12', where: undefined}},
+
+        { statement: 'DELETE 42 FROM books WHERE title = "A book"', 
+          expected: {type: 'delete', id: 42, from: 'books', 
+                     where: { keyConditionExpression: "#title = :title", 
+                              expressionAttributeNames: {'#title': 'title'},
+                              expressionAttributeValues: {':title': "A book"}}}},
+
+        { statement: 'DELETE 42 FROM users WHERE age = 100', 
+          expected: {type: 'delete', id: 42, from: 'users', 
+                     where: { keyConditionExpression: "#age = :age", 
+                              expressionAttributeNames: {'#age': 'age'},
+                              expressionAttributeValues: {':age': 100}}}},     
     ]
     .forEach(test => 
     {
-        it(`'${test.statement}' is valid.`, async () =>
+        it.only(`'${test.statement}' is valid.`, async () =>
         {
             let result = parse(test.statement);
             assert.deepEqual(result, test.expected);

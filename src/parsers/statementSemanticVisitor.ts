@@ -1,4 +1,5 @@
 import { RuleName } from '../entities/ruleName';
+import { Token } from '../entities/token';
 import { StatementParser } from './statementParser';
 
 const statementParser = new StatementParser()
@@ -81,7 +82,8 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         return {
             type: "delete",
             id: this.visit(ctx[RuleName.DeleteClause]),
-            from: this.visit(ctx[RuleName.DeleteFromClause])
+            from: this.visit(ctx[RuleName.DeleteFromClause]),
+            where: this.visit(ctx[RuleName.WhereClause])
         }
     }
 
@@ -103,6 +105,55 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         return ctx.Identifier[0].image;
     }
 
+    /**
+     * WHERE clause
+     */
+    [RuleName.WhereClause](ctx)
+    {
+        return this.visit(ctx[RuleName.WhereExpression])
+    }
+    [RuleName.WhereExpression](ctx)
+    {
+        return this.visit(ctx[RuleName.WhereComparisonExpression])
+    }
+    [RuleName.WhereAndOrExpression](ctx)
+    {
+        
+    }
+    [RuleName.WhereComparisonExpression](ctx)
+    {
+        let operand = '';
+        
+        if(ctx['Equal'])
+        {
+            operand = '='
+        }
+
+        let lhs = ctx.Identifier[0].image;
+        let rhs = this.visit(ctx[RuleName.WhereAtomicExpression])
+        
+        return {
+            keyConditionExpression: `#${lhs} ${operand} :${lhs}`,
+            expressionAttributeNames: { [`#${lhs}`]: lhs },
+            expressionAttributeValues: { [`:${lhs}`]: rhs }
+        }
+    }
+    [RuleName.WhereAtomicExpression](ctx)
+    {
+        if (ctx.String)
+        {
+            //Remove ""
+            return ctx.String[0].image.substr(1, ctx.String[0].image.length - 2)
+        }
+        else 
+        {
+            return Number(ctx.Integer[0].image)
+        }
+    }
+    [RuleName.WhereParenthesisExpression](ctx)
+    {
+        
+    }
     /**
      * CREATE TABLE Statement
      * 

@@ -1,4 +1,4 @@
-import { CstParser, TokenVocabulary, IParserConfig } from 'chevrotain';
+import { CstParser, TokenVocabulary, IParserConfig, Rule } from 'chevrotain';
 import { Token } from '../entities/token';
 import { ErrorMessage } from '../entities/errorMessage';
 import { ParserErrorProvider } from '../errorProviders/parserErrorProvider';
@@ -64,6 +64,9 @@ export class StatementParser extends CstParser
                             {
                                 this.SUBRULE(this.deleteClause)
                                 this.SUBRULE(this.deleteFromClause)
+                                this.OPTION(() => {
+                                    this.SUBRULE(this.whereClause)
+                                })
                             })
 
     deleteClause = this.RULE(RuleName.DeleteClause, () =>
@@ -82,6 +85,73 @@ export class StatementParser extends CstParser
                             {
                                 this.CONSUME(Token.From, { ERR_MSG: ErrorMessage.DELETE_MISSING_FROM })
                                 this.CONSUME(Token.Identifier, { ERR_MSG: ErrorMessage.DELETE_MISSING_ENTITY_NAME })
+                            })
+
+    /**
+     * WHERE clause
+     */
+    whereClause = this.RULE(RuleName.WhereClause, () =>
+                            {
+                                this.CONSUME(Token.Where)
+                                this.SUBRULE(this.whereExpression)
+                            })
+    
+    WhereAndOrExpression = this.RULE(RuleName.WhereAndOrExpression, () =>
+    {
+
+    })  
+           
+    whereExpression = this.RULE(RuleName.WhereExpression, () => 
+                            {
+                                this.OR({
+                                    DEF: [
+                                       // { ALT: () => this.SUBRULE(this.whereAndOrExpression) },
+                                        { ALT: () => this.SUBRULE(this.whereComparisonExpression) }
+                                    ]
+                                })
+                            })
+/*
+    whereAndOrExpression = this.RULE(RuleName.WhereAndOrExpression, () => 
+                            {                 
+                                this.SUBRULE1(this.whereAndOrExpression, { LABEL: 'lhs' })
+                                this.MANY(() => {
+                                    this.OR([
+                                        { ALT: () => { this.CONSUME(Token.And)} },
+                                        { ALT: () => { this.CONSUME(Token.Or)} }
+                                    ])
+                                    this.SUBRULE2(this.whereAndOrExpression, { LABEL: 'rhs' })
+                                })
+                            })
+*/
+    whereComparisonExpression = this.RULE(RuleName.WhereComparisonExpression, () => 
+                            {
+                                this.CONSUME(Token.Identifier);
+                                this.OR([
+                                    { ALT:() => { this.CONSUME(Token.Equal) }},
+                                    { ALT:() => { this.CONSUME(Token.GreaterThanEqual) }},
+                                    { ALT:() => { this.CONSUME(Token.NotEqual) }},
+                                    { ALT:() => { this.CONSUME(Token.GreaterThan) }},
+                                    { ALT:() => { this.CONSUME(Token.LessThanEqual) }},
+                                    { ALT:() => { this.CONSUME(Token.LessThan) }},
+                                ]);
+                                this.SUBRULE(this.whereAtomicExpression);
+                            })
+
+    whereAtomicExpression = this.RULE(RuleName.WhereAtomicExpression, () => 
+                            {
+                                this.OR({
+                                    DEF: [
+                                        { ALT:() => { this.CONSUME(Token.Integer) }},
+                                        { ALT:() => { this.CONSUME(Token.String) }}
+                                    ]
+                                });
+                            });
+
+    whereParenthesisExpression = this.RULE(RuleName.WhereParenthesisExpression, () => 
+                            {
+                                this.CONSUME(Token.LeftParenthesis)
+                                this.SUBRULE(this.whereExpression)
+                                this.CONSUME(Token.RightParenthesis)
                             })
 
     /**
