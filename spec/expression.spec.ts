@@ -5,15 +5,48 @@ import { parseKeyCondition } from '../src/parser';
 describe('Expression', function () 
 {
     [
+        { operand: '=' },
+        { operand: '<>' },
+        { operand: '>' },
+        { operand: '>=' },
+        { operand: '<' },
+        { operand: '<=' }
+    ]
+    .forEach(test => 
+    {
+        it(`Operand '${test.operand}' is valid.`, async () =>
+        {
+            let result = parseKeyCondition(`key ${test.operand} "value"`);
+            assert.deepEqual(result, { expression: `#key ${test.operand} :key`, 
+                                       expressionAttributeNames: {'#key': 'key'},
+                                       expressionAttributeValues: {':key': "value"}});
+        })
+    });
+    [
+        { value: "True", expected: true },
+        { value: "FALSE", expected: false },
+        { value: 0, expected: 0 },
+        { value: -1, expected: -1 },
+        { value: 123, expected: 123 },
+        { value: '"word"', expected: "word" },
+        { value: '"escaped\\"word\\""', expected: "escaped\\\"word\\\"" }
+    ]
+    .forEach(test => 
+    {
+        it(`Value '${test.value}' is valid.`, async () =>
+        {
+            let result = parseKeyCondition(`key = ${test.value}`);
+            assert.deepEqual(result, { expression: `#key = :key`, 
+                                       expressionAttributeNames: {'#key': 'key'},
+                                       expressionAttributeValues: {':key': test.expected}});
+        })
+    });
+
+    [
         { statement: 'title = "A book"', 
           expected: { expression: "#title = :title", 
                       expressionAttributeNames: {'#title': 'title'},
                       expressionAttributeValues: {':title': "A book"}}},
-
-        { statement: 'age = 100', 
-          expected: { expression: "#age = :age", 
-                      expressionAttributeNames: {'#age': 'age'},
-                      expressionAttributeValues: {':age': 100}}},     
                          
         { statement: 'age = 100 and name = "some one"', 
           expected: { expression: "#age = :age and #name = :name", 
@@ -21,14 +54,29 @@ describe('Expression', function ()
                       expressionAttributeValues: {':age': 100, ':name': 'some one'}}},
                          
         { statement: 'age < 100 and firstname <> "some" or lastname > "one"', 
-        expected: { expression: "#age < :age and #firstname <> :firstname or #lastname > :lastname", 
-                    expressionAttributeNames: {'#age': 'age', '#firstname': 'firstname', '#lastname': 'lastname'},
-                    expressionAttributeValues: {':age': 100, ':firstname': 'some', ':lastname': 'one'}}},
+          expected: { expression: "#age < :age and #firstname <> :firstname or #lastname > :lastname", 
+                      expressionAttributeNames: {'#age': 'age', '#firstname': 'firstname', '#lastname': 'lastname'},
+                      expressionAttributeValues: {':age': 100, ':firstname': 'some', ':lastname': 'one'}}},
+
+        { statement: 'age = 100 or firstname <> "some" and lastname = "one"', 
+          expected: { expression: "#age = :age or #firstname <> :firstname and #lastname = :lastname", 
+                      expressionAttributeNames: {'#age': 'age', '#firstname': 'firstname', '#lastname': 'lastname'},
+                      expressionAttributeValues: {':age': 100, ':firstname': 'some', ':lastname': 'one'}}},
 
         { statement: 'age < 100 and ((firstname <> "some") or lastname > "one")', 
-        expected: { expression: "#age < :age and ((#firstname <> :firstname) or #lastname > :lastname)", 
-                    expressionAttributeNames: {'#age': 'age', '#firstname': 'firstname', '#lastname': 'lastname'},
-                    expressionAttributeValues: {':age': 100, ':firstname': 'some', ':lastname': 'one'}}},
+          expected: { expression: "#age < :age and ((#firstname <> :firstname) or #lastname > :lastname)", 
+                      expressionAttributeNames: {'#age': 'age', '#firstname': 'firstname', '#lastname': 'lastname'},
+                      expressionAttributeValues: {':age': 100, ':firstname': 'some', ':lastname': 'one'}}},
+
+        { statement: 'age < 100 and firstname <> "some" or lastname > "one" and title = "Mr."', 
+          expected: { expression: "#age < :age and #firstname <> :firstname or #lastname > :lastname and #title = :title", 
+                      expressionAttributeNames: {'#age': 'age', '#firstname': 'firstname', '#lastname': 'lastname', '#title': 'title'},
+                      expressionAttributeValues: {':age': 100, ':firstname': 'some', ':lastname': 'one', ':title': 'Mr.'}}},
+
+        { statement: '(age < 100 and (firstname <> "some" or (lastname > "one")) and title = "Mr.") or enabled = true', 
+          expected: { expression: "(#age < :age and (#firstname <> :firstname or (#lastname > :lastname)) and #title = :title) or #enabled = :enabled", 
+                      expressionAttributeNames: {'#age': 'age', '#firstname': 'firstname', '#lastname': 'lastname', '#title': 'title', '#enabled': 'enabled'},
+                      expressionAttributeValues: {':age': 100, ':firstname': 'some', ':lastname': 'one', ':title': 'Mr.', ':enabled': true}}},
     ]
     .forEach(test => 
     {

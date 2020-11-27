@@ -126,18 +126,14 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         let operands = []
         
         Object.entries(ctx).forEach(([key, value]) => {
-            if(key === Token.And.name)
+            if(key === Token.And.name || key === Token.Or.name)
             {
-                operands.push(value[0])
-            }
-            else if(key === Token.Or.name)
-            {
-                operands.push(value[0])
+                operands = operands.concat(...<[]>value)
             }
         });
         //Ensure the location of operands are in order.
         operands = operands.sort((a,b) => a.startOffset - b.startOffset);
-
+        
         let lhs = this.visit(ctx.lhs)
         
         if(ctx['rhs'])
@@ -224,6 +220,10 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         {
             //Remove ""
             return ctx.String[0].image.substr(1, ctx.String[0].image.length - 2)
+        }
+        else if(ctx.Boolean)
+        {
+            return ctx.Boolean[0].image.toLowerCase() === 'true'
         }
         else 
         {

@@ -15,7 +15,8 @@ export class Token
     static readonly Identifier = createToken({ name: "Identifier", pattern: /[a-zA-Z]\w*/ })
     static readonly String = createToken({ name: "String", pattern: /"(:?[^\\"]|\\(:?[bfnrtv"\\/]|u[0-9a-fA-F]{4}))*"/ })
     static readonly Comma = createToken({ name: "Comma", pattern: /,/ })
-    static readonly Integer = createToken({ name: "Integer", pattern: /-?0|[1-9]\d*/ })
+    static readonly Integer = createToken({ name: "Integer", pattern: /-?0|-?[1-9]\d*/ })
+    static readonly Boolean = createToken({ name: "Boolean", pattern: /true|false/i })
     static readonly GreaterThan = createToken({ name: "GreaterThan", pattern: />/ })
     static readonly GreaterThanEqual = createToken({ name: "GreaterThanEqual", pattern: />=/ })
     static readonly Equal = createToken({ name: "Equal", pattern: /=/ })
@@ -46,6 +47,7 @@ export class Token
         Token.String,
         Token.And,
         Token.Or,
+        Token.Boolean,
         // The Identifier must appear after the keywords because all keywords are valid identifiers.
         Token.Identifier,
         Token.Integer,

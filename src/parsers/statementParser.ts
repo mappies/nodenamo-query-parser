@@ -147,7 +147,8 @@ export class StatementParser extends CstParser
                                 this.OR({
                                     DEF: [
                                         { ALT:() => { this.CONSUME(Token.Integer) }},
-                                        { ALT:() => { this.CONSUME(Token.String) }}
+                                        { ALT:() => { this.CONSUME(Token.String) }},
+                                        { ALT:() => { this.CONSUME(Token.Boolean) }}
                                     ]
                                 });
                             });
