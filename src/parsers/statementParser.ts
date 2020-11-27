@@ -157,7 +157,7 @@ export class StatementParser extends CstParser
                             {
                                 this.CONSUME(Token.LeftParenthesis)
                                 this.SUBRULE(this.andOrExpression)
-                                this.CONSUME(Token.RightParenthesis)
+                                this.CONSUME(Token.RightParenthesis, { ERR_MSG: ErrorMessage.EXPRESSION_MISSING_PARENTHESIS })
                             })
 
     /**

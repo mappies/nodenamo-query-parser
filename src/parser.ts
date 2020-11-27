@@ -20,7 +20,7 @@ export function parse(text)
     return new StatementSemanticVisitor().visit(cst)
 }
 
-export function parseKeyCondition(text) 
+export function parseExpression(text) 
 {
     parser.input = lexer.tokenize(text).tokens;
 

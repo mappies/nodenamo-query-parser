@@ -13,7 +13,10 @@ export class ParserErrorProvider implements IParserErrorMessageProvider
     }
     buildNoViableAltMessage(options: { expectedPathsPerAlt: TokenType[][][]; actual: IToken[]; previous: IToken; customUserDescription: string; ruleName: string; }): string
     {
-        return options.customUserDescription || ErrorMessage.UNRECOGNIZED_COMMAND.replace('?', options.actual[0].image)
+        return options.customUserDescription || 
+               (options.actual[0].image && ErrorMessage.UNRECOGNIZED_COMMAND.replace('?', options.actual[0].image)) ||
+               (options.previous.image && ErrorMessage.UNEXPECTED_END_OF_STATEMENT)  ||
+               defaultParserErrorProvider.buildNoViableAltMessage(options);
     }
     buildEarlyExitMessage(options: { expectedIterationPaths: TokenType[][]; actual: IToken[]; previous: IToken; customUserDescription: string; ruleName: string; }): string
     {

@@ -1,6 +1,6 @@
 import {assert as assert} from 'chai';
 import { ErrorMessage } from '../src/entities/errorMessage';
-import { parseKeyCondition } from '../src/parser';
+import { parseExpression } from '../src/parser';
 
 describe('Expression', function () 
 {
@@ -16,7 +16,7 @@ describe('Expression', function ()
     {
         it(`Operand '${test.operand}' is valid.`, async () =>
         {
-            let result = parseKeyCondition(`key ${test.operand} "value"`);
+            let result = parseExpression(`key ${test.operand} "value"`);
             assert.deepEqual(result, { expression: `#key ${test.operand} :key`, 
                                        expressionAttributeNames: {'#key': 'key'},
                                        expressionAttributeValues: {':key': "value"}});
@@ -35,7 +35,7 @@ describe('Expression', function ()
     {
         it(`Value '${test.value}' is valid.`, async () =>
         {
-            let result = parseKeyCondition(`key = ${test.value}`);
+            let result = parseExpression(`key = ${test.value}`);
             assert.deepEqual(result, { expression: `#key = :key`, 
                                        expressionAttributeNames: {'#key': 'key'},
                                        expressionAttributeValues: {':key': test.expected}});
@@ -47,7 +47,12 @@ describe('Expression', function ()
           expected: { expression: "#title = :title", 
                       expressionAttributeNames: {'#title': 'title'},
                       expressionAttributeValues: {':title': "A book"}}},
-                         
+
+        { statement: '((((((((((title = "A book"))))))))))', 
+          expected: { expression: "((((((((((#title = :title))))))))))", 
+                      expressionAttributeNames: {'#title': 'title'},
+                      expressionAttributeValues: {':title': "A book"}}}, 
+
         { statement: 'age = 100 and name = "some one"', 
           expected: { expression: "#age = :age and #name = :name", 
                       expressionAttributeNames: {'#age': 'age', '#name': 'name'},
@@ -82,8 +87,40 @@ describe('Expression', function ()
     {
         it(`'${test.statement}' is valid.`, async () =>
         {
-            let result = parseKeyCondition(test.statement);
+            let result = parseExpression(test.statement);
             assert.deepEqual(result, test.expected);
+        })
+    });
+
+    [
+        { statement: 'key', expected: {error: "NoViableAltException", message: ErrorMessage.UNEXPECTED_END_OF_STATEMENT}},
+        { statement: 'key = ', expected: {error: "NoViableAltException", message: ErrorMessage.UNEXPECTED_END_OF_STATEMENT}},
+        { statement: 'key = invalid', expected: {error: "NoViableAltException", message: ErrorMessage.UNRECOGNIZED_COMMAND.replace('?', 'invalid')}},
+        { statement: 'key = = true', expected: {error: "NoViableAltException", message: ErrorMessage.UNRECOGNIZED_COMMAND.replace('?', '=')}},
+        { statement: '(key = true', expected: {error: "MismatchedTokenException", message: ErrorMessage.EXPRESSION_MISSING_PARENTHESIS}},
+        { statement: 'key = true)', expected: {error: "NotAllInputParsedException", message: ErrorMessage.UNEXPECTED_TOKEN.replace('?', ')')}},
+        { statement: '(key = true))', expected: {error: "NotAllInputParsedException", message: ErrorMessage.UNEXPECTED_TOKEN.replace('?', ')')}},
+        { statement: '(key = true) and', expected: {error: "NoViableAltException", message: ErrorMessage.UNEXPECTED_END_OF_STATEMENT}},
+        { statement: '(key = true) or', expected: {error: "NoViableAltException", message: ErrorMessage.UNEXPECTED_END_OF_STATEMENT}},
+        { statement: '(key = true) or (key = false', expected: {error: "MismatchedTokenException", message: ErrorMessage.EXPRESSION_MISSING_PARENTHESIS}},
+    ]
+    .forEach(test => 
+    {
+        it(`'${test.statement}' is invalid because '${test.expected.message}'`, async () =>
+        {
+            let error = undefined;
+            try
+            {
+                parseExpression(test.statement);
+            }
+            catch(e)
+            {
+                error = e;
+            }
+            
+            assert.isDefined(error);
+            assert.equal(error.name, test.expected.error);
+            assert.equal(error.message, test.expected.message);
         })
     });
 });

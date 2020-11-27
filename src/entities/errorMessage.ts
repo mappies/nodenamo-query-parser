@@ -2,6 +2,7 @@ export class ErrorMessage
 {
     static readonly UNEXPECTED_TOKEN = 'Unexpected token "?" found.'
     static readonly UNRECOGNIZED_COMMAND = 'Unrecognized command "?" found.'
+    static readonly UNEXPECTED_END_OF_STATEMENT = 'Unexpected end of statement'
 
     static readonly GET_MISSING_ID = 'Missing an object ID or an invalid ID is given to the GET statement.'
     static readonly GET_MISSING_FROM = 'Missing "FROM" clause from the GET statement.'
@@ -18,4 +19,6 @@ export class ErrorMessage
     static readonly DELETE_MISSING_ID = 'Missing an object ID or an invalid ID is given to the DELETE statement.'
     static readonly DELETE_MISSING_FROM = 'Missing "FROM" clause from the DELETE statement.'
     static readonly DELETE_MISSING_ENTITY_NAME = 'Missing an entity name from the DELETE statement.'
+
+    static readonly EXPRESSION_MISSING_PARENTHESIS = 'Missing a closing parenthesis in the expression.'
 }
