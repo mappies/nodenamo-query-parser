@@ -59,9 +59,19 @@ describe('Expression', function ()
                       expressionAttributeValues: {':title': "A book"}}},
 
         { statement: 'age between 25 and 30', 
-          expected: { expression: "#age between :age_between and :age_and", 
+          expected: { expression: "#age between :age_between_1 and :age_between_2", 
                       expressionAttributeNames: {'#age': 'age'},
-                      expressionAttributeValues: {':age_between': 25, ':age_and': 30}}},
+                      expressionAttributeValues: {':age_between_1': 25, ':age_between_2': 30}}},
+
+        { statement: 'age in (10)', 
+          expected: { expression: "#age in (:age_in_1)", 
+                      expressionAttributeNames: {'#age': 'age'},
+                      expressionAttributeValues: {':age_in_1': 10}}},
+
+        { statement: 'age in (10,"str",true)', 
+          expected: { expression: "#age in (:age_in_1,:age_in_2,:age_in_3)", 
+                      expressionAttributeNames: {'#age': 'age'},
+                      expressionAttributeValues: {':age_in_1': 10, ':age_in_2': "str", ':age_in_3': true}}},
 
         { statement: '((((((((((title = "A book"))))))))))', 
           expected: { expression: "((((((((((#title = :title))))))))))", 
@@ -93,10 +103,10 @@ describe('Expression', function ()
                       expressionAttributeNames: {'#age': 'age', '#firstname': 'firstname', '#lastname': 'lastname', '#title': 'title'},
                       expressionAttributeValues: {':age': 100, ':firstname': 'some', ':lastname': 'one', ':title': 'Mr.'}}},
 
-        { statement: '(   age    between 30 and  100 and (   firstname <> "some"    or  not (lastname > "one"     )) and title    =    "Mr."    ) or enabled = true', 
-          expected: { expression: "(#age between :age_between and :age_and and (#firstname <> :firstname or not (#lastname > :lastname)) and #title = :title) or #enabled = :enabled", 
+        { statement: '(   age    between 30 and  100 and (   firstname <> "some"    or  not (lastname in ("one","two")     )) and title    =    "Mr."    ) or enabled = true', 
+          expected: { expression: "(#age between :age_between_1 and :age_between_2 and (#firstname <> :firstname or not (#lastname in (:lastname_in_1,:lastname_in_2))) and #title = :title) or #enabled = :enabled", 
                       expressionAttributeNames: {'#age': 'age', '#firstname': 'firstname', '#lastname': 'lastname', '#title': 'title', '#enabled': 'enabled'},
-                      expressionAttributeValues: {':age_between': 30, ':age_and': 100, ':firstname': 'some', ':lastname': 'one', ':title': 'Mr.', ':enabled': true}}},
+                      expressionAttributeValues: {':age_between_1': 30, ':age_between_2': 100, ':firstname': 'some', ':lastname_in_1': 'one', ':lastname_in_2': "two", ':title': 'Mr.', ':enabled': true}}},
     ]
     .forEach(test => 
     {
@@ -110,7 +120,7 @@ describe('Expression', function ()
     [
         { statement: 'key', expected: {error: "NoViableAltException", message: ErrorMessage.UNRECOGNIZED_COMMAND.replace('?', 'key')}},
         { statement: 'key = ', expected: {error: "NoViableAltException", message: ErrorMessage.UNEXPECTED_END_OF_STATEMENT}},
-        { statement: 'key = invalid', expected: {error: "NoViableAltException", message: ErrorMessage.UNRECOGNIZED_COMMAND.replace('?', 'invalid')}},
+        { statement: 'key = something', expected: {error: "NoViableAltException", message: ErrorMessage.UNRECOGNIZED_COMMAND.replace('?', 'something')}},
         { statement: 'key = = true', expected: {error: "NoViableAltException", message: ErrorMessage.UNRECOGNIZED_COMMAND.replace('?', '=')}},
         { statement: '(key = true', expected: {error: "MismatchedTokenException", message: ErrorMessage.EXPRESSION_MISSING_PARENTHESIS}},
         { statement: 'key = true)', expected: {error: "NotAllInputParsedException", message: ErrorMessage.UNEXPECTED_TOKEN.replace('?', ')')}},

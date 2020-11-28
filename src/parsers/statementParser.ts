@@ -111,11 +111,25 @@ export class StatementParser extends CstParser
                                 this.OR({
                                     DEF: [
                                         { ALT: () => this.SUBRULE(this.notExpression) },
+                                        { ALT: () => this.SUBRULE(this.inExpression) },
                                         { ALT: () => this.SUBRULE(this.parenthesisExpression) },
                                         { ALT: () => this.SUBRULE(this.comparisonExpression) },
                                         { ALT: () => this.SUBRULE(this.betweenInExpression) }
                                     ]
                                 })
+                            })
+
+    inExpression = this.RULE(RuleName.InExpression, () =>
+                            {
+                                this.CONSUME(Token.Identifier)
+                                this.CONSUME(Token.In)
+                                this.CONSUME(Token.LeftParenthesis)
+                                this.SUBRULE1(this.atomicExpression)
+                                this.MANY(()=>{
+                                    this.CONSUME(Token.Comma)
+                                    this.SUBRULE2(this.atomicExpression)
+                                })
+                                this.CONSUME(Token.RightParenthesis)
                             })
 
     betweenInExpression = this.RULE(RuleName.BetweenInExpression, () =>

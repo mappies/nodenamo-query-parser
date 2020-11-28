@@ -167,6 +167,10 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         {
             return this.visit(ctx[RuleName.BetweenInExpression])
         }
+        else if(ctx[RuleName.InExpression])
+        {
+            return this.visit(ctx[RuleName.InExpression])
+        }
     }
     
     [RuleName.ComparisonExpression](ctx)
@@ -250,9 +254,21 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         let and = this.visit(ctx.and)
 
         return {
-            expression: `#${lhs} between :${lhs}_between and :${lhs}_and`,
+            expression: `#${lhs} between :${lhs}_between_1 and :${lhs}_between_2`,
             expressionAttributeNames: {[`#${lhs}`]: lhs},
-            expressionAttributeValues: {[`:${lhs}_between`]: between, [`:${lhs}_and`]: and}
+            expressionAttributeValues: {[`:${lhs}_between_1`]: between, [`:${lhs}_between_2`]: and}
+        }
+    }
+    [RuleName.InExpression](ctx)
+    {
+        let lhs = ctx.Identifier[0].image
+
+        let rhs = ctx[RuleName.AtomicExpression].map(i => this.visit(i))
+
+        return {
+            expression: `#${lhs} in (${rhs.map((item, index)=>`:${lhs}_in_${index+1}`)})`,
+            expressionAttributeNames: {[`#${lhs}`]: lhs},
+            expressionAttributeValues: rhs.reduce((result, item, index)=>{result[`:${lhs}_in_${index+1}`] = item; return result}, {})
         }
     }
     /**

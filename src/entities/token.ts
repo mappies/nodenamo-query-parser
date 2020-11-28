@@ -28,6 +28,7 @@ export class Token
     static readonly RightParenthesis = createToken({ name: "RightParenthesis", pattern: /\)/ })
     static readonly And = createToken({ name: "And", pattern: /and/i })
     static readonly Or = createToken({ name: "Or", pattern: /or/i })
+    static readonly In = createToken({ name: "In", pattern: /in/i })
     static readonly Between = createToken({ name: "Between", pattern: /Between/i })
     static readonly WhiteSpace = createToken({name: "WhiteSpace", pattern: /\s+/, group: Lexer.SKIPPED})
 
@@ -49,6 +50,7 @@ export class Token
         Token.String,
         Token.And,
         Token.Or,
+        Token.In,
         Token.Boolean,
         Token.Not,
         Token.Between,
