@@ -46,6 +46,7 @@ export enum RuleName
     AtomicExpression = "atomicExpressionRuleName",
     AndOrExpression = "andOrExpressionRuleName",
     NotExpression = "notExpressionRuleName",
+    BetweenInExpression = "betweenInExpressionRuleName",
     ComparisonExpression = "comparisonExpressionRuleName",
     ParenthesisExpression = "parenthesisExpressionRuleName",
 

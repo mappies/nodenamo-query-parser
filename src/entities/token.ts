@@ -28,6 +28,7 @@ export class Token
     static readonly RightParenthesis = createToken({ name: "RightParenthesis", pattern: /\)/ })
     static readonly And = createToken({ name: "And", pattern: /and/i })
     static readonly Or = createToken({ name: "Or", pattern: /or/i })
+    static readonly Between = createToken({ name: "Between", pattern: /Between/i })
     static readonly WhiteSpace = createToken({name: "WhiteSpace", pattern: /\s+/, group: Lexer.SKIPPED})
 
     // note we are placing WhiteSpace first as it is very common thus it will speed up the lexer.
@@ -50,6 +51,7 @@ export class Token
         Token.Or,
         Token.Boolean,
         Token.Not,
+        Token.Between,
         // The Identifier must appear after the keywords because all keywords are valid identifiers.
         Token.Identifier,
         Token.Integer,

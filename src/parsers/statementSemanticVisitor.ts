@@ -163,6 +163,10 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         {
             return this.visit(ctx[RuleName.NotExpression])
         }
+        else if(ctx[RuleName.BetweenInExpression])
+        {
+            return this.visit(ctx[RuleName.BetweenInExpression])
+        }
     }
     
     [RuleName.ComparisonExpression](ctx)
@@ -237,6 +241,18 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
             expression: `not ${child.expression}`,
             expressionAttributeNames: child.expressionAttributeNames,
             expressionAttributeValues: child.expressionAttributeValues
+        }
+    }
+    [RuleName.BetweenInExpression](ctx)
+    {
+        let lhs = ctx.Identifier[0].image
+        let between = this.visit(ctx.between)
+        let and = this.visit(ctx.and)
+
+        return {
+            expression: `#${lhs} between :${lhs}_between and :${lhs}_and`,
+            expressionAttributeNames: {[`#${lhs}`]: lhs},
+            expressionAttributeValues: {[`:${lhs}_between`]: between, [`:${lhs}_and`]: and}
         }
     }
     /**

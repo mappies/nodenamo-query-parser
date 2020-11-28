@@ -58,6 +58,11 @@ describe('Expression', function ()
                       expressionAttributeNames: {'#title': 'title'},
                       expressionAttributeValues: {':title': "A book"}}},
 
+        { statement: 'age between 25 and 30', 
+          expected: { expression: "#age between :age_between and :age_and", 
+                      expressionAttributeNames: {'#age': 'age'},
+                      expressionAttributeValues: {':age_between': 25, ':age_and': 30}}},
+
         { statement: '((((((((((title = "A book"))))))))))', 
           expected: { expression: "((((((((((#title = :title))))))))))", 
                       expressionAttributeNames: {'#title': 'title'},
@@ -88,10 +93,10 @@ describe('Expression', function ()
                       expressionAttributeNames: {'#age': 'age', '#firstname': 'firstname', '#lastname': 'lastname', '#title': 'title'},
                       expressionAttributeValues: {':age': 100, ':firstname': 'some', ':lastname': 'one', ':title': 'Mr.'}}},
 
-        { statement: '(   age    <   100 and (   firstname <> "some"    or  not (lastname > "one"     )) and title    =    "Mr."    ) or enabled = true', 
-          expected: { expression: "(#age < :age and (#firstname <> :firstname or not (#lastname > :lastname)) and #title = :title) or #enabled = :enabled", 
+        { statement: '(   age    between 30 and  100 and (   firstname <> "some"    or  not (lastname > "one"     )) and title    =    "Mr."    ) or enabled = true', 
+          expected: { expression: "(#age between :age_between and :age_and and (#firstname <> :firstname or not (#lastname > :lastname)) and #title = :title) or #enabled = :enabled", 
                       expressionAttributeNames: {'#age': 'age', '#firstname': 'firstname', '#lastname': 'lastname', '#title': 'title', '#enabled': 'enabled'},
-                      expressionAttributeValues: {':age': 100, ':firstname': 'some', ':lastname': 'one', ':title': 'Mr.', ':enabled': true}}},
+                      expressionAttributeValues: {':age_between': 30, ':age_and': 100, ':firstname': 'some', ':lastname': 'one', ':title': 'Mr.', ':enabled': true}}},
     ]
     .forEach(test => 
     {
@@ -103,7 +108,7 @@ describe('Expression', function ()
     });
 
     [
-        { statement: 'key', expected: {error: "NoViableAltException", message: ErrorMessage.UNEXPECTED_END_OF_STATEMENT}},
+        { statement: 'key', expected: {error: "NoViableAltException", message: ErrorMessage.UNRECOGNIZED_COMMAND.replace('?', 'key')}},
         { statement: 'key = ', expected: {error: "NoViableAltException", message: ErrorMessage.UNEXPECTED_END_OF_STATEMENT}},
         { statement: 'key = invalid', expected: {error: "NoViableAltException", message: ErrorMessage.UNRECOGNIZED_COMMAND.replace('?', 'invalid')}},
         { statement: 'key = = true', expected: {error: "NoViableAltException", message: ErrorMessage.UNRECOGNIZED_COMMAND.replace('?', '=')}},
