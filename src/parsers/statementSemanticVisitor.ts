@@ -159,7 +159,12 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         {
             return this.visit(ctx[RuleName.ParenthesisExpression])
         }
+        else if(ctx[RuleName.NotExpression])
+        {
+            return this.visit(ctx[RuleName.NotExpression])
+        }
     }
+    
     [RuleName.ComparisonExpression](ctx)
     {
         let operand = '';
@@ -220,6 +225,16 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
 
         return {
             expression: `(${child.expression})`,
+            expressionAttributeNames: child.expressionAttributeNames,
+            expressionAttributeValues: child.expressionAttributeValues
+        }
+    }
+    [RuleName.NotExpression](ctx)
+    {
+        let child = this.visit(ctx[RuleName.AndOrExpression])
+
+        return {
+            expression: `not ${child.expression}`,
             expressionAttributeNames: child.expressionAttributeNames,
             expressionAttributeValues: child.expressionAttributeValues
         }

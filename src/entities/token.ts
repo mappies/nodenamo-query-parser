@@ -20,6 +20,7 @@ export class Token
     static readonly GreaterThan = createToken({ name: "GreaterThan", pattern: />/ })
     static readonly GreaterThanEqual = createToken({ name: "GreaterThanEqual", pattern: />=/ })
     static readonly Equal = createToken({ name: "Equal", pattern: /=/ })
+    static readonly Not = createToken({ name: "Not", pattern: /Not/i })
     static readonly NotEqual = createToken({ name: "NotEqual", pattern: /<>/ })
     static readonly LessThan = createToken({ name: "LessThan", pattern: /</ })
     static readonly LessThanEqual = createToken({ name: "LessThanEqual", pattern: /<=/ })
@@ -48,6 +49,7 @@ export class Token
         Token.And,
         Token.Or,
         Token.Boolean,
+        Token.Not,
         // The Identifier must appear after the keywords because all keywords are valid identifiers.
         Token.Identifier,
         Token.Integer,

@@ -41,12 +41,13 @@ export enum RuleName
     /**
      * Expression
      */
-    Expression = "expression",
-    HighPrecedenceExpression = "highPrecedenceExpression",
-    AtomicExpression = "atomicExpression",
-    AndOrExpression = "andOrExpression",
-    ComparisonExpression = "comparisonExpression",
-    ParenthesisExpression = "parenthesisExpression",
+    Expression = "expressionRuleName",
+    HighPrecedenceExpression = "highPrecedenceExpressionRuleName",
+    AtomicExpression = "atomicExpressionRuleName",
+    AndOrExpression = "andOrExpressionRuleName",
+    NotExpression = "notExpressionRuleName",
+    ComparisonExpression = "comparisonExpressionRuleName",
+    ParenthesisExpression = "parenthesisExpressionRuleName",
 
     /**
      * Misc

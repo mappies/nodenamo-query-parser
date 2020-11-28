@@ -110,10 +110,17 @@ export class StatementParser extends CstParser
                             {
                                 this.OR({
                                     DEF: [
+                                        { ALT: () => this.SUBRULE(this.notExpression) },
                                         { ALT: () => this.SUBRULE(this.parenthesisExpression) },
                                         { ALT: () => this.SUBRULE(this.comparisonExpression) }
                                     ]
                                 })
+                            })
+
+    notExpression = this.RULE(RuleName.NotExpression, () =>
+                            {
+                                this.CONSUME(Token.Not)
+                                this.SUBRULE(this.andOrExpression)
                             })
 
     comparisonExpression = this.RULE(RuleName.ComparisonExpression, () => 
