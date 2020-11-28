@@ -30,11 +30,11 @@ describe('Delete Statement', function ()
     });
 
     [
-        { statement: 'Delete ', expected: {error: "NoViableAltException", message: ErrorMessage.DELETE_MISSING_ID}},
+        { statement: 'Delete ', expected: {error: "NoViableAltException", message: ErrorMessage.MISSING_OBJECT_ID}},
         { statement: 'Delete 42', expected: {error: "MismatchedTokenException", message: ErrorMessage.DELETE_MISSING_FROM}},
-        { statement: 'Delete a123', expected: {error: "NoViableAltException", message: ErrorMessage.DELETE_MISSING_ID}},
+        { statement: 'Delete a123', expected: {error: "NoViableAltException", message: ErrorMessage.MISSING_OBJECT_ID}},
         { statement: 'Delete "a123"', expected: {error: "MismatchedTokenException", message: ErrorMessage.DELETE_MISSING_FROM}},
-        { statement: 'Delete "a123" From', expected: {error: "MismatchedTokenException", message: ErrorMessage.DELETE_MISSING_ENTITY_NAME}},
+        { statement: 'Delete "a123" From', expected: {error: "MismatchedTokenException", message: ErrorMessage.MISSING_ENTITY_NAME}},
         { statement: 'Delete "a123", "a123" From table', expected: {error: "MismatchedTokenException", message: ErrorMessage.DELETE_MISSING_FROM}},
         { statement: 'Delete "a123" From table table', expected: {error: "NotAllInputParsedException", message: ErrorMessage.UNEXPECTED_TOKEN.replace('?', 'table')}}
     ]

@@ -35,13 +35,7 @@ export class StatementParser extends CstParser
     getClause = this.RULE(RuleName.GetClause, () =>
                 {
                     this.CONSUME(Token.Get);
-                    this.OR({
-                        DEF: [
-                            { ALT: () => this.CONSUME(Token.String)},
-                            { ALT: () => this.CONSUME(Token.Integer) }
-                        ],
-                        ERR_MSG: ErrorMessage.GET_MISSING_ID
-                    })
+                    this.SUBRULE(this.objectId);
                 })
 
     getFromClause = this.RULE(RuleName.GetFromClause, () =>
@@ -72,19 +66,13 @@ export class StatementParser extends CstParser
     deleteClause = this.RULE(RuleName.DeleteClause, () =>
                             {
                                 this.CONSUME(Token.Delete)
-                                this.OR({
-                                    DEF: [
-                                        { ALT: () => this.CONSUME(Token.String)},
-                                        { ALT: () => this.CONSUME(Token.Integer) }
-                                    ],
-                                    ERR_MSG: ErrorMessage.DELETE_MISSING_ID
-                                })
+                                this.SUBRULE(this.objectId)
                             })
 
     deleteFromClause = this.RULE(RuleName.DeleteFromClause, () =>
                             {
                                 this.CONSUME(Token.From, { ERR_MSG: ErrorMessage.DELETE_MISSING_FROM })
-                                this.CONSUME(Token.Identifier, { ERR_MSG: ErrorMessage.DELETE_MISSING_ENTITY_NAME })
+                                this.CONSUME(Token.Identifier, { ERR_MSG: ErrorMessage.MISSING_ENTITY_NAME })
                             })
 
     /**
@@ -96,7 +84,7 @@ export class StatementParser extends CstParser
                                 this.SUBRULE(this.keyConditionExpression)
                             })
 
-    keyConditionExpression = this.RULE(RuleName.KeyConditionExpression, () =>
+    keyConditionExpression = this.RULE(RuleName.Expression, () =>
                             {
                                 this.SUBRULE(this.andOrExpression)
                             });
@@ -182,7 +170,7 @@ export class StatementParser extends CstParser
     createTableForClause = this.RULE(RuleName.CreateTableForClause, () =>
                             {
                                 this.CONSUME(Token.For, { ERR_MSG: ErrorMessage.CREATE_TABLE_MISSING_FOR })
-                                this.CONSUME(Token.Identifier, { ERR_MSG: ErrorMessage.CREATE_TABLE_MISSING_ENTITY_NAME })
+                                this.CONSUME(Token.Identifier, { ERR_MSG: ErrorMessage.MISSING_ENTITY_NAME })
                             })
     
     createTableWithCapacityOf = this.RULE(RuleName.CreateTableWithCapacityOfClause, () =>
@@ -212,6 +200,20 @@ export class StatementParser extends CstParser
                             {
                                 this.CONSUME(Token.For, { ERR_MSG: ErrorMessage.DELETE_TABLE_MISSING_FOR })
                                 this.CONSUME(Token.Identifier, { ERR_MSG: ErrorMessage.DELETE_TABLE_MISSING_ENTITY_NAME })
+                            })
+
+    /**
+     * ObjectId
+     */
+    objectId = this.RULE(RuleName.ObjectId, () => 
+                            {
+                                this.OR({
+                                    DEF: [
+                                        { ALT: () => this.CONSUME(Token.String)},
+                                        { ALT: () => this.CONSUME(Token.Integer) }
+                                    ],
+                                    ERR_MSG: ErrorMessage.MISSING_OBJECT_ID
+                                })
                             })
 
     constructor(tokenVocabulary: TokenVocabulary = Token.AllTokens, config?: IParserConfig)

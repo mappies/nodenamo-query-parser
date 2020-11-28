@@ -51,15 +51,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
 
     [RuleName.GetClause](ctx) 
     {
-        if (ctx.String)
-        {
-            //Remove ""
-            return ctx.String[0].image.substr(1, ctx.String[0].image.length - 2)
-        }
-        else 
-        {
-            return Number(ctx.Integer[0].image)
-        }
+        return this.visit(ctx[RuleName.ObjectId])
     }
 
     [RuleName.GetFromClause](ctx) 
@@ -89,15 +81,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
 
     [RuleName.DeleteClause](ctx)
     {
-        if (ctx.String)
-        {
-            //Remove ""
-            return ctx.String[0].image.substr(1, ctx.String[0].image.length - 2)
-        }
-        else 
-        {
-            return Number(ctx.Integer[0].image)
-        }
+        return this.visit(ctx[RuleName.ObjectId])
     }
 
     [RuleName.DeleteFromClause](ctx)
@@ -110,10 +94,10 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
      */
     [RuleName.WhereClause](ctx)
     {
-        return this.visit(ctx[RuleName.KeyConditionExpression])
+        return this.visit(ctx[RuleName.Expression])
     }
 
-    [RuleName.KeyConditionExpression](ctx)
+    [RuleName.Expression](ctx)
     {
         return this.visit(ctx[RuleName.AndOrExpression])
     }
@@ -293,5 +277,21 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
     [RuleName.DeleteTableForClause](ctx)
     {
         return ctx.Identifier[0].image;
+    }
+
+    /**
+     * ObjectId
+     */
+    [RuleName.ObjectId](ctx)
+    {
+        if (ctx.String)
+        {
+            //Remove ""
+            return ctx.String[0].image.substr(1, ctx.String[0].image.length - 2)
+        }
+        else 
+        {
+            return Number(ctx.Integer[0].image)
+        }
     }
 }

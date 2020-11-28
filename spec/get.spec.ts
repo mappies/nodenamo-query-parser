@@ -20,9 +20,9 @@ describe('Get Statement', function ()
     });
 
     [
-        { statement: 'Get ', expected: {error: "NoViableAltException", message: ErrorMessage.GET_MISSING_ID}},
+        { statement: 'Get ', expected: {error: "NoViableAltException", message: ErrorMessage.MISSING_OBJECT_ID}},
         { statement: 'Get 42', expected: {error: "MismatchedTokenException", message: ErrorMessage.GET_MISSING_FROM}},
-        { statement: 'Get a123', expected: {error: "NoViableAltException", message: ErrorMessage.GET_MISSING_ID}},
+        { statement: 'Get a123', expected: {error: "NoViableAltException", message: ErrorMessage.MISSING_OBJECT_ID}},
         { statement: 'Get "a123"', expected: {error: "MismatchedTokenException", message: ErrorMessage.GET_MISSING_FROM}},
         { statement: 'Get "a123" From', expected: {error: "MismatchedTokenException", message: ErrorMessage.GET_MISSING_TABLE}},
         { statement: 'Get "a123", "a123" From table', expected: {error: "MismatchedTokenException", message: ErrorMessage.GET_MISSING_FROM}},

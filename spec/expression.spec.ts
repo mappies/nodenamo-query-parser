@@ -78,7 +78,7 @@ describe('Expression', function ()
                       expressionAttributeNames: {'#age': 'age', '#firstname': 'firstname', '#lastname': 'lastname', '#title': 'title'},
                       expressionAttributeValues: {':age': 100, ':firstname': 'some', ':lastname': 'one', ':title': 'Mr.'}}},
 
-        { statement: '(age < 100 and (firstname <> "some" or (lastname > "one")) and title = "Mr.") or enabled = true', 
+        { statement: '(   age    <   100 and (   firstname <> "some"    or  (lastname > "one"     )) and title    =    "Mr."    ) or enabled = true', 
           expected: { expression: "(#age < :age and (#firstname <> :firstname or (#lastname > :lastname)) and #title = :title) or #enabled = :enabled", 
                       expressionAttributeNames: {'#age': 'age', '#firstname': 'firstname', '#lastname': 'lastname', '#title': 'title', '#enabled': 'enabled'},
                       expressionAttributeValues: {':age': 100, ':firstname': 'some', ':lastname': 'one', ':title': 'Mr.', ':enabled': true}}},
