@@ -77,7 +77,26 @@ describe('Expression', function ()
           expected: { expression: "((((((((((#title = :title))))))))))", 
                       expressionAttributeNames: {'#title': 'title'},
                       expressionAttributeValues: {':title': "A book"}}}, 
-
+        
+        { statement: 'attribute_exists(id)', 
+          expected: { expression: "attribute_exists(#id)", 
+                      expressionAttributeNames: {'#id': 'id'},
+                      expressionAttributeValues: {}}},           
+        
+        { statement: 'attribute_not_exists(deleted)', 
+          expected: { expression: "attribute_not_exists(#deleted)", 
+                      expressionAttributeNames: {'#deleted': 'deleted'},
+                      expressionAttributeValues: {}}},            
+        ]
+        .forEach(test => 
+        {
+            it(`Basic query '${test.statement}' is valid.`, async () =>
+            {
+                let result = parseExpression(test.statement);
+                assert.deepEqual(result, test.expected);
+            })
+        });
+    [
         { statement: 'age = 100 and name = "some one"', 
           expected: { expression: "#age = :age and #name = :name", 
                       expressionAttributeNames: {'#age': 'age', '#name': 'name'},
@@ -103,14 +122,14 @@ describe('Expression', function ()
                       expressionAttributeNames: {'#age': 'age', '#firstname': 'firstname', '#lastname': 'lastname', '#title': 'title'},
                       expressionAttributeValues: {':age': 100, ':firstname': 'some', ':lastname': 'one', ':title': 'Mr.'}}},
 
-        { statement: '(   age    between 30 and  100 and (   firstname <> "some"    or  not (lastname in ("one","two")     )) and title    =    "Mr."    ) or enabled = true', 
-          expected: { expression: "(#age between :age_between_1 and :age_between_2 and (#firstname <> :firstname or not (#lastname in (:lastname_in_1,:lastname_in_2))) and #title = :title) or #enabled = :enabled", 
-                      expressionAttributeNames: {'#age': 'age', '#firstname': 'firstname', '#lastname': 'lastname', '#title': 'title', '#enabled': 'enabled'},
-                      expressionAttributeValues: {':age_between_1': 30, ':age_between_2': 100, ':firstname': 'some', ':lastname_in_1': 'one', ':lastname_in_2': "two", ':title': 'Mr.', ':enabled': true}}},
+        { statement: '(   age    between 30 and  100 and (   firstname <> "some"    or  not (lastname in ("one","two")     )) and attribute_exists(  createdTimestamp  )   or   attribute_not_exists(  deletedTimestamp )    ) or enabled = true', 
+          expected: { expression: "(#age between :age_between_1 and :age_between_2 and (#firstname <> :firstname or not (#lastname in (:lastname_in_1,:lastname_in_2))) and attribute_exists(#createdTimestamp) or attribute_not_exists(#deletedTimestamp)) or #enabled = :enabled", 
+                      expressionAttributeNames: {'#age': 'age', '#firstname': 'firstname', '#lastname': 'lastname', '#enabled': 'enabled', '#createdTimestamp': 'createdTimestamp', '#deletedTimestamp': 'deletedTimestamp'},
+                      expressionAttributeValues: {':age_between_1': 30, ':age_between_2': 100, ':firstname': 'some', ':lastname_in_1': 'one', ':lastname_in_2': "two", ':enabled': true}}},
     ]
     .forEach(test => 
     {
-        it(`'${test.statement}' is valid.`, async () =>
+        it(`Advance query '${test.statement}' is valid.`, async () =>
         {
             let result = parseExpression(test.statement);
             assert.deepEqual(result, test.expected);

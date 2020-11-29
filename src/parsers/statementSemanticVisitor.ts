@@ -171,6 +171,14 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         {
             return this.visit(ctx[RuleName.InExpression])
         }
+        else if(ctx[RuleName.AttributeExistsExpression])
+        {
+            return this.visit(ctx[RuleName.AttributeExistsExpression])
+        }
+        else if(ctx[RuleName.AttributeNotExistsExpression])
+        {
+            return this.visit(ctx[RuleName.AttributeNotExistsExpression])
+        }
     }
     
     [RuleName.ComparisonExpression](ctx)
@@ -269,6 +277,26 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
             expression: `#${lhs} in (${rhs.map((item, index)=>`:${lhs}_in_${index+1}`)})`,
             expressionAttributeNames: {[`#${lhs}`]: lhs},
             expressionAttributeValues: rhs.reduce((result, item, index)=>{result[`:${lhs}_in_${index+1}`] = item; return result}, {})
+        }
+    }
+    [RuleName.AttributeExistsExpression](ctx)
+    {
+        let identifier = ctx.Identifier[0].image
+
+        return {
+            expression: `attribute_exists(#${identifier})`,
+            expressionAttributeNames: {[`#${identifier}`]: identifier},
+            expressionAttributeValues: {}
+        }
+    }
+    [RuleName.AttributeNotExistsExpression](ctx)
+    {
+        let identifier = ctx.Identifier[0].image
+
+        return {
+            expression: `attribute_not_exists(#${identifier})`,
+            expressionAttributeNames: {[`#${identifier}`]: identifier},
+            expressionAttributeValues: {}
         }
     }
     /**

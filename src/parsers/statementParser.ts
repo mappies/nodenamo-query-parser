@@ -114,11 +114,29 @@ export class StatementParser extends CstParser
                                         { ALT: () => this.SUBRULE(this.inExpression) },
                                         { ALT: () => this.SUBRULE(this.parenthesisExpression) },
                                         { ALT: () => this.SUBRULE(this.comparisonExpression) },
-                                        { ALT: () => this.SUBRULE(this.betweenInExpression) }
+                                        { ALT: () => this.SUBRULE(this.betweenInExpression) },
+                                        { ALT: () => this.SUBRULE(this.attributeExistsExpression) },
+                                        { ALT: () => this.SUBRULE(this.attributeNotExistsExpression) }
                                     ]
                                 })
                             })
 
+    attributeExistsExpression = this.RULE(RuleName.AttributeExistsExpression, () => 
+                            {
+                                this.CONSUME(Token.AttributeExists)
+                                this.CONSUME(Token.LeftParenthesis)
+                                this.CONSUME(Token.Identifier)
+                                this.CONSUME(Token.RightParenthesis)
+                            })
+
+    attributeNotExistsExpression = this.RULE(RuleName.AttributeNotExistsExpression, () => 
+                            {
+                                this.CONSUME(Token.AttributeNotExists)
+                                this.CONSUME(Token.LeftParenthesis)
+                                this.CONSUME(Token.Identifier)
+                                this.CONSUME(Token.RightParenthesis)
+                            })
+                    
     inExpression = this.RULE(RuleName.InExpression, () =>
                             {
                                 this.CONSUME(Token.Identifier)

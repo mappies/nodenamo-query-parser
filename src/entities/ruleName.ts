@@ -50,6 +50,8 @@ export enum RuleName
     BetweenInExpression = "betweenInExpressionRuleName",
     ComparisonExpression = "comparisonExpressionRuleName",
     ParenthesisExpression = "parenthesisExpressionRuleName",
+    AttributeExistsExpression = "attributeExistsExpressionRuleName",
+    AttributeNotExistsExpression = "attributeNotExistsExpressionRuleName",
 
     /**
      * Misc

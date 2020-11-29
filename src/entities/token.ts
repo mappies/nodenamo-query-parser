@@ -2,14 +2,14 @@ import {createToken, Lexer} from 'chevrotain'
 
 export class Token
 {
-    static readonly Get = createToken({ name: "Get", pattern: /GET/i })
+    static readonly Get = createToken({ name: "Get", pattern: /GET\s+/i })
     static readonly From = createToken({ name: "From", pattern: /From/i })
     static readonly StronglyConsistent = createToken({ name: "StronglyConsistent", pattern: /Strongly\s+Consistent/i })
     static readonly CreateTable = createToken({ name: "CreateTable", pattern: /Create\s+Table/i })
     static readonly For = createToken({ name: "For", pattern: /For/i })
     static readonly WithCapacityOf = createToken({ name: "WithCapacityOf", pattern: /With\s+Capacity\s+Of/i })
     static readonly DeleteTable = createToken({ name: "DeleteTable", pattern: /Delete\s+Table/i })
-    static readonly Delete = createToken({ name: "Delete", pattern: /Delete/i })
+    static readonly Delete = createToken({ name: "Delete", pattern: /Delete\s+/i,})
     static readonly Where = createToken({ name: "Where", pattern: /Where/i })
 
     static readonly Identifier = createToken({ name: "Identifier", pattern: /[a-zA-Z]\w*/ })
@@ -31,6 +31,8 @@ export class Token
     static readonly In = createToken({ name: "In", pattern: /in/i })
     static readonly Between = createToken({ name: "Between", pattern: /Between/i })
     static readonly WhiteSpace = createToken({name: "WhiteSpace", pattern: /\s+/, group: Lexer.SKIPPED})
+    static readonly AttributeExists = createToken({name: "AttributeExists", pattern: /attribute_exists/})
+    static readonly AttributeNotExists = createToken({name: "AttributeNotExists", pattern: /attribute_not_exists/})
 
     // note we are placing WhiteSpace first as it is very common thus it will speed up the lexer.
     static AllTokens = 
@@ -54,6 +56,8 @@ export class Token
         Token.Boolean,
         Token.Not,
         Token.Between,
+        Token.AttributeExists,
+        Token.AttributeNotExists,
         // The Identifier must appear after the keywords because all keywords are valid identifiers.
         Token.Identifier,
         Token.Integer,
