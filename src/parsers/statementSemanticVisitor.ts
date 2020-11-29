@@ -179,6 +179,10 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         {
             return this.visit(ctx[RuleName.AttributeNotExistsExpression])
         }
+        else if(ctx[RuleName.SizeExpression])
+        {
+            return this.visit(ctx[RuleName.SizeExpression])
+        }
     }
     
     [RuleName.ComparisonExpression](ctx)
@@ -297,6 +301,44 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
             expression: `attribute_not_exists(#${identifier})`,
             expressionAttributeNames: {[`#${identifier}`]: identifier},
             expressionAttributeValues: {}
+        }
+    }
+    [RuleName.SizeExpression](ctx)
+    {
+        let lhs = ctx.Identifier[0].image
+        let operand = '';
+        
+        if(ctx[Token.Equal.name])
+        {
+            operand = '='
+        }
+        else if(ctx[Token.NotEqual.name])
+        {
+            operand = '<>'
+        }
+        else if(ctx[Token.GreaterThan.name])
+        {
+            operand = '>'
+        }
+        else if(ctx[Token.GreaterThanEqual.name])
+        {
+            operand = '>='
+        }
+        else if(ctx[Token.LessThan.name])
+        {
+            operand = '<'
+        }
+        else if(ctx[Token.LessThanEqual.name])
+        {
+            operand = '<='
+        }
+
+        let rhs = this.visit(ctx[RuleName.AtomicExpression])
+
+        return {
+            expression: `size(#${lhs}) ${operand} :${lhs}`,
+            expressionAttributeNames: {[`#${lhs}`]: lhs},
+            expressionAttributeValues: {[`:${lhs}`]: rhs}
         }
     }
     /**

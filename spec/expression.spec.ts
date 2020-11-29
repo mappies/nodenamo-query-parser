@@ -86,7 +86,12 @@ describe('Expression', function ()
         { statement: 'attribute_not_exists(deleted)', 
           expected: { expression: "attribute_not_exists(#deleted)", 
                       expressionAttributeNames: {'#deleted': 'deleted'},
-                      expressionAttributeValues: {}}},            
+                      expressionAttributeValues: {}}},
+
+        { statement: 'size(description) < 12', 
+          expected: { expression: "size(#description) < :description", 
+                      expressionAttributeNames: {'#description': 'description'},
+                      expressionAttributeValues: {':description': 12}}},           
         ]
         .forEach(test => 
         {
@@ -122,10 +127,10 @@ describe('Expression', function ()
                       expressionAttributeNames: {'#age': 'age', '#firstname': 'firstname', '#lastname': 'lastname', '#title': 'title'},
                       expressionAttributeValues: {':age': 100, ':firstname': 'some', ':lastname': 'one', ':title': 'Mr.'}}},
 
-        { statement: '(   age    between 30 and  100 and (   firstname <> "some"    or  not (lastname in ("one","two")     )) and attribute_exists(  createdTimestamp  )   or   attribute_not_exists(  deletedTimestamp )    ) or enabled = true', 
-          expected: { expression: "(#age between :age_between_1 and :age_between_2 and (#firstname <> :firstname or not (#lastname in (:lastname_in_1,:lastname_in_2))) and attribute_exists(#createdTimestamp) or attribute_not_exists(#deletedTimestamp)) or #enabled = :enabled", 
-                      expressionAttributeNames: {'#age': 'age', '#firstname': 'firstname', '#lastname': 'lastname', '#enabled': 'enabled', '#createdTimestamp': 'createdTimestamp', '#deletedTimestamp': 'deletedTimestamp'},
-                      expressionAttributeValues: {':age_between_1': 30, ':age_between_2': 100, ':firstname': 'some', ':lastname_in_1': 'one', ':lastname_in_2': "two", ':enabled': true}}},
+        { statement: '(   age    between 30 and  100 and (   size(  height  ) <> 42    or  not (lastname in ("one","two")     )) and attribute_exists(  createdTimestamp  )   or   attribute_not_exists(  deletedTimestamp )    ) or enabled = true', 
+          expected: { expression: "(#age between :age_between_1 and :age_between_2 and (size(#height) <> :height or not (#lastname in (:lastname_in_1,:lastname_in_2))) and attribute_exists(#createdTimestamp) or attribute_not_exists(#deletedTimestamp)) or #enabled = :enabled", 
+                      expressionAttributeNames: {'#age': 'age', '#height': 'height', '#lastname': 'lastname', '#enabled': 'enabled', '#createdTimestamp': 'createdTimestamp', '#deletedTimestamp': 'deletedTimestamp'},
+                      expressionAttributeValues: {':age_between_1': 30, ':age_between_2': 100, ':height': 42, ':lastname_in_1': 'one', ':lastname_in_2': "two", ':enabled': true}}},
     ]
     .forEach(test => 
     {
@@ -147,6 +152,18 @@ describe('Expression', function ()
         { statement: '(key = true) and', expected: {error: "NoViableAltException", message: ErrorMessage.UNEXPECTED_END_OF_STATEMENT}},
         { statement: '(key = true) or', expected: {error: "NoViableAltException", message: ErrorMessage.UNEXPECTED_END_OF_STATEMENT}},
         { statement: '(key = true) or (key = false', expected: {error: "MismatchedTokenException", message: ErrorMessage.EXPRESSION_MISSING_PARENTHESIS}},
+        { statement: 'attribute_exists()', expected: {error: "MismatchedTokenException", message: undefined}},
+        { statement: 'attribute_exists(12', expected: {error: "MismatchedTokenException", message: undefined}},
+        { statement: 'attribute_exists(true', expected: {error: "MismatchedTokenException", message: undefined}},
+        { statement: 'attribute_exists(key', expected: {error: "MismatchedTokenException", message: undefined}},
+        { statement: 'attribute_not_exists()', expected: {error: "MismatchedTokenException", message: undefined}},
+        { statement: 'attribute_not_exists(12', expected: {error: "MismatchedTokenException", message: undefined}},
+        { statement: 'attribute_not_exists(true', expected: {error: "MismatchedTokenException", message: undefined}},
+        { statement: 'attribute_not_exists(key', expected: {error: "MismatchedTokenException", message: undefined}},
+        { statement: 'size()', expected: {error: "MismatchedTokenException", message: undefined}},
+        { statement: 'size(12', expected: {error: "MismatchedTokenException", message: undefined}},
+        { statement: 'size(true', expected: {error: "MismatchedTokenException", message: undefined}},
+        { statement: 'size(key', expected: {error: "MismatchedTokenException", message: undefined}},
     ]
     .forEach(test => 
     {
@@ -164,7 +181,10 @@ describe('Expression', function ()
             
             assert.isDefined(error);
             assert.equal(error.name, test.expected.error);
-            assert.equal(error.message, test.expected.message);
+            if(test.expected.message)
+            {
+                assert.equal(error.message, test.expected.message);
+            }
         })
     });
 });

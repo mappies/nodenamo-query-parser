@@ -116,15 +116,31 @@ export class StatementParser extends CstParser
                                         { ALT: () => this.SUBRULE(this.comparisonExpression) },
                                         { ALT: () => this.SUBRULE(this.betweenInExpression) },
                                         { ALT: () => this.SUBRULE(this.attributeExistsExpression) },
-                                        { ALT: () => this.SUBRULE(this.attributeNotExistsExpression) }
+                                        { ALT: () => this.SUBRULE(this.attributeNotExistsExpression) },
+                                        { ALT: () => this.SUBRULE(this.sizeExpression) }
                                     ]
                                 })
+                            })
+
+    sizeExpression = this.RULE(RuleName.SizeExpression, () => 
+                            {
+                                this.CONSUME(Token.Size)
+                                this.CONSUME(Token.Identifier)
+                                this.CONSUME(Token.RightParenthesis)
+                                this.OR([
+                                    { ALT:() => { this.CONSUME(Token.Equal) }},
+                                    { ALT:() => { this.CONSUME(Token.GreaterThanEqual) }},
+                                    { ALT:() => { this.CONSUME(Token.NotEqual) }},
+                                    { ALT:() => { this.CONSUME(Token.GreaterThan) }},
+                                    { ALT:() => { this.CONSUME(Token.LessThanEqual) }},
+                                    { ALT:() => { this.CONSUME(Token.LessThan) }},
+                                ]);
+                                this.SUBRULE(this.atomicExpression)
                             })
 
     attributeExistsExpression = this.RULE(RuleName.AttributeExistsExpression, () => 
                             {
                                 this.CONSUME(Token.AttributeExists)
-                                this.CONSUME(Token.LeftParenthesis)
                                 this.CONSUME(Token.Identifier)
                                 this.CONSUME(Token.RightParenthesis)
                             })
@@ -132,7 +148,6 @@ export class StatementParser extends CstParser
     attributeNotExistsExpression = this.RULE(RuleName.AttributeNotExistsExpression, () => 
                             {
                                 this.CONSUME(Token.AttributeNotExists)
-                                this.CONSUME(Token.LeftParenthesis)
                                 this.CONSUME(Token.Identifier)
                                 this.CONSUME(Token.RightParenthesis)
                             })

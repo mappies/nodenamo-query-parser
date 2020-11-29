@@ -3,9 +3,9 @@ import { ErrorMessage } from '../entities/errorMessage';
 
 export class ParserErrorProvider implements IParserErrorMessageProvider
 {
-    buildMismatchTokenMessage(options: { expected: TokenType; actual: IToken; previous: IToken; ruleName: string; }): string
+    buildMismatchTokenMessage(options: { expected: TokenType; actual: IToken; previous: IToken; customUserDescription?: string, ruleName: string; }): string
     {
-        return defaultParserErrorProvider.buildMismatchTokenMessage(options);
+        return options.customUserDescription || defaultParserErrorProvider.buildMismatchTokenMessage(options);
     }
     buildNotAllInputParsedMessage(options: { firstRedundant: IToken; ruleName: string; }): string
     {

@@ -6,6 +6,7 @@ export class ErrorMessage
     
     static readonly MISSING_OBJECT_ID = 'Missing an object ID or an invalid ID is given.'
     static readonly MISSING_ENTITY_NAME = 'Missing an entity name.'
+    static readonly MISSING_PROPERTY_NAME = 'Missing a property name.'
 
     static readonly GET_MISSING_FROM = 'Missing "FROM" clause from the GET statement.'
     static readonly GET_MISSING_TABLE = 'Missing a table name from the GET statement.'

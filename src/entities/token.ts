@@ -31,8 +31,9 @@ export class Token
     static readonly In = createToken({ name: "In", pattern: /in/i })
     static readonly Between = createToken({ name: "Between", pattern: /Between/i })
     static readonly WhiteSpace = createToken({name: "WhiteSpace", pattern: /\s+/, group: Lexer.SKIPPED})
-    static readonly AttributeExists = createToken({name: "AttributeExists", pattern: /attribute_exists/})
-    static readonly AttributeNotExists = createToken({name: "AttributeNotExists", pattern: /attribute_not_exists/})
+    static readonly AttributeExists = createToken({name: "AttributeExists", pattern: /attribute_exists\s*\(/})
+    static readonly AttributeNotExists = createToken({name: "AttributeNotExists", pattern: /attribute_not_exists\s*\(/})
+    static readonly Size = createToken({name: "Size", pattern: /size\s*\(/})
 
     // note we are placing WhiteSpace first as it is very common thus it will speed up the lexer.
     static AllTokens = 
@@ -58,6 +59,7 @@ export class Token
         Token.Between,
         Token.AttributeExists,
         Token.AttributeNotExists,
+        Token.Size,
         // The Identifier must appear after the keywords because all keywords are valid identifiers.
         Token.Identifier,
         Token.Integer,
