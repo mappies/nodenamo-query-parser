@@ -184,8 +184,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
             return this.visit(ctx[RuleName.SizeExpression])
         }
     }
-    
-    [RuleName.ComparisonExpression](ctx)
+    [RuleName.Operand](ctx)
     {
         let operand = '';
         
@@ -214,7 +213,12 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
             operand = '<='
         }
 
+        return operand
+    }
+    [RuleName.ComparisonExpression](ctx)
+    {
         let lhs = ctx.Identifier[0].image;
+        let operand = this.visit(ctx[RuleName.Operand])
         let rhs = this.visit(ctx[RuleName.AtomicExpression])
         
         return {
@@ -306,33 +310,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
     [RuleName.SizeExpression](ctx)
     {
         let lhs = ctx.Identifier[0].image
-        let operand = '';
-        
-        if(ctx[Token.Equal.name])
-        {
-            operand = '='
-        }
-        else if(ctx[Token.NotEqual.name])
-        {
-            operand = '<>'
-        }
-        else if(ctx[Token.GreaterThan.name])
-        {
-            operand = '>'
-        }
-        else if(ctx[Token.GreaterThanEqual.name])
-        {
-            operand = '>='
-        }
-        else if(ctx[Token.LessThan.name])
-        {
-            operand = '<'
-        }
-        else if(ctx[Token.LessThanEqual.name])
-        {
-            operand = '<='
-        }
-
+        let operand = this.visit(ctx[RuleName.Operand])
         let rhs = this.visit(ctx[RuleName.AtomicExpression])
 
         return {

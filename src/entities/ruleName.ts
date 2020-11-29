@@ -53,6 +53,7 @@ export enum RuleName
     AttributeExistsExpression = "attributeExistsExpressionRuleName",
     AttributeNotExistsExpression = "attributeNotExistsExpressionRuleName",
     SizeExpression = "sizeExpressionRuleName",
+    Operand = "OperandRuleName",
 
     /**
      * Misc

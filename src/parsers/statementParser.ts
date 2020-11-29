@@ -127,6 +127,12 @@ export class StatementParser extends CstParser
                                 this.CONSUME(Token.Size)
                                 this.CONSUME(Token.Identifier)
                                 this.CONSUME(Token.RightParenthesis)
+                                this.SUBRULE(this.operand)
+                                this.SUBRULE(this.atomicExpression)
+                            })
+
+    operand = this.RULE(RuleName.Operand, () => 
+                            {
                                 this.OR([
                                     { ALT:() => { this.CONSUME(Token.Equal) }},
                                     { ALT:() => { this.CONSUME(Token.GreaterThanEqual) }},
@@ -135,7 +141,6 @@ export class StatementParser extends CstParser
                                     { ALT:() => { this.CONSUME(Token.LessThanEqual) }},
                                     { ALT:() => { this.CONSUME(Token.LessThan) }},
                                 ]);
-                                this.SUBRULE(this.atomicExpression)
                             })
 
     attributeExistsExpression = this.RULE(RuleName.AttributeExistsExpression, () => 
@@ -183,14 +188,7 @@ export class StatementParser extends CstParser
     comparisonExpression = this.RULE(RuleName.ComparisonExpression, () => 
                             {
                                 this.CONSUME(Token.Identifier);
-                                this.OR([
-                                    { ALT:() => { this.CONSUME(Token.Equal) }},
-                                    { ALT:() => { this.CONSUME(Token.GreaterThanEqual) }},
-                                    { ALT:() => { this.CONSUME(Token.NotEqual) }},
-                                    { ALT:() => { this.CONSUME(Token.GreaterThan) }},
-                                    { ALT:() => { this.CONSUME(Token.LessThanEqual) }},
-                                    { ALT:() => { this.CONSUME(Token.LessThan) }},
-                                ]);
+                                this.SUBRULE(this.operand)
                                 this.SUBRULE(this.atomicExpression);
                             })
 
