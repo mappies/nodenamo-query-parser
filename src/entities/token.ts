@@ -35,6 +35,7 @@ export class Token
     static readonly AttributeNotExists = createToken({name: "AttributeNotExists", pattern: /attribute_not_exists\s*\(/})
     static readonly AttributeType = createToken({name: "AttributeType", pattern: /attribute_type\s*\(/})
     static readonly BeginsWith = createToken({name: "BeginsWith", pattern: /begins_with\s*\(/})
+    static readonly Contains = createToken({name: "BeginsWith", pattern: /contains\s*\(/})
     static readonly Size = createToken({name: "Size", pattern: /size\s*\(/})
 
     // note we are placing WhiteSpace first as it is very common thus it will speed up the lexer.
@@ -63,6 +64,7 @@ export class Token
         Token.AttributeNotExists,
         Token.AttributeType,
         Token.BeginsWith,
+        Token.Contains,
         Token.Size,
         // The Identifier must appear after the keywords because all keywords are valid identifiers.
         Token.Identifier,

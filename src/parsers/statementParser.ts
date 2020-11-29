@@ -119,6 +119,7 @@ export class StatementParser extends CstParser
                                         { ALT: () => this.SUBRULE(this.attributeNotExistsExpression) },
                                         { ALT: () => this.SUBRULE(this.attributeTypeExpression)},
                                         { ALT: () => this.SUBRULE(this.beginsWithExpression)},
+                                        { ALT: () => this.SUBRULE(this.containsExpression)},
                                         { ALT: () => this.SUBRULE(this.sizeExpression) }
                                     ]
                                 })
@@ -171,6 +172,15 @@ export class StatementParser extends CstParser
     beginsWithExpression = this.RULE(RuleName.BeginsWithExpression, () => 
                             {
                                 this.CONSUME(Token.BeginsWith)
+                                this.CONSUME(Token.Identifier)
+                                this.CONSUME(Token.Comma)
+                                this.CONSUME(Token.String)
+                                this.CONSUME(Token.RightParenthesis)
+                            })
+
+    containsExpression = this.RULE(RuleName.ContainsExpression, () => 
+                            {
+                                this.CONSUME(Token.Contains)
                                 this.CONSUME(Token.Identifier)
                                 this.CONSUME(Token.Comma)
                                 this.CONSUME(Token.String)

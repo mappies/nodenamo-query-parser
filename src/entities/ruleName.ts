@@ -54,6 +54,7 @@ export enum RuleName
     AttributeNotExistsExpression = "attributeNotExistsExpressionRuleName",
     AttributeTypeExpression = "attributeTypeExpressionRuleName",
     BeginsWithExpression = "beginsWithExpressionRuleName",
+    ContainsExpression = "containsExpressionRuleName",
     SizeExpression = "sizeExpressionRuleName",
     Operand = "OperandRuleName",
 
