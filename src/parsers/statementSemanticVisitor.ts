@@ -183,6 +183,10 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         {
             return this.visit(ctx[RuleName.AttributeTypeExpression])
         }
+        else if(ctx[RuleName.BeginsWithExpression])
+        {
+            return this.visit(ctx[RuleName.BeginsWithExpression])
+        }
         else if(ctx[RuleName.SizeExpression])
         {
             return this.visit(ctx[RuleName.SizeExpression])
@@ -320,6 +324,17 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
             expression: `attribute_type(#${identifier},:${identifier})`,
             expressionAttributeNames: {[`#${identifier}`]: identifier},
             expressionAttributeValues: {[`:${identifier}`]: type}
+        }
+    }
+    [RuleName.BeginsWithExpression](ctx)
+    {
+        let identifier = ctx.Identifier[0].image
+        let str = this.removeEnclosingDoubleQuotes(ctx.String[0].image)
+
+        return {
+            expression: `begins_with(#${identifier},:${identifier})`,
+            expressionAttributeNames: {[`#${identifier}`]: identifier},
+            expressionAttributeValues: {[`:${identifier}`]: str}
         }
     }
     [RuleName.SizeExpression](ctx)

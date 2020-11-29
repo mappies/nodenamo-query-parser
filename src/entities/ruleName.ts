@@ -53,6 +53,7 @@ export enum RuleName
     AttributeExistsExpression = "attributeExistsExpressionRuleName",
     AttributeNotExistsExpression = "attributeNotExistsExpressionRuleName",
     AttributeTypeExpression = "attributeTypeExpressionRuleName",
+    BeginsWithExpression = "beginsWithExpressionRuleName",
     SizeExpression = "sizeExpressionRuleName",
     Operand = "OperandRuleName",
 
