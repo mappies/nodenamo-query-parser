@@ -52,6 +52,7 @@ export enum RuleName
     ParenthesisExpression = "parenthesisExpressionRuleName",
     AttributeExistsExpression = "attributeExistsExpressionRuleName",
     AttributeNotExistsExpression = "attributeNotExistsExpressionRuleName",
+    AttributeTypeExpression = "attributeTypeExpressionRuleName",
     SizeExpression = "sizeExpressionRuleName",
     Operand = "OperandRuleName",
 

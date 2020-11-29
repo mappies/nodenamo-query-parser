@@ -179,6 +179,10 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         {
             return this.visit(ctx[RuleName.AttributeNotExistsExpression])
         }
+        else if(ctx[RuleName.AttributeTypeExpression])
+        {
+            return this.visit(ctx[RuleName.AttributeTypeExpression])
+        }
         else if(ctx[RuleName.SizeExpression])
         {
             return this.visit(ctx[RuleName.SizeExpression])
@@ -307,6 +311,17 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
             expressionAttributeValues: {}
         }
     }
+    [RuleName.AttributeTypeExpression](ctx)
+    {
+        let identifier = ctx.Identifier[0].image
+        let type = this.removeEnclosingDoubleQuotes(ctx.String[0].image)
+
+        return {
+            expression: `attribute_type(#${identifier},:${identifier})`,
+            expressionAttributeNames: {[`#${identifier}`]: identifier},
+            expressionAttributeValues: {[`:${identifier}`]: type}
+        }
+    }
     [RuleName.SizeExpression](ctx)
     {
         let lhs = ctx.Identifier[0].image
@@ -382,11 +397,19 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         if (ctx.String)
         {
             //Remove ""
-            return ctx.String[0].image.substr(1, ctx.String[0].image.length - 2)
+            return this.removeEnclosingDoubleQuotes(ctx.String[0].image)
         }
         else 
         {
             return Number(ctx.Integer[0].image)
         }
+    }
+
+    /**
+     * Helper
+     */
+    removeEnclosingDoubleQuotes(s)
+    {
+        return s.substr(1, s.length - 2)
     }
 }
