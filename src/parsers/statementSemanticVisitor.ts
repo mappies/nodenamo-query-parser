@@ -4,6 +4,12 @@ import { StatementParser } from './statementParser';
 
 const statementParser = new StatementParser()
 const BaseSQLVisitor = statementParser.getBaseCstVisitorConstructor()
+let propertyCollisionIndex = 1
+
+export function resetCollisionIndex()
+{
+    propertyCollisionIndex = 1;
+}
 
 export class StatementSemanticVisitor extends BaseSQLVisitor 
 {
@@ -127,28 +133,70 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
             let firstRhsResult = rhsResults.shift()
             let firstOperand = operands.shift()
 
-            let rhsExpression = firstRhsResult.expression
-            let rhsExpressionAttributeNames = firstRhsResult.expressionAttributeNames
-            let rhsExpressionAttributeValues = firstRhsResult.expressionAttributeValues
+            let rhsExpression = {
+                    expression: firstRhsResult.expression,
+                    expressionAttributeNames: firstRhsResult.expressionAttributeNames,
+                    expressionAttributeValues: firstRhsResult.expressionAttributeValues
+            }
 
             for(let rhs of rhsResults)
             {
-                rhsExpression = `${rhsExpression} ${operands.shift().image} ${rhs.expression}`,
-                rhsExpressionAttributeNames = Object.assign(rhsExpressionAttributeNames, rhs.expressionAttributeNames),
-                rhsExpressionAttributeValues = Object.assign(rhsExpressionAttributeValues, rhs.expressionAttributeValues)
+                rhsExpression = this.mergeExpressions(rhsExpression, operands.shift().image, rhs);
             }
 
-            return {
-                expression: `${lhs.expression} ${firstOperand.image} ${rhsExpression}`,
-                expressionAttributeNames: Object.assign(lhs.expressionAttributeNames, rhsExpressionAttributeNames),
-                expressionAttributeValues: Object.assign(lhs.expressionAttributeValues, rhsExpressionAttributeValues)
-            }
+            return this.mergeExpressions(lhs, firstOperand.image, rhsExpression)
         }
         else
         {
             return lhs;
         }
     }
+
+    private mergeExpressions(expression1:{expression:string, expressionAttributeNames:object,expressionAttributeValues:object},
+                             operand: string,
+                             expression2:{expression:string, expressionAttributeNames:object,expressionAttributeValues:object} )
+    {
+        let expression1attributeNames = Object.keys(expression1.expressionAttributeNames)
+
+        for(let expression1attributeName of expression1attributeNames)
+        {
+            if(expression2.expressionAttributeNames && expression1attributeName in expression2.expressionAttributeNames)
+            {
+                let duplicateAttributeName = expression1attributeName
+
+                //Duplicate property found.
+                let suffix = propertyCollisionIndex++
+
+                //Change #duplicateProperty in expression2 to #duplicateProperty___$suffix
+                let regex = new RegExp(`${expression1attributeName}([\\s,\\)])|${expression1attributeName}$`, "i")
+                let newExpression2attributeName = duplicateAttributeName +`___${suffix}`
+
+                expression2.expression = expression2.expression.replace(regex, newExpression2attributeName+"$1")
+                expression2.expressionAttributeNames[newExpression2attributeName] = expression2.expressionAttributeNames[duplicateAttributeName] 
+                delete expression2.expressionAttributeNames[duplicateAttributeName]
+
+                //Change :duplicateProperty in expression2 to :duplicateProperty___$suffix
+                let duplicateAttributeValue = duplicateAttributeName.replace(/^#/, ':')
+                let newExpression2AttributeValue = duplicateAttributeValue+`___${suffix}`
+
+                if(duplicateAttributeValue in expression2.expressionAttributeValues)
+                {
+                    let regex = new RegExp(`${duplicateAttributeValue}([\\s,\\)])|${duplicateAttributeValue}$`, "i")
+
+                    expression2.expression = expression2.expression.replace(regex, newExpression2AttributeValue+'$1')
+                    expression2.expressionAttributeValues[newExpression2AttributeValue] = expression2.expressionAttributeValues[duplicateAttributeValue]
+                    delete expression2.expressionAttributeValues[duplicateAttributeValue]
+                }
+            }
+        }
+
+        return {
+            expression: `${expression1.expression} ${operand} ${expression2.expression}`,
+            expressionAttributeNames: Object.assign(expression1.expressionAttributeNames, expression2.expressionAttributeNames),
+            expressionAttributeValues: Object.assign(expression1.expressionAttributeValues, expression2.expressionAttributeValues)
+        }
+    }
+
     [RuleName.HighPrecedenceExpression](ctx)
     {
         if(ctx[RuleName.ComparisonExpression])
@@ -281,10 +329,14 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         let between = this.visit(ctx.between)
         let and = this.visit(ctx.and)
 
+        //use propertyCollisionIndex to avoid collision
+        let suffix = propertyCollisionIndex++
+        let lhsWithSuffix = `${lhs}___${suffix}`
+
         return {
-            expression: `#${lhs} between :${lhs}_between_1 and :${lhs}_between_2`,
-            expressionAttributeNames: {[`#${lhs}`]: lhs},
-            expressionAttributeValues: {[`:${lhs}_between_1`]: between, [`:${lhs}_between_2`]: and}
+            expression: `#${lhsWithSuffix} between :${lhsWithSuffix}_between_1 and :${lhsWithSuffix}_between_2`,
+            expressionAttributeNames: {[`#${lhsWithSuffix}`]: lhs},
+            expressionAttributeValues: {[`:${lhsWithSuffix}_between_1`]: between, [`:${lhsWithSuffix}_between_2`]: and}
         }
     }
     [RuleName.InExpression](ctx)
@@ -293,10 +345,14 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
 
         let rhs = ctx[RuleName.AtomicExpression].map(i => this.visit(i))
 
+        //use propertyCollisionIndex to avoid collision
+        let suffix = propertyCollisionIndex++
+        let lhsWithSuffix = `${lhs}___${suffix}`
+
         return {
-            expression: `#${lhs} in (${rhs.map((item, index)=>`:${lhs}_in_${index+1}`)})`,
-            expressionAttributeNames: {[`#${lhs}`]: lhs},
-            expressionAttributeValues: rhs.reduce((result, item, index)=>{result[`:${lhs}_in_${index+1}`] = item; return result}, {})
+            expression: `#${lhsWithSuffix} in (${rhs.map((item, index)=>`:${lhsWithSuffix}_in_${index+1}`)})`,
+            expressionAttributeNames: {[`#${lhsWithSuffix}`]: lhs},
+            expressionAttributeValues: rhs.reduce((result, item, index)=>{result[`:${lhsWithSuffix}_in_${index+1}`] = item; return result}, {})
         }
     }
     [RuleName.AttributeExistsExpression](ctx)
