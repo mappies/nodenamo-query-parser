@@ -11,8 +11,18 @@ export class Token
     static readonly DeleteTable = createToken({ name: "DeleteTable", pattern: /Delete\s+Table/i })
     static readonly Delete = createToken({ name: "Delete", pattern: /Delete\s+/i,})
     static readonly Where = createToken({ name: "Where", pattern: /Where/i })
+    static readonly Find = createToken({ name: "Find", pattern: /Find/i })
+    static readonly Using = createToken({ name: "Using", pattern: /Using/i })
+    static readonly Filter = createToken({ name: "Filter", pattern: /Filter/i })
+    static readonly Resume = createToken({ name: "Resume", pattern: /Resume/i })
+    static readonly Order = createToken({ name: "Order", pattern: /Order/i })
+    static readonly Limit = createToken({ name: "Limit", pattern: /Limit/i })
+    static readonly By = createToken({ name: "By", pattern: /By/i })
+    static readonly Asc = createToken({ name: "Asc", pattern: /\sAsc\W+/i })
+    static readonly Desc = createToken({ name: "Desc", pattern:/\sDesc\W+/i })
+    static readonly Star = createToken({ name: "Star", pattern: /\*/ })
 
-    static readonly Identifier = createToken({ name: "Identifier", pattern: /[a-zA-Z]\w*/ })
+    static readonly Identifier = createToken({ name: "Identifier", pattern: /[a-zA-Z][\w\-\.]*/ })
     static readonly String = createToken({ name: "String", pattern: /"(:?[^\\"]|\\(:?[bfnrtv"\\/]|u[0-9a-fA-F]{4}))*"/ })
     static readonly Comma = createToken({ name: "Comma", pattern: /,/ })
     static readonly Integer = createToken({ name: "Integer", pattern: /-?0|-?[1-9]\d*/ })
@@ -41,7 +51,6 @@ export class Token
     // note we are placing WhiteSpace first as it is very common thus it will speed up the lexer.
     static AllTokens = 
     [
-        Token.WhiteSpace,
         // "keywords" appear before the Identifier
         Token.Get,
         Token.From,
@@ -52,6 +61,17 @@ export class Token
         Token.DeleteTable,
         Token.Delete,
         Token.Where,
+        Token.Size,
+        Token.Find,
+        Token.Filter,
+        Token.Order,
+        Token.Using,
+        Token.Resume,
+        Token.Asc,
+        Token.Desc,
+        Token.Star,
+        Token.By,
+        Token.Limit,
         Token.Comma,
         Token.String,
         Token.And,
@@ -65,7 +85,7 @@ export class Token
         Token.AttributeType,
         Token.BeginsWith,
         Token.Contains,
-        Token.Size,
+        Token.WhiteSpace,
         // The Identifier must appear after the keywords because all keywords are valid identifiers.
         Token.Identifier,
         Token.Integer,

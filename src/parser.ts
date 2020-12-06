@@ -8,7 +8,7 @@ let parser = new StatementParser();
 
 export function parse(text) 
 {
-    parser.input = lexer.tokenize(text).tokens;
+    parser.input = lexer.tokenize(text + ' ').tokens;
 
     let cst = parser.statement();
 
@@ -22,9 +22,9 @@ export function parse(text)
 
 export function parseExpression(text) 
 {
-    parser.input = lexer.tokenize(text).tokens;
+    parser.input = lexer.tokenize(text + ' ').tokens;
 
-    let cst = parser.keyConditionExpression();
+    let cst = parser.expression();
 
     if (parser.errors.length > 0) 
     {

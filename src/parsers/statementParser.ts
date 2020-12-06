@@ -10,6 +10,7 @@ export class StatementParser extends CstParser
                 {
                     this.OR({
                         DEF: [
+                            { ALT: () => this.SUBRULE(this.findStatement) },
                             { ALT: () => this.SUBRULE(this.getStatement) },
                             { ALT: () => this.SUBRULE(this.deleteStatement) },
                             { ALT: () => this.SUBRULE(this.createTableStatement) },
@@ -76,15 +77,132 @@ export class StatementParser extends CstParser
                             })
 
     /**
+     * FIND Statement
+     * 
+     * Syntax: FIND *|([string][,string]*) 
+     *         FROM identifier 
+     *         (USING identifier)?
+     *         ((WHERE expression)|(BY hash,range))? 
+     *         (FILTER expression)? 
+     *         (ORDER ASC|DESC)? 
+     *         (LIMIT number)? 
+     *         (Strongly Consistent)? 
+     */
+    findStatement = this.RULE(RuleName.FindStatement, () =>
+                {
+                    this.SUBRULE(this.findClause)
+                    this.SUBRULE(this.findFromClause)
+                    this.OPTION1(() => {
+                        this.SUBRULE(this.findUsingClause)
+                    })
+                    this.OPTION2(() => {
+                        this.SUBRULE(this.whereClause)
+                    })
+                    this.OPTION3(() => {
+                        this.SUBRULE(this.findFilterClause)
+                    })
+                    this.OPTION4(() => {
+                        this.SUBRULE(this.findResumeClause)
+                    })
+                    this.OPTION5(()=> {
+                        this.SUBRULE(this.findOrderClause)
+                    })
+                    this.OPTION6(()=> {
+                        this.SUBRULE(this.findLimitClause)
+                    })
+                    this.OPTION7(()=> {
+                        this.SUBRULE(this.findByClause)
+                    })
+                    this.OPTION8(() => {
+                        this.SUBRULE(this.findStronglyConsistentClause)
+                    })
+                })
+
+    findClause = this.RULE(RuleName.FindClause, () =>
+                {
+                    this.CONSUME(Token.Find);
+                    this.OR({
+                        DEF: [
+                            { ALT: ()=> this.CONSUME(Token.Star) },
+                            { ALT: ()=> {
+                                this.CONSUME1(Token.Identifier) 
+                                this.MANY(()=>{
+                                    this.CONSUME(Token.Comma)
+                                    this.CONSUME2(Token.Identifier, {ERR_MSG: ErrorMessage.FIND_MISSING_PROJECTION})
+                                })
+                            }}
+                        ],
+                        ERR_MSG: ErrorMessage.FIND_MISSING_PROJECTIONS
+                    })
+                })
+
+    findFromClause = this.RULE(RuleName.FindFromClause, () =>
+                {
+                    this.CONSUME(Token.From, {ERR_MSG: ErrorMessage.FIND_MISSING_FROM})
+                    this.CONSUME(Token.Identifier, {ERR_MSG: ErrorMessage.FIND_MISSING_TABLE})
+                })
+
+    findUsingClause = this.RULE(RuleName.FindUsingClause, () =>
+                {
+                    this.CONSUME(Token.Using)
+                    this.CONSUME(Token.Identifier, {ERR_MSG: ErrorMessage.FIND_MISSING_USING})
+                })
+
+    findByClause = this.RULE(RuleName.FindByClause, () =>
+                {
+                    this.CONSUME(Token.By)
+                    this.CONSUME(Token.String)
+                    this.OPTION(()=>{
+                        this.CONSUME1(Token.Comma)
+                        this.CONSUME2(Token.String)
+                    })
+                })
+
+    findFilterClause = this.RULE(RuleName.FindFilterClause, () =>
+                {
+                    this.CONSUME(Token.Filter)
+                    this.SUBRULE(this.expression)
+                })
+
+    findResumeClause = this.RULE(RuleName.FindResumeClause, () =>
+                {
+                    this.CONSUME(Token.Resume)
+                    this.CONSUME(Token.Identifier, {ERR_MSG:ErrorMessage.FIND_MISSING_RESUME})
+                })
+
+    findOrderClause = this.RULE(RuleName.FindOrderClause, () =>
+                {
+                    this.CONSUME(Token.Order)
+                    this.OR({
+                        DEF: [
+                            {ALT: ()=>this.CONSUME(Token.Asc, {LABEL: 'Asc'})},
+                            {ALT: ()=>this.CONSUME(Token.Desc, {LABEL: 'Desc'})}
+                        ],
+                        ERR_MSG: ErrorMessage.FIND_MISSING_ORDER
+                    });
+                })
+
+    findLimitClause = this.RULE(RuleName.FindLimitClause, () =>
+                {
+                    this.CONSUME(Token.Limit)
+                    this.CONSUME(Token.Integer, {ERR_MSG: ErrorMessage.FIND_MISSING_LIMIT})
+                })
+
+    findStronglyConsistentClause = this.RULE(RuleName.FindStronglyConsistentClause, () =>
+                {
+                    this.CONSUME(Token.StronglyConsistent)
+                });
+
+    /**
      * WHERE clause
      */
     whereClause = this.RULE(RuleName.WhereClause, () =>
                             {
                                 this.CONSUME(Token.Where)
-                                this.SUBRULE(this.keyConditionExpression)
+                                this.SUBRULE(this.expression)
                             })
 
-    keyConditionExpression = this.RULE(RuleName.Expression, () =>
+    expression = this.RULE(RuleName.Expression, () =>
                             {
                                 this.SUBRULE(this.andOrExpression)
                             });

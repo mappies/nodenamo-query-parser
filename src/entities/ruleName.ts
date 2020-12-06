@@ -34,6 +34,21 @@ export enum RuleName
     DeleteWhereClause = "deleteWhereClauseRuleName",
 
     /**
+     * Find statement
+     */
+    FindStatement = "findStatementRuleName",
+    FindClause = "findClauseRuleName",
+    FindFromClause = "findFromClauseRuleName",
+    FindWhereClause = "findWhereClauseRuleName",
+    FindByClause = "findByClauseRuleName",
+    FindUsingClause = "findUsingClauseRuleName",
+    FindFilterClause = "findFilterClauseRuleName",
+    FindOrderClause = "findOrderClauseRuleName",
+    FindResumeClause = "findResumeClauseRuleName",
+    FindLimitClause = "findLimitClauseRuleName",
+    FindStronglyConsistentClause = "findStrongConsistentClauseRuleName",
+
+    /**
      * Where clause
      */
     WhereClause = "whereClauseRuleName",

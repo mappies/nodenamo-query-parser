@@ -21,7 +21,11 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
 
     [RuleName.Statement](ctx)
     {
-        if (ctx[RuleName.GetStatement])
+        if (ctx[RuleName.FindStatement])
+        {
+            return this.visit(ctx[RuleName.FindStatement])
+        }
+        else if (ctx[RuleName.GetStatement])
         {
             return this.visit(ctx[RuleName.GetStatement])
         }
@@ -93,6 +97,88 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
     [RuleName.DeleteFromClause](ctx)
     {
         return ctx.Identifier[0].image;
+    }
+
+    /**
+     * FIND Statement
+     * 
+     * Syntax: FIND *|([string][,string]*) 
+     *         FROM identifier 
+     *         (USING identifier)?
+     *         ((WHERE expression)|(BY hash,range))? 
+     *         (FILTER expression)? 
+     *         (ORDER ASC|DESC)? 
+     *         (LIMIT number)? 
+     *         (Strongly Consistent)? 
+     */
+    [RuleName.FindStatement](ctx)
+    {
+        return {
+            type: "find",
+            projections: this.visit(ctx[RuleName.FindClause]),
+            from: this.visit(ctx[RuleName.FindFromClause]),
+            using: this.visit(ctx[RuleName.FindUsingClause]),
+            where: this.visit(ctx[RuleName.WhereClause]),
+            by: this.visit(ctx[RuleName.FindByClause]),
+            filter: this.visit(ctx[RuleName.FindFilterClause]),
+            resume: this.visit(ctx[RuleName.FindResumeClause]),
+            order: this.visit(ctx[RuleName.FindOrderClause]),
+            limit: this.visit(ctx[RuleName.FindLimitClause]),
+            stronglyConsistent: this.visit(ctx[RuleName.FindStronglyConsistentClause])
+        }
+    }
+
+    [RuleName.FindClause](ctx)
+    {
+        if(ctx.Star)
+        {
+            return undefined
+        }
+
+        return ctx.Identifier.map(s => s.image)
+    }
+
+    [RuleName.FindFromClause](ctx)
+    {
+        return ctx.Identifier[0].image;
+    }
+
+    [RuleName.FindUsingClause](ctx)
+    {
+        return ctx.Identifier[0].image;
+    }
+
+    [RuleName.FindByClause](ctx)
+    {
+        return {
+            hash: this.removeEnclosingDoubleQuotes(ctx.String[0].image),
+            range: ctx.String.length > 1 ? this.removeEnclosingDoubleQuotes(ctx.String[1].image) : undefined
+        }
+    }
+
+    [RuleName.FindFilterClause](ctx)
+    {
+        return this.visit(ctx[RuleName.Expression])
+    }
+
+    [RuleName.FindResumeClause](ctx)
+    {
+        return ctx.Identifier[0].image;
+    }
+
+    [RuleName.FindOrderClause](ctx)
+    {
+        return ctx.Desc ? -1 : 1;
+    }
+
+    [RuleName.FindLimitClause](ctx)
+    {
+        return Number(ctx.Integer[0].image);
+    }
+
+    [RuleName.FindStronglyConsistentClause](ctx) 
+    {
+        return true
     }
 
     /**

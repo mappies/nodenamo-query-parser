@@ -20,5 +20,14 @@ export class ErrorMessage
 
     static readonly DELETE_MISSING_FROM = 'Missing "FROM" clause from the DELETE statement.'
 
+    static readonly FIND_MISSING_PROJECTIONS = 'Missing projected properties from the statement. Specify property names or use * to project all properties.'
+    static readonly FIND_MISSING_PROJECTION = 'Missing a projected property after a comma.'
+    static readonly FIND_MISSING_FROM = 'Missing "FROM" clause from the statement.'
+    static readonly FIND_MISSING_TABLE = 'Missing a table name from the statement.'
+    static readonly FIND_MISSING_LIMIT = 'Missing a number of records to return after LIMIT.'
+    static readonly FIND_MISSING_USING = 'Missing a GSI name after USING.'
+    static readonly FIND_MISSING_ORDER = 'Missing a sorting order (ASC or DESC) after ORDER.'
+    static readonly FIND_MISSING_RESUME = 'Missing a lastEvaluatedKey after RESUME'
+
     static readonly EXPRESSION_MISSING_PARENTHESIS = 'Missing a closing parenthesis in the expression.'
 }
