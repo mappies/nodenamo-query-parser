@@ -10,6 +10,7 @@ export class StatementParser extends CstParser
                 {
                     this.OR({
                         DEF: [
+                            { ALT: () => this.SUBRULE(this.listStatement) },
                             { ALT: () => this.SUBRULE(this.findStatement) },
                             { ALT: () => this.SUBRULE(this.getStatement) },
                             { ALT: () => this.SUBRULE(this.deleteStatement) },
@@ -82,7 +83,7 @@ export class StatementParser extends CstParser
      * Syntax: FIND *|([string][,string]*) 
      *         FROM identifier 
      *         (USING identifier)?
-     *         ((WHERE expression)|(BY hash,range))? 
+     *         (WHERE expression)? 
      *         (FILTER expression)? 
      *         (ORDER ASC|DESC)? 
      *         (LIMIT number)? 
@@ -110,10 +111,7 @@ export class StatementParser extends CstParser
                     this.OPTION6(()=> {
                         this.SUBRULE(this.findLimitClause)
                     })
-                    this.OPTION7(()=> {
-                        this.SUBRULE(this.findByClause)
-                    })
-                    this.OPTION8(() => {
+                    this.OPTION7(() => {
                         this.SUBRULE(this.findStronglyConsistentClause)
                     })
                 })
@@ -146,16 +144,6 @@ export class StatementParser extends CstParser
                 {
                     this.CONSUME(Token.Using)
                     this.CONSUME(Token.Identifier, {ERR_MSG: ErrorMessage.FIND_MISSING_USING})
-                })
-
-    findByClause = this.RULE(RuleName.FindByClause, () =>
-                {
-                    this.CONSUME(Token.By)
-                    this.CONSUME(Token.String)
-                    this.OPTION(()=>{
-                        this.CONSUME1(Token.Comma)
-                        this.CONSUME2(Token.String)
-                    })
                 })
 
     findFilterClause = this.RULE(RuleName.FindFilterClause, () =>
@@ -193,6 +181,72 @@ export class StatementParser extends CstParser
                     this.CONSUME(Token.StronglyConsistent)
                 });
 
+    /**
+     * LIST Statement
+     * 
+     * Syntax: LIST *|([string][,string]*) 
+     *         FROM identifier 
+     *         (USING identifier)?
+     *         (BY hash,range)? 
+     *         (FILTER expression)? 
+     *         (ORDER ASC|DESC)? 
+     *         (LIMIT number)? 
+     *         (Strongly Consistent)? 
+     */
+    listStatement = this.RULE(RuleName.ListStatement, () =>
+                {
+                    this.SUBRULE(this.listClause)
+                    this.SUBRULE(this.findFromClause)
+                    this.OPTION1(() => {
+                        this.SUBRULE(this.findUsingClause)
+                    })
+                    this.OPTION2(()=> {
+                        this.SUBRULE(this.listByClause)
+                    })
+                    this.OPTION3(() => {
+                        this.SUBRULE(this.findFilterClause)
+                    })
+                    this.OPTION4(() => {
+                        this.SUBRULE(this.findResumeClause)
+                    })
+                    this.OPTION5(()=> {
+                        this.SUBRULE(this.findOrderClause)
+                    })
+                    this.OPTION6(()=> {
+                        this.SUBRULE(this.findLimitClause)
+                    })
+                    this.OPTION7(() => {
+                        this.SUBRULE(this.findStronglyConsistentClause)
+                    })
+                })
+
+    listClause = this.RULE(RuleName.ListClause, () =>
+                {
+                    this.CONSUME(Token.List);
+                    this.OR({
+                        DEF: [
+                            { ALT: ()=> this.CONSUME(Token.Star) },
+                            { ALT: ()=> {
+                                this.CONSUME1(Token.Identifier) 
+                                this.MANY(()=>{
+                                    this.CONSUME(Token.Comma)
+                                    this.CONSUME2(Token.Identifier, {ERR_MSG: ErrorMessage.FIND_MISSING_PROJECTION})
+                                })
+                            }}
+                        ],
+                        ERR_MSG: ErrorMessage.FIND_MISSING_PROJECTIONS
+                    })
+                })
+
+    listByClause = this.RULE(RuleName.ListByClause, () =>
+                {
+                    this.CONSUME(Token.By)
+                    this.CONSUME(Token.String, {ERR_MSG: ErrorMessage.LIST_MISSING_BY_HASH})
+                    this.OPTION(()=>{
+                        this.CONSUME1(Token.Comma)
+                        this.CONSUME2(Token.String, {ERR_MSG: ErrorMessage.LIST_MISSING_BY_RANGE})
+                    })
+                })
     /**
      * WHERE clause
      */

@@ -21,7 +21,11 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
 
     [RuleName.Statement](ctx)
     {
-        if (ctx[RuleName.FindStatement])
+        if (ctx[RuleName.ListStatement])
+        {
+            return this.visit(ctx[RuleName.ListStatement])
+        }
+        else if (ctx[RuleName.FindStatement])
         {
             return this.visit(ctx[RuleName.FindStatement])
         }
@@ -105,7 +109,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
      * Syntax: FIND *|([string][,string]*) 
      *         FROM identifier 
      *         (USING identifier)?
-     *         ((WHERE expression)|(BY hash,range))? 
+     *         (WHERE expression)? 
      *         (FILTER expression)? 
      *         (ORDER ASC|DESC)? 
      *         (LIMIT number)? 
@@ -119,7 +123,6 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
             from: this.visit(ctx[RuleName.FindFromClause]),
             using: this.visit(ctx[RuleName.FindUsingClause]),
             where: this.visit(ctx[RuleName.WhereClause]),
-            by: this.visit(ctx[RuleName.FindByClause]),
             filter: this.visit(ctx[RuleName.FindFilterClause]),
             resume: this.visit(ctx[RuleName.FindResumeClause]),
             order: this.visit(ctx[RuleName.FindOrderClause]),
@@ -148,14 +151,6 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         return ctx.Identifier[0].image;
     }
 
-    [RuleName.FindByClause](ctx)
-    {
-        return {
-            hash: this.removeEnclosingDoubleQuotes(ctx.String[0].image),
-            range: ctx.String.length > 1 ? this.removeEnclosingDoubleQuotes(ctx.String[1].image) : undefined
-        }
-    }
-
     [RuleName.FindFilterClause](ctx)
     {
         return this.visit(ctx[RuleName.Expression])
@@ -179,6 +174,52 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
     [RuleName.FindStronglyConsistentClause](ctx) 
     {
         return true
+    }
+
+    /**
+     * LIST Statement
+     * 
+     * Syntax: FIND *|([string][,string]*) 
+     *         FROM identifier 
+     *         (USING identifier)?
+     *         (BY hash [,range]?)? 
+     *         (FILTER expression)? 
+     *         (ORDER ASC|DESC)? 
+     *         (LIMIT number)? 
+     *         (Strongly Consistent)? 
+     */
+    [RuleName.ListStatement](ctx)
+    {
+        return {
+            type: "list",
+            projections: this.visit(ctx[RuleName.ListClause]),
+            from: this.visit(ctx[RuleName.FindFromClause]),
+            using: this.visit(ctx[RuleName.FindUsingClause]),
+            by: this.visit(ctx[RuleName.ListByClause]),
+            filter: this.visit(ctx[RuleName.FindFilterClause]),
+            resume: this.visit(ctx[RuleName.FindResumeClause]),
+            order: this.visit(ctx[RuleName.FindOrderClause]),
+            limit: this.visit(ctx[RuleName.FindLimitClause]),
+            stronglyConsistent: this.visit(ctx[RuleName.FindStronglyConsistentClause])
+        }
+    }
+
+    [RuleName.ListClause](ctx)
+    {
+        if(ctx.Star)
+        {
+            return undefined
+        }
+
+        return ctx.Identifier.map(s => s.image)
+    }
+
+    [RuleName.ListByClause](ctx)
+    {
+        return {
+            hash: this.removeEnclosingDoubleQuotes(ctx.String[0].image),
+            range: ctx.String.length > 1 ? this.removeEnclosingDoubleQuotes(ctx.String[1].image) : undefined
+        }
     }
 
     /**

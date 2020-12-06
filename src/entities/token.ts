@@ -12,6 +12,7 @@ export class Token
     static readonly Delete = createToken({ name: "Delete", pattern: /Delete\s+/i,})
     static readonly Where = createToken({ name: "Where", pattern: /Where/i })
     static readonly Find = createToken({ name: "Find", pattern: /Find/i })
+    static readonly List = createToken({ name: "List", pattern: /List\s+/i })
     static readonly Using = createToken({ name: "Using", pattern: /Using/i })
     static readonly Filter = createToken({ name: "Filter", pattern: /Filter/i })
     static readonly Resume = createToken({ name: "Resume", pattern: /Resume/i })
@@ -72,6 +73,7 @@ export class Token
         Token.Star,
         Token.By,
         Token.Limit,
+        Token.List,
         Token.Comma,
         Token.String,
         Token.And,
