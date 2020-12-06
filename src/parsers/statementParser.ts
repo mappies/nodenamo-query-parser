@@ -441,6 +441,7 @@ export class StatementParser extends CstParser
                             {
                                 this.CONSUME(Token.WithCapacityOf)
                                 this.CONSUME1(Token.Integer, { ERR_MSG: ErrorMessage.CREATE_TABLE_MISSING_READ_CAPACITY })
+                                this.CONSUME(Token.Comma, { ERR_MSG: ErrorMessage.CREATE_TABLE_MISSING_WRITE_CAPACITY })
                                 this.CONSUME2(Token.Integer, { ERR_MSG: ErrorMessage.CREATE_TABLE_MISSING_WRITE_CAPACITY })
                             })
 
