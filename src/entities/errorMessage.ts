@@ -5,8 +5,8 @@ export class ErrorMessage
     static readonly UNEXPECTED_END_OF_STATEMENT = 'Unexpected end of statement'
     
     static readonly MISSING_OBJECT_ID = 'Missing an object ID or an invalid ID is given.'
-    static readonly MISSING_ENTITY_NAME = 'Missing an entity name.'
-    static readonly MISSING_PROPERTY_NAME = 'Missing a property name.'
+    static readonly MISSING_ENTITY_NAME = 'Missing an entity name or an invalid entity name is given.'
+    static readonly MISSING_PROPERTY_NAME = 'Missing a property name or an invalid property name is given.'
 
     static readonly GET_MISSING_FROM = 'Missing "FROM" clause from the GET statement.'
     static readonly GET_MISSING_TABLE = 'Missing a table name from the GET statement.'
@@ -31,6 +31,10 @@ export class ErrorMessage
 
     static readonly LIST_MISSING_BY_HASH = 'Missing a hash property value after BY.'
     static readonly LIST_MISSING_BY_RANGE = 'Missing a range property value after BY.'
+
+    static readonly IMPORT_MISSING_FROM = 'Missing "FROM" clause from the IMPORT statement.'
+    static readonly IMPORT_MISSING_CLOSING_CURLY_PARENTHESIS = 'Missing a closing curly parenthesis.'
+    static readonly IMPORT_MISSING_PACKAGE_NAME = 'Missing a package name from the IMPORT statement.'
 
     static readonly EXPRESSION_MISSING_PARENTHESIS = 'Missing a closing parenthesis in the expression.'
 }

@@ -12,6 +12,7 @@ export class Token
     static readonly Delete = createToken({ name: "Delete", pattern: /Delete\s+/i,})
     static readonly Where = createToken({ name: "Where", pattern: /Where/i })
     static readonly Find = createToken({ name: "Find", pattern: /Find/i })
+    static readonly Import = createToken({ name: "Import", pattern: /Import/i })
     static readonly List = createToken({ name: "List", pattern: /List\s+/i })
     static readonly Using = createToken({ name: "Using", pattern: /Using/i })
     static readonly Filter = createToken({ name: "Filter", pattern: /Filter/i })
@@ -37,6 +38,8 @@ export class Token
     static readonly LessThanEqual = createToken({ name: "LessThanEqual", pattern: /<=/ })
     static readonly LeftParenthesis = createToken({ name: "LeftParenthesis", pattern: /\(/ })
     static readonly RightParenthesis = createToken({ name: "RightParenthesis", pattern: /\)/ })
+    static readonly LeftCurlyParenthesis = createToken({ name: "LeftCurlyParenthesis", pattern: /\{/ })
+    static readonly RightCurlyParenthesis = createToken({ name: "RightCurlyParenthesis", pattern: /\}/ })
     static readonly And = createToken({ name: "And", pattern: /and/i })
     static readonly Or = createToken({ name: "Or", pattern: /or/i })
     static readonly In = createToken({ name: "In", pattern: /in/i })
@@ -75,6 +78,7 @@ export class Token
         Token.Limit,
         Token.List,
         Token.Comma,
+        Token.Import,
         Token.String,
         Token.And,
         Token.Or,
@@ -98,6 +102,8 @@ export class Token
         Token.NotEqual,
         Token.LessThan,
         Token.LeftParenthesis,
-        Token.RightParenthesis
+        Token.RightParenthesis,
+        Token.LeftCurlyParenthesis,
+        Token.RightCurlyParenthesis
     ]
 }

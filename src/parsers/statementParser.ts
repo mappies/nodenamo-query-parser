@@ -15,7 +15,8 @@ export class StatementParser extends CstParser
                             { ALT: () => this.SUBRULE(this.getStatement) },
                             { ALT: () => this.SUBRULE(this.deleteStatement) },
                             { ALT: () => this.SUBRULE(this.createTableStatement) },
-                            { ALT: () => this.SUBRULE(this.deleteTableStatement) }
+                            { ALT: () => this.SUBRULE(this.deleteTableStatement) },
+                            { ALT: () => this.SUBRULE(this.importStatement) }
                         ]
                     })
                 });
@@ -411,7 +412,70 @@ export class StatementParser extends CstParser
                                 this.SUBRULE(this.andOrExpression)
                                 this.CONSUME(Token.RightParenthesis, { ERR_MSG: ErrorMessage.EXPRESSION_MISSING_PARENTHESIS })
                             })
+    /**
+     * IMPORT Statement
+     * 
+     * Syntax: IMPORT identifier|{identifier} FROM string
+     */
+    importStatement = this.RULE(RuleName.ImportStatement, () =>
+                            {
+                                this.SUBRULE(this.importClause)
+                                this.SUBRULE(this.importFromClause)
+                            })
 
+    importClause = this.RULE(RuleName.ImportClause, () =>
+                            {
+                                this.CONSUME(Token.Import)
+                                this.OR({
+                                    DEF: [
+                                        { ALT: () => this.SUBRULE(this.importTypeClause, { LABEL: 'entity'}) },
+                                        { ALT: () => this.SUBRULE(this.importDefaultTypeClause, {LABEL: 'defaultEntity'}) }
+                                    ],
+                                    ERR_MSG: ErrorMessage.MISSING_ENTITY_NAME
+                                })
+                            })
+
+    importDefaultTypeClause = this.RULE(RuleName.ImportDefaultTypeClause, () =>
+                            {
+                                this.CONSUME(Token.Identifier, {ERR_MSG: ErrorMessage.MISSING_ENTITY_NAME}),
+                                this.OPTION(()=>{
+                                    this.CONSUME2(Token.Comma)
+                                    this.OR({
+                                        DEF: [
+                                            {ALT: () => this.SUBRULE(this.importTypeClause)},
+                                            {ALT: () => this.SUBRULE(this.importDefaultTypeClause)}
+                                        ],
+                                        ERR_MSG: ErrorMessage.MISSING_ENTITY_NAME
+                                    })
+                                })
+                            })
+
+    importTypeClause = this.RULE(RuleName.ImportTypeClause, () =>
+                            {
+                                this.CONSUME(Token.LeftCurlyParenthesis, {ERR_MSG: ErrorMessage.MISSING_ENTITY_NAME})
+                                this.CONSUME1(Token.Identifier, {ERR_MSG: ErrorMessage.MISSING_ENTITY_NAME})
+                                this.MANY(()=>{
+                                    this.CONSUME(Token.Comma)
+                                    this.CONSUME2(Token.Identifier, {ERR_MSG: ErrorMessage.MISSING_ENTITY_NAME})
+                                })
+                                this.CONSUME(Token.RightCurlyParenthesis, {ERR_MSG: ErrorMessage.IMPORT_MISSING_CLOSING_CURLY_PARENTHESIS}),
+                                this.OPTION(()=>{
+                                    this.CONSUME2(Token.Comma)
+                                    this.OR({
+                                        DEF: [
+                                            {ALT: () => this.SUBRULE(this.importTypeClause)},
+                                            {ALT: () => this.SUBRULE(this.importDefaultTypeClause)}
+                                        ],
+                                        ERR_MSG: ErrorMessage.MISSING_ENTITY_NAME
+                                    })
+                                })
+                            })
+
+    importFromClause = this.RULE(RuleName.ImportFromClause, () =>
+                            {
+                                this.CONSUME(Token.From, {ERR_MSG: ErrorMessage.IMPORT_MISSING_FROM})
+                                this.CONSUME(Token.String, {ERR_MSG: ErrorMessage.IMPORT_MISSING_PACKAGE_NAME})
+                            })
     /**
      * CREATE TABLE Statement
      * 

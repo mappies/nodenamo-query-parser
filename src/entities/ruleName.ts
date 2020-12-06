@@ -55,6 +55,15 @@ export enum RuleName
     ListByClause = "listByClauseRuleName",
 
     /**
+     * Import statement
+     */
+    ImportStatement = "importStatementRuleName",
+    ImportClause = "importClauseRuleName",
+    ImportFromClause = "importFromClauseRuleName",
+    ImportTypeClause = "importTypeClauseRuleName",
+    ImportDefaultTypeClause = "importDefaultTypeClauseRuleName",
+
+    /**
      * Where clause
      */
     WhereClause = "whereClauseRuleName",

@@ -45,6 +45,10 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         {
             return this.visit(ctx[RuleName.DeleteTableStatement])
         }
+        else if (ctx[RuleName.ImportStatement])
+        {
+            return this.visit(ctx[RuleName.ImportStatement])
+        }
     }
 
 
@@ -547,6 +551,72 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
             expressionAttributeValues: {[`:${lhs}`]: rhs}
         }
     }
+
+    /**
+     * IMPORT Statement
+     * 
+     * Syntax: IMPORT identifier|{identifier} FROM string
+     */
+    [RuleName.ImportStatement](ctx)
+    {
+        return {
+            type: "import",
+            entity: this.visit(ctx[RuleName.ImportClause]),
+            from: this.visit(ctx[RuleName.ImportFromClause])
+        }
+    }
+
+    [RuleName.ImportClause](ctx)
+    {
+        if(ctx.entity)
+        {
+            return this.visit(ctx.entity)
+        }
+        else if(ctx.defaultEntity)
+        {
+            return this.visit(ctx.defaultEntity)
+        }
+    }
+
+    [RuleName.ImportDefaultTypeClause](ctx)
+    {
+        let result = [{name: ctx.Identifier[0].image, default: true}]
+
+        if(ctx[RuleName.ImportTypeClause])
+        {
+            result.push(...this.visit(ctx[RuleName.ImportTypeClause]))
+        }
+        
+        if(ctx[RuleName.ImportDefaultTypeClause])
+        {
+            result.push(...this.visit(ctx[RuleName.ImportDefaultTypeClause]))
+        }
+
+        return result
+    }
+
+    [RuleName.ImportTypeClause](ctx)
+    {
+        let result = ctx.Identifier.map(identifier => ({name: identifier.image, default: false}))
+
+        if(ctx[RuleName.ImportDefaultTypeClause])
+        {
+            result.push(...this.visit(ctx[RuleName.ImportDefaultTypeClause]))
+        }
+        
+        if(ctx[RuleName.ImportTypeClause])
+        {
+            result.push(...this.visit(ctx[RuleName.ImportTypeClause]))
+        }
+
+        return result
+    }
+
+    [RuleName.ImportFromClause](ctx)
+    {
+        return this.removeEnclosingDoubleQuotes(ctx.String[0].image)
+    }
+
     /**
      * CREATE TABLE Statement
      * 
