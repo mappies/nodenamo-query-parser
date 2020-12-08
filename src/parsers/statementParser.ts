@@ -301,8 +301,8 @@ export class StatementParser extends CstParser
     sizeExpression = this.RULE(RuleName.SizeExpression, () => 
                             {
                                 this.CONSUME(Token.Size)
-                                this.CONSUME(Token.Identifier)
-                                this.CONSUME(Token.RightParenthesis)
+                                this.CONSUME(Token.Identifier, {ERR_MSG: ErrorMessage.MISSING_PROPERTY_NAME})
+                                this.CONSUME(Token.RightParenthesis, {ERR_MSG: ErrorMessage.EXPRESSION_MISSING_PARENTHESIS})
                                 this.SUBRULE(this.operand)
                                 this.SUBRULE(this.atomicExpression)
                             })
@@ -322,42 +322,42 @@ export class StatementParser extends CstParser
     attributeExistsExpression = this.RULE(RuleName.AttributeExistsExpression, () => 
                             {
                                 this.CONSUME(Token.AttributeExists)
-                                this.CONSUME(Token.Identifier)
-                                this.CONSUME(Token.RightParenthesis)
+                                this.CONSUME(Token.Identifier, {ERR_MSG: ErrorMessage.MISSING_PROPERTY_NAME})
+                                this.CONSUME(Token.RightParenthesis, {ERR_MSG: ErrorMessage.EXPRESSION_MISSING_PARENTHESIS})
                             })
 
     attributeNotExistsExpression = this.RULE(RuleName.AttributeNotExistsExpression, () => 
                             {
                                 this.CONSUME(Token.AttributeNotExists)
-                                this.CONSUME(Token.Identifier)
-                                this.CONSUME(Token.RightParenthesis)
+                                this.CONSUME(Token.Identifier, {ERR_MSG: ErrorMessage.MISSING_PROPERTY_NAME})
+                                this.CONSUME(Token.RightParenthesis, {ERR_MSG: ErrorMessage.EXPRESSION_MISSING_PARENTHESIS})
                             })
 
     attributeTypeExpression = this.RULE(RuleName.AttributeTypeExpression, () => 
                             {
                                 this.CONSUME(Token.AttributeType)
-                                this.CONSUME(Token.Identifier)
-                                this.CONSUME(Token.Comma)
-                                this.CONSUME(Token.String)
-                                this.CONSUME(Token.RightParenthesis)
+                                this.CONSUME(Token.Identifier, {ERR_MSG: ErrorMessage.MISSING_PROPERTY_NAME})
+                                this.CONSUME(Token.Comma, {ERR_MSG: ErrorMessage.EXPRESSION_MISSING_PROPERTY_TYPE})
+                                this.CONSUME(Token.String, {ERR_MSG: ErrorMessage.EXPRESSION_MISSING_PROPERTY_TYPE})
+                                this.CONSUME(Token.RightParenthesis, {ERR_MSG: ErrorMessage.EXPRESSION_MISSING_PARENTHESIS})
                             })
 
     beginsWithExpression = this.RULE(RuleName.BeginsWithExpression, () => 
                             {
                                 this.CONSUME(Token.BeginsWith)
-                                this.CONSUME(Token.Identifier)
-                                this.CONSUME(Token.Comma)
-                                this.CONSUME(Token.String)
-                                this.CONSUME(Token.RightParenthesis)
+                                this.CONSUME(Token.Identifier, {ERR_MSG: ErrorMessage.MISSING_PROPERTY_NAME})
+                                this.CONSUME(Token.Comma, {ERR_MSG: ErrorMessage.EXPRESSION_MISSING_SEARCH_STRING})
+                                this.CONSUME(Token.String, {ERR_MSG: ErrorMessage.EXPRESSION_MISSING_SEARCH_STRING})
+                                this.CONSUME(Token.RightParenthesis, {ERR_MSG: ErrorMessage.EXPRESSION_MISSING_PARENTHESIS})
                             })
 
     containsExpression = this.RULE(RuleName.ContainsExpression, () => 
                             {
                                 this.CONSUME(Token.Contains)
-                                this.CONSUME(Token.Identifier)
-                                this.CONSUME(Token.Comma)
-                                this.CONSUME(Token.String)
-                                this.CONSUME(Token.RightParenthesis)
+                                this.CONSUME(Token.Identifier, {ERR_MSG: ErrorMessage.MISSING_PROPERTY_NAME})
+                                this.CONSUME(Token.Comma, {ERR_MSG: ErrorMessage.EXPRESSION_MISSING_SEARCH_STRING})
+                                this.CONSUME(Token.String, {ERR_MSG: ErrorMessage.EXPRESSION_MISSING_SEARCH_STRING})
+                                this.CONSUME(Token.RightParenthesis, {ERR_MSG: ErrorMessage.EXPRESSION_MISSING_PARENTHESIS})
                             })
                     
     inExpression = this.RULE(RuleName.InExpression, () =>

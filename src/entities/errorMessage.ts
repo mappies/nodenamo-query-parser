@@ -37,4 +37,6 @@ export class ErrorMessage
     static readonly IMPORT_MISSING_PACKAGE_NAME = 'Missing a package name from the IMPORT statement.'
 
     static readonly EXPRESSION_MISSING_PARENTHESIS = 'Missing a closing parenthesis in the expression.'
+    static readonly EXPRESSION_MISSING_PROPERTY_TYPE = 'Missing a property type.'
+    static readonly EXPRESSION_MISSING_SEARCH_STRING = 'Missing a string to search for.'
 }
