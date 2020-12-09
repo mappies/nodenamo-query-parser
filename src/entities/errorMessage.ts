@@ -40,4 +40,11 @@ export class ErrorMessage
     static readonly EXPRESSION_MISSING_PARENTHESIS = 'Missing a closing parenthesis in the expression.'
     static readonly EXPRESSION_MISSING_PROPERTY_TYPE = 'Missing a property type.'
     static readonly EXPRESSION_MISSING_SEARCH_STRING = 'Missing a string to search for.'
+
+
+    static readonly JSON_MISSING_CLOSING_BRACKET = 'Invalid JSON array. Missing a closing bracket.'
+    static readonly JSON_MISSING_PROPERTY_KEY = 'Invalid JSON object. Missing a property key.'
+    static readonly JSON_MISSING_PROPERTY_VALUE = 'Invalid JSON object. Missing a property value.'
+    static readonly JSON_MISSING_CLOSING_CURLY_PARENTHESIS = 'Invalid JSON object. Missing a closing curly parenthesis.'
+    static readonly JSON_INVALID_VALUE = 'Invalid JSON value. Expect a string, a number, a boolean, an array, or an object.'
 }

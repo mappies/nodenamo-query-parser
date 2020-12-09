@@ -33,3 +33,17 @@ export function parseExpression(text)
 
     return new StatementSemanticVisitor().visit(cst)
 }
+
+export function parseJsonObject(text) 
+{
+    parser.input = lexer.tokenize(text + ' ').tokens;
+
+    let cst = parser.jsonObject();
+
+    if (parser.errors.length > 0) 
+    {
+        throw parser.errors[0]
+    }
+
+    return new StatementSemanticVisitor().visit(cst)
+}

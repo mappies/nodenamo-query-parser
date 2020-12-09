@@ -575,6 +575,61 @@ export class StatementParser extends CstParser
                             })
 
     /**
+     * JSON
+     */
+    jsonObject = this.RULE(RuleName.JsonObject, () =>
+                            {
+                                this.CONSUME(Token.LeftCurlyParenthesis)
+                                this.OPTION(() => {
+                                  this.SUBRULE(this.jsonObjectItem)
+                                  this.MANY(() => {
+                                    this.CONSUME(Token.Comma)
+                                    this.SUBRULE2(this.jsonObjectItem)
+                                  })
+                                })
+                                this.CONSUME(Token.RightCurlyParenthesis, {ERR_MSG: ErrorMessage.JSON_MISSING_CLOSING_CURLY_PARENTHESIS})
+                            })
+
+    jsonObjectItem = this.RULE(RuleName.JsonObjectItem, () =>
+                            {
+                                this.OR({
+                                    DEF: [
+                                        {ALT: () => this.CONSUME(Token.String)},
+                                        {ALT: () => this.CONSUME(Token.Identifier)}
+                                    ],
+                                    ERR_MSG: ErrorMessage.JSON_MISSING_PROPERTY_KEY
+                                })
+                                this.CONSUME(Token.Colon, {ERR_MSG: ErrorMessage.JSON_MISSING_PROPERTY_VALUE})
+                                this.SUBRULE(this.jsonValue)
+                            })
+
+    jsonArray = this.RULE(RuleName.JsonArray, () =>
+                            {
+                                this.CONSUME(Token.LeftSquareBracket)
+                                this.OPTION(() => {
+                                    this.SUBRULE(this.jsonValue)
+                                    this.MANY(() => {
+                                    this.CONSUME(Token.Comma)
+                                    this.SUBRULE2(this.jsonValue)
+                                })})
+                                this.CONSUME(Token.RightSquareBracket, {ERR_MSG: ErrorMessage.JSON_MISSING_CLOSING_BRACKET})
+                            })
+
+    jsonValue = this.RULE(RuleName.JsonValue, () =>
+                            {
+                                this.OR({
+                                    DEF: [
+                                        { ALT: () => this.CONSUME(Token.String) },
+                                        { ALT: () => this.CONSUME(Token.Integer) },
+                                        { ALT: () => this.SUBRULE(this.jsonObject) },
+                                        { ALT: () => this.SUBRULE(this.jsonArray) },
+                                        { ALT: () => this.CONSUME(Token.Boolean) },
+                                        { ALT: () => this.CONSUME(Token.Null) }
+                                    ],
+                                    ERR_MSG: ErrorMessage.JSON_INVALID_VALUE
+                                }) 
+                            })
+    /**
      * ObjectId
      */
     objectId = this.RULE(RuleName.ObjectId, () => 

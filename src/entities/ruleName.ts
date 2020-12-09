@@ -102,6 +102,14 @@ export enum RuleName
     Operand = "OperandRuleName",
 
     /**
+     * JSON
+     */
+    JsonObject = 'jsonObjectRuleName',
+    JsonArray = 'jsonArrayRuleName',
+    JsonObjectItem = 'jsonObjectItemRuleName',
+    JsonValue = 'jsonValueRuleName',
+
+    /**
      * Misc
      */
     ObjectId = "objectIdRuleName"

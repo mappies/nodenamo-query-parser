@@ -30,8 +30,9 @@ export class Token
     static readonly Identifier = createToken({ name: "Identifier", pattern: /[a-zA-Z][\w\-\.]*/ })
     static readonly String = createToken({ name: "String", pattern: /"(:?[^\\"]|\\(:?[bfnrtv"\\/]|u[0-9a-fA-F]{4}))*"/ })
     static readonly Comma = createToken({ name: "Comma", pattern: /,/ })
-    static readonly Integer = createToken({ name: "Integer", pattern: /-?0|-?[1-9]\d*/ })
-    static readonly Boolean = createToken({ name: "Boolean", pattern: /true|false/i })
+    static readonly Colon = createToken({ name: "Colon", pattern: /:/ })
+    static readonly Integer = createToken({ name: "Integer", pattern: /-?(0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?/ })
+    static readonly Boolean = createToken({ name: "Boolean", pattern: /true|false/ })
     static readonly GreaterThan = createToken({ name: "GreaterThan", pattern: />/ })
     static readonly GreaterThanEqual = createToken({ name: "GreaterThanEqual", pattern: />=/ })
     static readonly Equal = createToken({ name: "Equal", pattern: /=/ })
@@ -43,6 +44,9 @@ export class Token
     static readonly RightParenthesis = createToken({ name: "RightParenthesis", pattern: /\)/ })
     static readonly LeftCurlyParenthesis = createToken({ name: "LeftCurlyParenthesis", pattern: /\{/ })
     static readonly RightCurlyParenthesis = createToken({ name: "RightCurlyParenthesis", pattern: /\}/ })
+    static readonly LeftSquareBracket = createToken({ name: "LeftSquareBracket", pattern: /\[/ })
+    static readonly RightSquareBracket = createToken({ name: "RightSquareBracket", pattern: /\]/ })
+    static readonly Null = createToken({ name: "Null", pattern: /null/ })
     static readonly And = createToken({ name: "And", pattern: /and/i })
     static readonly Or = createToken({ name: "Or", pattern: /or/i })
     static readonly In = createToken({ name: "In", pattern: /in/i })
@@ -84,6 +88,10 @@ export class Token
         Token.ShowTables,
         Token.List,
         Token.Comma,
+        Token.Colon,
+        Token.Null,
+        Token.LeftSquareBracket,
+        Token.RightSquareBracket,
         Token.Import,
         Token.String,
         Token.And,

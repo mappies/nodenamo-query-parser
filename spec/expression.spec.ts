@@ -24,8 +24,8 @@ describe('Expression', function ()
         })
     });
     [
-        { value: "True", expected: true },
-        { value: "FALSE", expected: false },
+        { value: "true", expected: true },
+        { value: "false", expected: false },
         { value: 0, expected: 0 },
         { value: -1, expected: -1 },
         { value: 123, expected: 123 },

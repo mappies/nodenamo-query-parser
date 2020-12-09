@@ -725,6 +725,72 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
     }
 
     /**
+     * JSON
+     */
+    [RuleName.JsonObject](ctx)
+    {
+        let keyValuePairs = ctx[RuleName.JsonObjectItem]?.map(item => (this.visit(item))) || []
+
+        let result = {}
+
+        for(let kvp of keyValuePairs)
+        {
+            result = Object.assign(result, kvp)
+        }
+
+        return result
+    }
+
+    [RuleName.JsonObjectItem](ctx)
+    {
+        let key = ctx.String ? this.removeEnclosingDoubleQuotes(ctx.String[0].image) : ctx.Identifier[0].image
+        let value = this.visit(ctx[RuleName.JsonValue])
+
+        return {[key]: value}
+    }
+
+    [RuleName.JsonArray](ctx)
+    {
+        return ctx[RuleName.JsonValue]?.map(clause => this.visit(clause)) || []
+    }
+
+    [RuleName.JsonValue](ctx)
+    {
+        if(ctx.String)
+        {
+            return JSON.parse(ctx.String[0].image)
+        }
+        else if(ctx.Integer)
+        {
+            return Number(ctx.Integer[0].image)
+        }
+        else if(ctx.Boolean)
+        {
+            return ctx.Boolean[0].image.toLowerCase() === 'true'
+        }
+        else if(ctx.Null)
+        {
+            return null
+        }
+        else if(ctx.Undefined)
+        {
+            return undefined
+        }
+        else if(ctx[RuleName.JsonArray])
+        {
+            return this.visit(ctx[RuleName.JsonArray])
+        }
+        else if(ctx[RuleName.JsonObject])
+        {
+            return this.visit(ctx[RuleName.JsonObject])
+        }
+        else
+        {
+            return undefined
+        }
+    }
+
+    /**
      * ObjectId
      */
     [RuleName.ObjectId](ctx)
