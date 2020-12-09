@@ -35,6 +35,7 @@ export class ErrorMessage
     static readonly IMPORT_MISSING_FROM = 'Missing "FROM" clause from the IMPORT statement.'
     static readonly IMPORT_MISSING_CLOSING_CURLY_PARENTHESIS = 'Missing a closing curly parenthesis.'
     static readonly IMPORT_MISSING_PACKAGE_NAME = 'Missing a package name from the IMPORT statement.'
+    static readonly IMPORT_MISSING_ALIAS = 'Missing an alias name after AS.'
 
     static readonly EXPRESSION_MISSING_PARENTHESIS = 'Missing a closing parenthesis in the expression.'
     static readonly EXPRESSION_MISSING_PROPERTY_TYPE = 'Missing a property type.'

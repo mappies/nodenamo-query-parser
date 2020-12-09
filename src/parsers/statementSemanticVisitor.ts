@@ -563,7 +563,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
     /**
      * IMPORT Statement
      * 
-     * Syntax: IMPORT identifier|{identifier} FROM string
+     * Syntax: IMPORT identifier (AS identifier)?|{identifier (AS identifier)?} FROM string
      */
     [RuleName.ImportStatement](ctx)
     {
@@ -588,11 +588,13 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
 
     [RuleName.ImportDefaultTypeClause](ctx)
     {
-        let result = [{name: ctx.Identifier[0].image, default: true}]
+        let alias = ctx.alias ? ctx.alias[0].image : ctx.Identifier[0].image
+        
+        let result = [{name: ctx.Identifier[0].image, as: alias, default: true}]
 
-        if(ctx[RuleName.ImportTypeClause])
+        if(ctx[RuleName.ImportNonDefaultTypeClause])
         {
-            result.push(...this.visit(ctx[RuleName.ImportTypeClause]))
+            result.push(...this.visit(ctx[RuleName.ImportNonDefaultTypeClause]))
         }
         
         if(ctx[RuleName.ImportDefaultTypeClause])
@@ -603,21 +605,28 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         return result
     }
 
-    [RuleName.ImportTypeClause](ctx)
+    [RuleName.ImportNonDefaultTypeClause](ctx)
     {
-        let result = ctx.Identifier.map(identifier => ({name: identifier.image, default: false}))
+        let result = ctx.importTypeClauseRuleName.map(clause => this.visit(clause))
 
         if(ctx[RuleName.ImportDefaultTypeClause])
         {
             result.push(...this.visit(ctx[RuleName.ImportDefaultTypeClause]))
         }
         
-        if(ctx[RuleName.ImportTypeClause])
+        if(ctx[RuleName.ImportNonDefaultTypeClause])
         {
-            result.push(...this.visit(ctx[RuleName.ImportTypeClause]))
+            result.push(...this.visit(ctx[RuleName.ImportNonDefaultTypeClause]))
         }
 
         return result
+    }
+
+    [RuleName.ImportTypeClause](ctx)
+    {
+        let alias =  ctx.alias ? ctx.alias[0].image : ctx.Identifier[0].image
+
+        return {name: ctx.Identifier[0].image, as: alias, default: false}
     }
 
     [RuleName.ImportFromClause](ctx)

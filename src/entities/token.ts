@@ -21,7 +21,8 @@ export class Token
     static readonly Resume = createToken({ name: "Resume", pattern: /Resume/i })
     static readonly Order = createToken({ name: "Order", pattern: /Order/i })
     static readonly Limit = createToken({ name: "Limit", pattern: /Limit/i })
-    static readonly By = createToken({ name: "By", pattern: /By/i })
+    static readonly By = createToken({ name: "By", pattern: /By\s+/i })
+    static readonly As = createToken({ name: "As", pattern: /As\s+/i })
     static readonly Asc = createToken({ name: "Asc", pattern: /\sAsc\W+/i })
     static readonly Desc = createToken({ name: "Desc", pattern:/\sDesc\W+/i })
     static readonly Star = createToken({ name: "Star", pattern: /\*/ })
@@ -73,6 +74,7 @@ export class Token
         Token.Order,
         Token.Using,
         Token.Resume,
+        Token.As,
         Token.Asc,
         Token.Desc,
         Token.Star,

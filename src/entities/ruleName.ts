@@ -73,6 +73,7 @@ export enum RuleName
     ImportClause = "importClauseRuleName",
     ImportFromClause = "importFromClauseRuleName",
     ImportTypeClause = "importTypeClauseRuleName",
+    ImportNonDefaultTypeClause = "importNonDefaultTypeClauseRuleName",
     ImportDefaultTypeClause = "importDefaultTypeClauseRuleName",
 
     /**
