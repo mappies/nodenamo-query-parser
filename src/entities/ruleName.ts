@@ -19,6 +19,12 @@ export enum RuleName
     CreateTableWithCapacityOfClause = "withCapacityOfClauseRuleName",
 
     /**
+     * SHOW TABLES statement
+     */
+    ShowTablesStatement = "showTablesStatement",
+    ShowTablesClause = "showTablesClauseRuleName",
+
+    /**
      * DELETE TABLE statement
      */
     DeleteTableStatement = "deleteTableStatement",

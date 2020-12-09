@@ -49,6 +49,10 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         {
             return this.visit(ctx[RuleName.ImportStatement])
         }
+        else if (ctx[RuleName.ShowTablesStatement])
+        {
+            return this.visit(ctx[RuleName.ShowTablesStatement])
+        }
     }
 
 
@@ -647,6 +651,23 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
             readCapacity: Number(ctx.Integer[0].image),
             writeCapacity: Number(ctx.Integer[1].image)
         }
+    }
+
+    /**
+     * SHOW TABLES Statement
+     * 
+     * Syntax: SHOW TABLES
+     */
+    [RuleName.ShowTablesStatement](ctx)
+    {
+        return {
+            type: "show_tables"
+        }
+    }
+
+    [RuleName.ShowTablesClause](ctx)
+    {
+        return
     }
 
     /**

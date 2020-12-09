@@ -16,7 +16,8 @@ export class StatementParser extends CstParser
                             { ALT: () => this.SUBRULE(this.deleteStatement) },
                             { ALT: () => this.SUBRULE(this.createTableStatement) },
                             { ALT: () => this.SUBRULE(this.deleteTableStatement) },
-                            { ALT: () => this.SUBRULE(this.importStatement) }
+                            { ALT: () => this.SUBRULE(this.importStatement) },
+                            { ALT: () => this.SUBRULE(this.showTablesStatement) }
                         ]
                     })
                 });
@@ -508,7 +509,20 @@ export class StatementParser extends CstParser
                                 this.CONSUME(Token.Comma, { ERR_MSG: ErrorMessage.CREATE_TABLE_MISSING_WRITE_CAPACITY })
                                 this.CONSUME2(Token.Integer, { ERR_MSG: ErrorMessage.CREATE_TABLE_MISSING_WRITE_CAPACITY })
                             })
+    /**
+     * SHOW TABLES Statement
+     * 
+     * Syntax: SHOW TABLES
+     */
+    showTablesStatement = this.RULE(RuleName.ShowTablesStatement, () =>
+                            {
+                                this.SUBRULE(this.showTablesClause)
+                            })
 
+    showTablesClause = this.RULE(RuleName.ShowTablesClause, ()=>
+                            {
+                                this.CONSUME(Token.ShowTables)
+                            })
     /**
      * DELETE TABLE Statement
      * 
