@@ -53,6 +53,10 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         {
             return this.visit(ctx[RuleName.ShowTablesStatement])
         }
+        else if (ctx[RuleName.RemoveTableStatement])
+        {
+            return this.visit(ctx[RuleName.RemoveTableStatement])
+        }
     }
 
 
@@ -668,6 +672,24 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
     [RuleName.ShowTablesClause](ctx)
     {
         return
+    }
+
+    /**
+     * REMOVE TABLE Statement
+     * 
+     * Syntax: REMOVE TABLE identifier
+     */
+    [RuleName.RemoveTableStatement](ctx)
+    {
+        return {
+            type: "remove_table",
+            name: this.visit(ctx[RuleName.RemoveTableClause])
+        }
+    }
+
+    [RuleName.RemoveTableClause](ctx)
+    {
+        return ctx.Identifier[0].image;
     }
 
     /**

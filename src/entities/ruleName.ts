@@ -25,6 +25,12 @@ export enum RuleName
     ShowTablesClause = "showTablesClauseRuleName",
 
     /**
+     * REMOVE TABLE statement
+     */
+    RemoveTableStatement = "removeTableStatement",
+    RemoveTableClause = "removeTableClauseRuleName",
+
+    /**
      * DELETE TABLE statement
      */
     DeleteTableStatement = "deleteTableStatement",
