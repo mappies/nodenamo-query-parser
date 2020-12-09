@@ -180,7 +180,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
 
     [RuleName.FindLimitClause](ctx)
     {
-        return Number(ctx.Integer[0].image);
+        return Number(ctx.Number[0].image);
     }
 
     [RuleName.FindStronglyConsistentClause](ctx) 
@@ -439,7 +439,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         }
         else 
         {
-            return Number(ctx.Integer[0].image)
+            return Number(ctx.Number[0].image)
         }
     }
     [RuleName.ParenthesisExpression](ctx)
@@ -661,8 +661,8 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
     [RuleName.CreateTableWithCapacityOfClause](ctx)
     {
         return {
-            readCapacity: Number(ctx.Integer[0].image),
-            writeCapacity: Number(ctx.Integer[1].image)
+            readCapacity: Number(ctx.Number[0].image),
+            writeCapacity: Number(ctx.Number[1].image)
         }
     }
 
@@ -760,9 +760,9 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         {
             return JSON.parse(ctx.String[0].image)
         }
-        else if(ctx.Integer)
+        else if(ctx.Number)
         {
-            return Number(ctx.Integer[0].image)
+            return Number(ctx.Number[0].image)
         }
         else if(ctx.Boolean)
         {
@@ -802,7 +802,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         }
         else 
         {
-            return Number(ctx.Integer[0].image)
+            return Number(ctx.Number[0].image)
         }
     }
 

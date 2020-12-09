@@ -176,7 +176,7 @@ export class StatementParser extends CstParser
     findLimitClause = this.RULE(RuleName.FindLimitClause, () =>
                 {
                     this.CONSUME(Token.Limit)
-                    this.CONSUME(Token.Integer, {ERR_MSG: ErrorMessage.FIND_MISSING_LIMIT})
+                    this.CONSUME(Token.Number, {ERR_MSG: ErrorMessage.FIND_MISSING_LIMIT})
                 })
 
     findStronglyConsistentClause = this.RULE(RuleName.FindStronglyConsistentClause, () =>
@@ -401,7 +401,7 @@ export class StatementParser extends CstParser
                             {
                                 this.OR({
                                     DEF: [
-                                        { ALT:() => { this.CONSUME(Token.Integer) }},
+                                        { ALT:() => { this.CONSUME(Token.Number) }},
                                         { ALT:() => { this.CONSUME(Token.String) }},
                                         { ALT:() => { this.CONSUME(Token.Boolean) }}
                                     ]
@@ -519,9 +519,9 @@ export class StatementParser extends CstParser
     createTableWithCapacityOf = this.RULE(RuleName.CreateTableWithCapacityOfClause, () =>
                             {
                                 this.CONSUME(Token.WithCapacityOf)
-                                this.CONSUME1(Token.Integer, { ERR_MSG: ErrorMessage.CREATE_TABLE_MISSING_READ_CAPACITY })
+                                this.CONSUME1(Token.Number, { ERR_MSG: ErrorMessage.CREATE_TABLE_MISSING_READ_CAPACITY })
                                 this.CONSUME(Token.Comma, { ERR_MSG: ErrorMessage.CREATE_TABLE_MISSING_WRITE_CAPACITY })
-                                this.CONSUME2(Token.Integer, { ERR_MSG: ErrorMessage.CREATE_TABLE_MISSING_WRITE_CAPACITY })
+                                this.CONSUME2(Token.Number, { ERR_MSG: ErrorMessage.CREATE_TABLE_MISSING_WRITE_CAPACITY })
                             })
     /**
      * SHOW TABLES Statement
@@ -620,7 +620,7 @@ export class StatementParser extends CstParser
                                 this.OR({
                                     DEF: [
                                         { ALT: () => this.CONSUME(Token.String) },
-                                        { ALT: () => this.CONSUME(Token.Integer) },
+                                        { ALT: () => this.CONSUME(Token.Number) },
                                         { ALT: () => this.SUBRULE(this.jsonObject) },
                                         { ALT: () => this.SUBRULE(this.jsonArray) },
                                         { ALT: () => this.CONSUME(Token.Boolean) },
@@ -637,7 +637,7 @@ export class StatementParser extends CstParser
                                 this.OR({
                                     DEF: [
                                         { ALT: () => this.CONSUME(Token.String)},
-                                        { ALT: () => this.CONSUME(Token.Integer) }
+                                        { ALT: () => this.CONSUME(Token.Number) }
                                     ],
                                     ERR_MSG: ErrorMessage.MISSING_OBJECT_ID
                                 })

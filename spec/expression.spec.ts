@@ -29,6 +29,7 @@ describe('Expression', function ()
         { value: 0, expected: 0 },
         { value: -1, expected: -1 },
         { value: 123, expected: 123 },
+        { value: 123.456, expected: 123.456 },
         { value: '"word"', expected: "word" },
         { value: '"escaped\\"word\\""', expected: "escaped\\\"word\\\"" }
     ]
