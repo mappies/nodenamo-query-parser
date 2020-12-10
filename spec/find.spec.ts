@@ -14,9 +14,9 @@ describe('Find Statement', function ()
         { statement: 'find * from user using user-index', 
           expected: {type: 'find', projections: undefined, from: 'user', using: 'user-index', where: undefined, filter: undefined, resume: undefined, order: undefined, limit: undefined, stronglyConsistent: undefined}},
         { statement: 'find * from user where name = "some one"', 
-          expected: {type: 'find', projections: undefined, from: 'user', using: undefined, where: { expression: "#name = :name", expressionAttributeNames: {'#name': 'name'}, expressionAttributeValues: {':name': "some one"}}, filter: undefined, resume: undefined, order: undefined, limit: undefined, stronglyConsistent: undefined}},
+          expected: {type: 'find', projections: undefined, from: 'user', using: undefined, where: { keyConditions: "#name = :name", expressionAttributeNames: {'#name': 'name'}, expressionAttributeValues: {':name': "some one"}}, filter: undefined, resume: undefined, order: undefined, limit: undefined, stronglyConsistent: undefined}},
         { statement: 'find * from user filter name = "some one"', 
-          expected: {type: 'find', projections: undefined, from: 'user', using: undefined, where: undefined, filter: { expression: "#name = :name", expressionAttributeNames: {'#name': 'name'}, expressionAttributeValues: {':name': "some one"}}, resume: undefined, order: undefined, limit: undefined, stronglyConsistent: undefined}},
+          expected: {type: 'find', projections: undefined, from: 'user', using: undefined, where: undefined, filter: { filterExpression: "#name = :name", expressionAttributeNames: {'#name': 'name'}, expressionAttributeValues: {':name': "some one"}}, resume: undefined, order: undefined, limit: undefined, stronglyConsistent: undefined}},
         { statement: 'find * from user resume nextPageToken', 
           expected: {type: 'find', projections: undefined, from: 'user', using: undefined, where: undefined, filter: undefined, resume: 'nextPageToken', order: undefined, limit: undefined, stronglyConsistent: undefined}},
         { statement: 'find * from user order asc', 
@@ -28,7 +28,7 @@ describe('Find Statement', function ()
         { statement: 'find * from user strongly consistent', 
           expected: {type: 'find', projections: undefined, from: 'user', using: undefined, where: undefined, filter: undefined, resume: undefined, order: undefined, limit: undefined, stronglyConsistent: true}},
         { statement: 'find id, name, email from user using an-index where name = "some one" filter email = "someone@example.com" resume token order desc limit 2 strongly consistent', 
-          expected: {type: 'find', projections: ['id', 'name', 'email'], from: 'user', using: 'an-index', where: { expression: "#name = :name", expressionAttributeNames: {'#name': 'name'}, expressionAttributeValues: {':name': 'some one'}}, filter: { expression: "#email = :email", expressionAttributeNames: {'#email': 'email'}, expressionAttributeValues: {':email': "someone@example.com"}}, resume: 'token', order: -1, limit: 2, stronglyConsistent: true}},
+          expected: {type: 'find', projections: ['id', 'name', 'email'], from: 'user', using: 'an-index', where: { keyConditions: "#name = :name", expressionAttributeNames: {'#name': 'name'}, expressionAttributeValues: {':name': 'some one'}}, filter: { filterExpression: "#email = :email", expressionAttributeNames: {'#email': 'email'}, expressionAttributeValues: {':email': "someone@example.com"}}, resume: 'token', order: -1, limit: 2, stronglyConsistent: true}},
     ]
     .forEach(test => 
     {

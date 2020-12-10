@@ -1,6 +1,16 @@
 import { RuleName } from '../entities/ruleName';
 import { Token } from '../entities/token';
+import { IUpdateStatement } from '../interfaces/IUpdateStatement';
 import { StatementParser } from './statementParser';
+import { IInsertStatement } from '../interfaces/IInsertStatement';
+import { IGetStatement } from '../interfaces/IGetStatement';
+import { IDeleteStatement } from '../interfaces/IDeleteStatement';
+import { IFindStatement } from '../interfaces/IFindStatement';
+import { IListStatement } from '../interfaces/IListStatement';
+import { ICreateTableStatement } from '../interfaces/ICreateTableStatement';
+import { IDeleteTableStatement } from '../interfaces/IDeleteTableStatement';
+import { IShowTablesStatement } from '../interfaces/IShowTablesStatement';
+import { IRemoveTableStatement } from '../interfaces/IRemoveTableStatement';
 
 const statementParser = new StatementParser()
 const BaseSQLVisitor = statementParser.getBaseCstVisitorConstructor()
@@ -72,7 +82,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
      * 
      * Syntax: INSERT jsonObject INTO identifier (where expression)? 
      */
-    [RuleName.InsertStatement](ctx) 
+    [RuleName.InsertStatement](ctx): IInsertStatement
     {
         return {
             type: "insert",
@@ -97,7 +107,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
      * 
      * Syntax: GET string|number FROM identifier (Strongly Consistent)? 
      */
-    [RuleName.GetStatement](ctx) 
+    [RuleName.GetStatement](ctx): IGetStatement
     {
         return {
             type: "get",
@@ -127,7 +137,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
      * 
      * Syntax: UPDATE jsonObject FROM identifier (where expression)?  (with version check)?
      */
-    [RuleName.UpdateStatement](ctx) 
+    [RuleName.UpdateStatement](ctx): IUpdateStatement
     {
         return {
             type: "update",
@@ -158,7 +168,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
      * 
      * Syntax: DELETE TABLE FOR identifier
      */
-    [RuleName.DeleteStatement](ctx)
+    [RuleName.DeleteStatement](ctx): IDeleteStatement
     {
         return {
             type: "delete",
@@ -190,14 +200,14 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
      *         (LIMIT number)? 
      *         (Strongly Consistent)? 
      */
-    [RuleName.FindStatement](ctx)
+    [RuleName.FindStatement](ctx): IFindStatement
     {
         return {
             type: "find",
             projections: this.visit(ctx[RuleName.FindClause]),
             from: this.visit(ctx[RuleName.FindFromClause]),
             using: this.visit(ctx[RuleName.FindUsingClause]),
-            where: this.visit(ctx[RuleName.WhereClause]),
+            where: this.visit(ctx[RuleName.WhereClause], 'keyConditions'),
             filter: this.visit(ctx[RuleName.FindFilterClause]),
             resume: this.visit(ctx[RuleName.FindResumeClause]),
             order: this.visit(ctx[RuleName.FindOrderClause]),
@@ -228,7 +238,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
 
     [RuleName.FindFilterClause](ctx)
     {
-        return this.visit(ctx[RuleName.Expression])
+        return this.visit(ctx[RuleName.Expression], 'filterExpression')
     }
 
     [RuleName.FindResumeClause](ctx)
@@ -263,7 +273,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
      *         (LIMIT number)? 
      *         (Strongly Consistent)? 
      */
-    [RuleName.ListStatement](ctx)
+    [RuleName.ListStatement](ctx): IListStatement
     {
         return {
             type: "list",
@@ -302,7 +312,12 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
      */
     [RuleName.WhereClause](ctx, expressionKeyName?:string)
     {
-        let result = this.visit(ctx[RuleName.Expression], expressionKeyName)
+        return this.visit(ctx[RuleName.Expression], expressionKeyName)
+    }
+
+    [RuleName.Expression](ctx, expressionKeyName?:string)
+    {
+        let result = this.visit(ctx[RuleName.AndOrExpression])
 
         if(expressionKeyName && result?.expression)
         {
@@ -311,11 +326,6 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         }
 
         return result
-    }
-
-    [RuleName.Expression](ctx)
-    {
-        return this.visit(ctx[RuleName.AndOrExpression])
     }
     
     /**
@@ -711,7 +721,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
      * 
      * Syntax: CREATE TABLE FOR identifier WITH CAPACITY OF number number
      */
-    [RuleName.CreateTableStatement](ctx)
+    [RuleName.CreateTableStatement](ctx): ICreateTableStatement
     {
         return {
             type: "create_table",
@@ -743,7 +753,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
      * 
      * Syntax: SHOW TABLES
      */
-    [RuleName.ShowTablesStatement](ctx)
+    [RuleName.ShowTablesStatement](ctx): IShowTablesStatement
     {
         return {
             type: "show_tables"
@@ -760,7 +770,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
      * 
      * Syntax: REMOVE TABLE identifier
      */
-    [RuleName.RemoveTableStatement](ctx)
+    [RuleName.RemoveTableStatement](ctx): IRemoveTableStatement
     {
         return {
             type: "remove_table",
@@ -778,7 +788,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
      * 
      * Syntax: DELETE TABLE FOR identifier
      */
-    [RuleName.DeleteTableStatement](ctx)
+    [RuleName.DeleteTableStatement](ctx): IDeleteTableStatement
     {
         return {
             type: "delete_table",

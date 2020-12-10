@@ -18,7 +18,7 @@ describe('List Statement', function ()
         { statement: 'list * from user by "name","last_login"', 
           expected: {type: 'list', projections: undefined, from: 'user', using: undefined, by: {hash: "name", range: "last_login"}, filter: undefined, resume: undefined, order: undefined, limit: undefined, stronglyConsistent: undefined}},
         { statement: 'list * from user filter name = "some one"', 
-          expected: {type: 'list', projections: undefined, from: 'user', using: undefined, by: undefined, filter: { expression: "#name = :name", expressionAttributeNames: {'#name': 'name'}, expressionAttributeValues: {':name': "some one"}}, resume: undefined, order: undefined, limit: undefined, stronglyConsistent: undefined}},
+          expected: {type: 'list', projections: undefined, from: 'user', using: undefined, by: undefined, filter: { filterExpression: "#name = :name", expressionAttributeNames: {'#name': 'name'}, expressionAttributeValues: {':name': "some one"}}, resume: undefined, order: undefined, limit: undefined, stronglyConsistent: undefined}},
         { statement: 'list * from user resume nextPageToken', 
           expected: {type: 'list', projections: undefined, from: 'user', using: undefined, by: undefined, filter: undefined, resume: 'nextPageToken', order: undefined, limit: undefined, stronglyConsistent: undefined}},
         { statement: 'list * from user order asc', 
@@ -30,7 +30,7 @@ describe('List Statement', function ()
         { statement: 'list * from user strongly consistent', 
           expected: {type: 'list', projections: undefined, from: 'user', using: undefined, by: undefined, filter: undefined, resume: undefined, order: undefined, limit: undefined, stronglyConsistent: true}},
         { statement: 'list id, name, email from user using an-index by "name" , "email" filter email = "someone@example.com" resume token order desc limit 2 strongly consistent', 
-          expected: {type: 'list', projections: ['id', 'name', 'email'], from: 'user', using: 'an-index', by: {hash: 'name', range: 'email'}, filter: { expression: "#email = :email", expressionAttributeNames: {'#email': 'email'}, expressionAttributeValues: {':email': "someone@example.com"}}, resume: 'token', order: -1, limit: 2, stronglyConsistent: true}},
+          expected: {type: 'list', projections: ['id', 'name', 'email'], from: 'user', using: 'an-index', by: {hash: 'name', range: 'email'}, filter: { filterExpression: "#email = :email", expressionAttributeNames: {'#email': 'email'}, expressionAttributeValues: {':email': "someone@example.com"}}, resume: 'token', order: -1, limit: 2, stronglyConsistent: true}},
     ]
     .forEach(test => 
     {
