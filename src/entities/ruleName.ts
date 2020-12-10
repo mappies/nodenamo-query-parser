@@ -1,13 +1,19 @@
 export enum RuleName
 {
     Statement = "statementRuleName",
+    AtomicStatement = 'atomicStatementRuleName',
+
+    /**
+     * Explain Statement
+     */
+    ExplainStatement = 'explainStatementRuleName',
 
     /**
      * INSERT Statement
      */
-    InsertStatement = "insertStatement",
-    InsertClause = "insertClause",
-    InsertIntoClause = "insertIntoClause",
+    InsertStatement = "insertStatementRuleName",
+    InsertClause = "insertClauseRuleName",
+    InsertIntoClause = "insertIntoClauseRuleName",
 
     /**
      * GET Statement
@@ -20,15 +26,15 @@ export enum RuleName
     /**
      * UPDATE Statement
      */
-    UpdateStatement = "updateStatement",
-    UpdateClause = "updateClause",
-    UpdateFromClause = "updateFromClause",
-    UpdateWithVersionCheckClause = "updateWithVersionCheckClause",
+    UpdateStatement = "updateStatementRuleName",
+    UpdateClause = "updateClauseRuleName",
+    UpdateFromClause = "updateFromClauseRuleName",
+    UpdateWithVersionCheckClause = "updateWithVersionCheckClauseRuleName",
 
     /**
      * CREATE TABLE statement
      */
-    CreateTableStatement = "createTableStatement",
+    CreateTableStatement = "createTableStatementRuleName",
     CreateTableClause = "createTableClauseRuleName",
     CreateTableForClause = "createTableForClauseRuleName",
     CreateTableWithCapacityOfClause = "withCapacityOfClauseRuleName",
@@ -36,19 +42,19 @@ export enum RuleName
     /**
      * SHOW TABLES statement
      */
-    ShowTablesStatement = "showTablesStatement",
+    ShowTablesStatement = "showTablesStatementRuleName",
     ShowTablesClause = "showTablesClauseRuleName",
 
     /**
      * REMOVE TABLE statement
      */
-    UnloadTableStatement = "removeTableStatement",
+    UnloadTableStatement = "removeTableStatementRuleName",
     UnloadTableClause = "removeTableClauseRuleName",
 
     /**
      * DELETE TABLE statement
      */
-    DeleteTableStatement = "deleteTableStatement",
+    DeleteTableStatement = "deleteTableStatementRuleName",
     DeleteTableClause = "deleteTableClauseRuleName",
     DeleteTableForClause = "deleteTableForClauseRuleName",
 

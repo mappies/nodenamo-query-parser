@@ -10,6 +10,22 @@ export class StatementParser extends CstParser
                 {
                     this.OR({
                         DEF: [
+                            { ALT: () => this.SUBRULE(this.atomicStatement) },
+                            { ALT: () => this.SUBRULE(this.explainStatement) }
+                        ]
+                    })
+                })
+
+    explainStatement = this.RULE(RuleName.ExplainStatement, () =>
+                {
+                    this.CONSUME(Token.Explain)
+                    this.SUBRULE(this.atomicStatement)
+                })
+
+    atomicStatement = this.RULE(RuleName.AtomicStatement, ()=>
+                {
+                    this.OR({
+                        DEF: [
                             { ALT: () => this.SUBRULE(this.listStatement) },
                             { ALT: () => this.SUBRULE(this.findStatement) },
                             { ALT: () => this.SUBRULE(this.getStatement) },

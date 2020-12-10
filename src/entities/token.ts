@@ -4,6 +4,7 @@ export class Token
 {
     static readonly Get = createToken({ name: "Get", pattern: /GET\s+/i })
     static readonly From = createToken({ name: "From", pattern: /From/i })
+    static readonly Explain = createToken({ name: "Explain", pattern: /Explain\s+/i })
     static readonly StronglyConsistent = createToken({ name: "StronglyConsistent", pattern: /Strongly\s+Consistent/i })
     static readonly CreateTable = createToken({ name: "CreateTable", pattern: /Create\s+Table/i })
     static readonly For = createToken({ name: "For", pattern: /For/i })
@@ -73,6 +74,7 @@ export class Token
         Token.CreateTable,
         Token.For,
         Token.WithCapacityOf,
+        Token.Explain,
         Token.DeleteTable,
         Token.Delete,
         Token.Where,

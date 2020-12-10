@@ -12,6 +12,7 @@ import { IDeleteTableStatement } from '../interfaces/IDeleteTableStatement';
 import { IShowTablesStatement } from '../interfaces/IShowTablesStatement';
 import { IUnloadTableStatement } from '../interfaces/IUnloadTableStatement';
 import { IImportStatement } from '../interfaces/IImportStatement';
+import { IExplainStatement } from '../interfaces/IExplainStatement';
 
 const statementParser = new StatementParser()
 const BaseSQLVisitor = statementParser.getBaseCstVisitorConstructor()
@@ -31,6 +32,24 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
     }
 
     [RuleName.Statement](ctx)
+    {
+        if(ctx[RuleName.ExplainStatement])
+        {
+            return this.visit(ctx[RuleName.ExplainStatement])
+        }
+        else if(ctx[RuleName.AtomicStatement])
+        {
+            return this.visit(ctx[RuleName.AtomicStatement])
+        }
+    }
+
+    [RuleName.ExplainStatement](ctx): IExplainStatement
+    {
+        return { type: 'explain',
+                 statement: this.visit(ctx[RuleName.AtomicStatement])}
+    }
+
+    [RuleName.AtomicStatement](ctx)
     {
         if (ctx[RuleName.ListStatement])
         {
