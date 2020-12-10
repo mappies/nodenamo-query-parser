@@ -14,7 +14,7 @@ export { IListStatement } from './interfaces/IListStatement';
 export { ICreateTableStatement } from './interfaces/ICreateTableStatement';
 export { IDeleteTableStatement } from './interfaces/IDeleteTableStatement';
 export { IShowTablesStatement } from './interfaces/IShowTablesStatement';
-export { IRemoveTableStatement } from './interfaces/IRemoveTableStatement';
+export { IUnloadTableStatement } from './interfaces/IUnloadTableStatement';
 export { IImportStatement } from './interfaces/IImportStatement';
 
 let lexer = new Lexer(Token.AllTokens);

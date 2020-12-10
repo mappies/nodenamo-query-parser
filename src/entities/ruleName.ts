@@ -42,8 +42,8 @@ export enum RuleName
     /**
      * REMOVE TABLE statement
      */
-    RemoveTableStatement = "removeTableStatement",
-    RemoveTableClause = "removeTableClauseRuleName",
+    UnloadTableStatement = "removeTableStatement",
+    UnloadTableClause = "removeTableClauseRuleName",
 
     /**
      * DELETE TABLE statement

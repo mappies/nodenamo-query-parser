@@ -10,7 +10,8 @@ import { IListStatement } from '../interfaces/IListStatement';
 import { ICreateTableStatement } from '../interfaces/ICreateTableStatement';
 import { IDeleteTableStatement } from '../interfaces/IDeleteTableStatement';
 import { IShowTablesStatement } from '../interfaces/IShowTablesStatement';
-import { IRemoveTableStatement } from '../interfaces/IRemoveTableStatement';
+import { IUnloadTableStatement } from '../interfaces/IUnloadTableStatement';
+import { IImportStatement } from '../interfaces/IImportStatement';
 
 const statementParser = new StatementParser()
 const BaseSQLVisitor = statementParser.getBaseCstVisitorConstructor()
@@ -71,9 +72,9 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         {
             return this.visit(ctx[RuleName.ShowTablesStatement])
         }
-        else if (ctx[RuleName.RemoveTableStatement])
+        else if (ctx[RuleName.UnloadTableStatement])
         {
-            return this.visit(ctx[RuleName.RemoveTableStatement])
+            return this.visit(ctx[RuleName.UnloadTableStatement])
         }
     }
 
@@ -647,7 +648,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
      * 
      * Syntax: IMPORT identifier (AS identifier)?|{identifier (AS identifier)?} FROM string
      */
-    [RuleName.ImportStatement](ctx)
+    [RuleName.ImportStatement](ctx): IImportStatement
     {
         return {
             type: "import",
@@ -770,15 +771,15 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
      * 
      * Syntax: REMOVE TABLE identifier
      */
-    [RuleName.RemoveTableStatement](ctx): IRemoveTableStatement
+    [RuleName.UnloadTableStatement](ctx): IUnloadTableStatement
     {
         return {
             type: "remove_table",
-            name: this.visit(ctx[RuleName.RemoveTableClause])
+            name: this.visit(ctx[RuleName.UnloadTableClause])
         }
     }
 
-    [RuleName.RemoveTableClause](ctx)
+    [RuleName.UnloadTableClause](ctx)
     {
         return ctx.Identifier[0].image;
     }

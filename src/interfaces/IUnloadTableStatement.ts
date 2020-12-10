@@ -1,6 +1,6 @@
 import { IStatement } from './IStatement';
 
-export interface IRemoveTableStatement extends IStatement
+export interface IUnloadTableStatement extends IStatement
 {
     name:string
 }

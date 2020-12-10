@@ -20,7 +20,7 @@ export class StatementParser extends CstParser
                             { ALT: () => this.SUBRULE(this.deleteTableStatement) },
                             { ALT: () => this.SUBRULE(this.importStatement) },
                             { ALT: () => this.SUBRULE(this.showTablesStatement) },
-                            { ALT: () => this.SUBRULE(this.removeTableStatement) }
+                            { ALT: () => this.SUBRULE(this.unloadTableStatement) }
                         ]
                     })
                 });
@@ -598,18 +598,18 @@ export class StatementParser extends CstParser
                                 this.CONSUME(Token.ShowTables)
                             })
     /**
-     * REMOVE TABLE Statement
+     * UNLOAD TABLE Statement
      * 
-     * Syntax: REMOVE TABLE identifier
+     * Syntax: UNLOAD TABLE identifier
      */
-    removeTableStatement = this.RULE(RuleName.RemoveTableStatement, () =>
+    unloadTableStatement = this.RULE(RuleName.UnloadTableStatement, () =>
                             {
-                                this.SUBRULE(this.removeTableClause)
+                                this.SUBRULE(this.unloadTableClause)
                             })
 
-    removeTableClause = this.RULE(RuleName.RemoveTableClause, ()=>
+    unloadTableClause = this.RULE(RuleName.UnloadTableClause, ()=>
                             {
-                                this.CONSUME(Token.RemoveTable)
+                                this.CONSUME(Token.UnloadTable)
                                 this.CONSUME(Token.Identifier, {ERR_MSG: ErrorMessage.MISSING_ENTITY_NAME})
                             })
     /**

@@ -2,10 +2,10 @@ import {assert as assert} from 'chai';
 import { ErrorMessage } from '../src/entities/errorMessage';
 import { parse } from '../src/parser';
 
-describe('Remove Table Statement', function () 
+describe('Unload Table Statement', function () 
 {
     [
-        { statement: 'REMOVE TABLE user', expected: {type: 'remove_table', name: 'user'}}
+        { statement: 'UNLOAD TABLE user', expected: {type: 'remove_table', name: 'user'}}
     ]
     .forEach(test => 
     {
@@ -17,9 +17,9 @@ describe('Remove Table Statement', function ()
     });
 
     [
-        { statement: 'REMOVE', expected: {error: "NoViableAltException", message: ErrorMessage.UNRECOGNIZED_COMMAND.replace('?', 'REMOVE')}},
-        { statement: 'REMOVE TABLE', expected: {error: "MismatchedTokenException", message: ErrorMessage.MISSING_ENTITY_NAME}},
-        { statement: 'REMOVE TABLE FOR user', expected: {error: "MismatchedTokenException", message: ErrorMessage.MISSING_ENTITY_NAME}}
+        { statement: 'UNLOAD', expected: {error: "NoViableAltException", message: ErrorMessage.UNRECOGNIZED_COMMAND.replace('?', 'UNLOAD')}},
+        { statement: 'UNLOAD TABLE', expected: {error: "MismatchedTokenException", message: ErrorMessage.MISSING_ENTITY_NAME}},
+        { statement: 'UNLOAD TABLE FOR user', expected: {error: "MismatchedTokenException", message: ErrorMessage.MISSING_ENTITY_NAME}}
     ]
     .forEach(test => 
     {

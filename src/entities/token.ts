@@ -18,7 +18,7 @@ export class Token
     static readonly Update = createToken({ name: "Update", pattern: /Update\s+/i })
     static readonly WithVersionCheck = createToken({ name: "WithVersionCheck", pattern: /With\s+Version\s+Check/i })
     static readonly ShowTables = createToken({ name: "ShowTables", pattern:/Show\s+Tables\s+/i })
-    static readonly RemoveTable = createToken({ name: "RemoveTable", pattern:/Remove\s+Table\s+/i })
+    static readonly UnloadTable = createToken({ name: "UnloadTable", pattern:/Unload\s+Table\s+/i })
     static readonly List = createToken({ name: "List", pattern: /List\s+/i })
     static readonly Using = createToken({ name: "Using", pattern: /Using/i })
     static readonly Filter = createToken({ name: "Filter", pattern: /Filter/i })
@@ -88,7 +88,7 @@ export class Token
         Token.Star,
         Token.By,
         Token.Limit,
-        Token.RemoveTable,
+        Token.UnloadTable,
         Token.ShowTables,
         Token.List,
         Token.Comma,
