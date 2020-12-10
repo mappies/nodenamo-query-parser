@@ -3,6 +3,13 @@ export enum RuleName
     Statement = "statementRuleName",
 
     /**
+     * INSERT Statement
+     */
+    InsertStatement = "insertStatement",
+    InsertClause = "insertClause",
+    InsertIntoClause = "insertIntoClause",
+
+    /**
      * GET Statement
      */
     GetStatement = "getStatementRuleName",

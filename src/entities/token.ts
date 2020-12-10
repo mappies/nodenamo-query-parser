@@ -13,6 +13,8 @@ export class Token
     static readonly Where = createToken({ name: "Where", pattern: /Where/i })
     static readonly Find = createToken({ name: "Find", pattern: /Find/i })
     static readonly Import = createToken({ name: "Import", pattern: /Import/i })
+    static readonly Insert = createToken({ name: "Insert", pattern: /Insert\s+/i })
+    static readonly Into = createToken({ name: "Into", pattern: /Into\s+/i })
     static readonly ShowTables = createToken({ name: "ShowTables", pattern:/Show\s+Tables\s+/i })
     static readonly RemoveTable = createToken({ name: "RemoveTable", pattern:/Remove\s+Table\s+/i })
     static readonly List = createToken({ name: "List", pattern: /List\s+/i })
@@ -47,9 +49,9 @@ export class Token
     static readonly LeftSquareBracket = createToken({ name: "LeftSquareBracket", pattern: /\[/ })
     static readonly RightSquareBracket = createToken({ name: "RightSquareBracket", pattern: /\]/ })
     static readonly Null = createToken({ name: "Null", pattern: /null/ })
-    static readonly And = createToken({ name: "And", pattern: /and/i })
-    static readonly Or = createToken({ name: "Or", pattern: /or/i })
-    static readonly In = createToken({ name: "In", pattern: /in/i })
+    static readonly And = createToken({ name: "And", pattern: /and\s+/i })
+    static readonly Or = createToken({ name: "Or", pattern: /or\s+/i })
+    static readonly In = createToken({ name: "In", pattern: /in\s+/i })
     static readonly Between = createToken({ name: "Between", pattern: /Between/i })
     static readonly WhiteSpace = createToken({name: "WhiteSpace", pattern: /\s+/, group: Lexer.SKIPPED})
     static readonly AttributeExists = createToken({name: "AttributeExists", pattern: /attribute_exists\s*\(/})
@@ -92,6 +94,8 @@ export class Token
         Token.Null,
         Token.LeftSquareBracket,
         Token.RightSquareBracket,
+        Token.Insert,
+        Token.Into,
         Token.Import,
         Token.String,
         Token.And,

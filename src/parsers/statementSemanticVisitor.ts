@@ -33,6 +33,10 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         {
             return this.visit(ctx[RuleName.GetStatement])
         }
+        else if (ctx[RuleName.InsertStatement])
+        {
+            return this.visit(ctx[RuleName.InsertStatement])
+        }
         else if(ctx[RuleName.DeleteStatement])
         {
             return this.visit(ctx[RuleName.DeleteStatement])
@@ -59,6 +63,30 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         }
     }
 
+    /**
+     * INSERT Statement
+     * 
+     * Syntax: INSERT jsonObject INTO identifier (where expression)? 
+     */
+    [RuleName.InsertStatement](ctx) 
+    {
+        return {
+            type: "insert",
+            object: this.visit(ctx[RuleName.InsertClause]),
+            into: this.visit(ctx[RuleName.InsertIntoClause]),
+            where: this.visit(ctx[RuleName.WhereClause], 'conditionExpression')
+        }
+    }
+
+    [RuleName.InsertClause](ctx) 
+    {
+        return this.visit(ctx[RuleName.JsonObject])
+    }
+
+    [RuleName.InsertIntoClause](ctx) 
+    {
+        return ctx.Identifier[0].image
+    }
 
     /**
      * GET Statement
@@ -237,9 +265,17 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
     /**
      * WHERE clause
      */
-    [RuleName.WhereClause](ctx)
+    [RuleName.WhereClause](ctx, expressionKeyName?:string)
     {
-        return this.visit(ctx[RuleName.Expression])
+        let result = this.visit(ctx[RuleName.Expression], expressionKeyName)
+
+        if(expressionKeyName && result?.expression)
+        {
+            result[expressionKeyName] = result.expression
+            delete result.expression
+        }
+
+        return result
     }
 
     [RuleName.Expression](ctx)
@@ -262,7 +298,8 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         });
         //Ensure the location of operands are in order.
         operands = operands.sort((a,b) => a.startOffset - b.startOffset);
-        
+        operands.forEach(operand => operand.image = operand.image.trim())
+
         let lhs = this.visit(ctx.lhs)
         
         if(ctx['rhs'])

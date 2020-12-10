@@ -13,6 +13,7 @@ export class StatementParser extends CstParser
                             { ALT: () => this.SUBRULE(this.listStatement) },
                             { ALT: () => this.SUBRULE(this.findStatement) },
                             { ALT: () => this.SUBRULE(this.getStatement) },
+                            { ALT: () => this.SUBRULE(this.insertStatement) },
                             { ALT: () => this.SUBRULE(this.deleteStatement) },
                             { ALT: () => this.SUBRULE(this.createTableStatement) },
                             { ALT: () => this.SUBRULE(this.deleteTableStatement) },
@@ -22,6 +23,31 @@ export class StatementParser extends CstParser
                         ]
                     })
                 });
+    /**
+     * INSERT Statement
+     * 
+     * Syntax: INSERT jsonObject INTO identifier (where expression)? 
+     */
+    insertStatement = this.RULE(RuleName.InsertStatement, () =>
+                {
+                    this.SUBRULE(this.insertClause)
+                    this.SUBRULE(this.insertIntoClause)
+                    this.OPTION(() => {
+                        this.SUBRULE(this.whereClause)
+                    })
+                })
+
+    insertClause = this.RULE(RuleName.InsertClause, () =>
+                {
+                    this.CONSUME(Token.Insert);
+                    this.SUBRULE(this.jsonObject);
+                })
+
+    insertIntoClause = this.RULE(RuleName.InsertIntoClause, () =>
+                {
+                    this.CONSUME(Token.Into, {ERR_MSG: ErrorMessage.MISSING_ENTITY_NAME})
+                    this.CONSUME(Token.Identifier, {ERR_MSG: ErrorMessage.MISSING_ENTITY_NAME})
+                })
 
     /**
      * GET Statement
@@ -579,7 +605,7 @@ export class StatementParser extends CstParser
      */
     jsonObject = this.RULE(RuleName.JsonObject, () =>
                             {
-                                this.CONSUME(Token.LeftCurlyParenthesis)
+                                this.CONSUME(Token.LeftCurlyParenthesis, {ERR_MSG: ErrorMessage.JSON_INVALID_OBJECT})
                                 this.OPTION(() => {
                                   this.SUBRULE(this.jsonObjectItem)
                                   this.MANY(() => {

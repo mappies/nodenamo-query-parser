@@ -79,6 +79,7 @@ describe('Json Object', function ()
     });
 
     [
+        { json: '1', expected: {error: "MismatchedTokenException", message: ErrorMessage.JSON_INVALID_OBJECT}},
         { json: '{', expected: {error: "MismatchedTokenException", message: ErrorMessage.JSON_MISSING_CLOSING_CURLY_PARENTHESIS}},
         { json: '{a"', expected: {error: "MismatchedTokenException", message: ErrorMessage.JSON_MISSING_PROPERTY_VALUE}},
         { json: '{"a"}', expected: {error: "MismatchedTokenException", message: ErrorMessage.JSON_MISSING_PROPERTY_VALUE}},

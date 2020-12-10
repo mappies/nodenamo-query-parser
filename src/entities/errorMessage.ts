@@ -41,7 +41,7 @@ export class ErrorMessage
     static readonly EXPRESSION_MISSING_PROPERTY_TYPE = 'Missing a property type.'
     static readonly EXPRESSION_MISSING_SEARCH_STRING = 'Missing a string to search for.'
 
-
+    static readonly JSON_INVALID_OBJECT = 'Invalid JSON object.'
     static readonly JSON_MISSING_CLOSING_BRACKET = 'Invalid JSON array. Missing a closing bracket.'
     static readonly JSON_MISSING_PROPERTY_KEY = 'Invalid JSON object. Missing a property key.'
     static readonly JSON_MISSING_PROPERTY_VALUE = 'Invalid JSON object. Missing a property value.'
