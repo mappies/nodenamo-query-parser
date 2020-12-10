@@ -15,6 +15,8 @@ export class Token
     static readonly Import = createToken({ name: "Import", pattern: /Import/i })
     static readonly Insert = createToken({ name: "Insert", pattern: /Insert\s+/i })
     static readonly Into = createToken({ name: "Into", pattern: /Into\s+/i })
+    static readonly Update = createToken({ name: "Update", pattern: /Update\s+/i })
+    static readonly WithVersionCheck = createToken({ name: "WithVersionCheck", pattern: /With\s+Version\s+Check/i })
     static readonly ShowTables = createToken({ name: "ShowTables", pattern:/Show\s+Tables\s+/i })
     static readonly RemoveTable = createToken({ name: "RemoveTable", pattern:/Remove\s+Table\s+/i })
     static readonly List = createToken({ name: "List", pattern: /List\s+/i })
@@ -98,6 +100,8 @@ export class Token
         Token.Into,
         Token.Import,
         Token.String,
+        Token.Update,
+        Token.WithVersionCheck,
         Token.And,
         Token.Or,
         Token.In,

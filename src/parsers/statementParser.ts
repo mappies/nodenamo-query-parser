@@ -14,6 +14,7 @@ export class StatementParser extends CstParser
                             { ALT: () => this.SUBRULE(this.findStatement) },
                             { ALT: () => this.SUBRULE(this.getStatement) },
                             { ALT: () => this.SUBRULE(this.insertStatement) },
+                            { ALT: () => this.SUBRULE(this.updateStatement) },
                             { ALT: () => this.SUBRULE(this.deleteStatement) },
                             { ALT: () => this.SUBRULE(this.createTableStatement) },
                             { ALT: () => this.SUBRULE(this.deleteTableStatement) },
@@ -79,6 +80,39 @@ export class StatementParser extends CstParser
                 {
                     this.CONSUME(Token.StronglyConsistent)
                 });
+    /**
+     * UPDATE Statement
+     * 
+     * Syntax: UPDATE jsonObject FROM identifier (where expression)?  (with version check)?
+     */
+    updateStatement = this.RULE(RuleName.UpdateStatement, () =>
+                {
+                    this.SUBRULE(this.updateClause)
+                    this.SUBRULE(this.updateFromClause)
+                    this.OPTION1(() => {
+                        this.SUBRULE(this.whereClause)
+                    })
+                    this.OPTION2(() => {
+                        this.SUBRULE(this.updateWithVersionCheckClause)
+                    })
+                })
+
+    updateClause = this.RULE(RuleName.UpdateClause, () =>
+                {
+                    this.CONSUME(Token.Update);
+                    this.SUBRULE(this.jsonObject);
+                })
+
+    updateFromClause = this.RULE(RuleName.UpdateFromClause, () =>
+                {
+                    this.CONSUME(Token.From, {ERR_MSG: ErrorMessage.MISSING_ENTITY_NAME})
+                    this.CONSUME(Token.Identifier, {ERR_MSG: ErrorMessage.MISSING_ENTITY_NAME})
+                })
+
+    updateWithVersionCheckClause = this.RULE(RuleName.UpdateWithVersionCheckClause, () =>
+                {
+                    this.CONSUME(Token.WithVersionCheck)
+                })
 
     /**
      * DELETE Statement

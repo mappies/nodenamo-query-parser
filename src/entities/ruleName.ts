@@ -16,6 +16,14 @@ export enum RuleName
     GetClause = "getClauseRuleName",
     GetFromClause = "getFromClauseRuleName",
     GetStronglyConsistentClause ="getStronglyConsistentClauseRuleName",
+    
+    /**
+     * UPDATE Statement
+     */
+    UpdateStatement = "updateStatement",
+    UpdateClause = "updateClause",
+    UpdateFromClause = "updateFromClause",
+    UpdateWithVersionCheckClause = "updateWithVersionCheckClause",
 
     /**
      * CREATE TABLE statement

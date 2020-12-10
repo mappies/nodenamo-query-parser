@@ -37,6 +37,10 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         {
             return this.visit(ctx[RuleName.InsertStatement])
         }
+        else if (ctx[RuleName.UpdateStatement])
+        {
+            return this.visit(ctx[RuleName.UpdateStatement])
+        }
         else if(ctx[RuleName.DeleteStatement])
         {
             return this.visit(ctx[RuleName.DeleteStatement])
@@ -114,6 +118,37 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
     }
 
     [RuleName.GetStronglyConsistentClause](ctx) 
+    {
+        return true
+    }
+
+    /**
+     * UPDATE Statement
+     * 
+     * Syntax: UPDATE jsonObject FROM identifier (where expression)?  (with version check)?
+     */
+    [RuleName.UpdateStatement](ctx) 
+    {
+        return {
+            type: "update",
+            object: this.visit(ctx[RuleName.UpdateClause]),
+            from: this.visit(ctx[RuleName.UpdateFromClause]),
+            where: this.visit(ctx[RuleName.WhereClause], 'conditionExpression'),
+            versionCheck: this.visit(ctx[RuleName.UpdateWithVersionCheckClause])
+        }
+    }
+
+    [RuleName.UpdateClause](ctx) 
+    {
+        return this.visit(ctx[RuleName.JsonObject])
+    }
+
+    [RuleName.UpdateFromClause](ctx) 
+    {
+        return ctx.Identifier[0].image
+    }
+
+    [RuleName.UpdateWithVersionCheckClause](ctx) 
     {
         return true
     }
