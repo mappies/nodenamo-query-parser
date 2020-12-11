@@ -193,6 +193,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
      * Syntax: ON string|number FROM identifier 
      *         (SET identifier=value(, SET identifier=value)*)*
      *         (ADD identifier value(, ADD identifier value)*)*
+     *         (DELETE identifier(, DELETE identifier)*)*
      *         (REMOVE identifier(, REMOVE identifier)*)*
      *         (where expression)?
      *         (with version check)?
@@ -203,6 +204,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
 
         let setExpression = {setExpressions:[], expressionAttributeNames:{}, expressionAttributeValues:{}}
         let addExpression = {addExpressions:[], expressionAttributeNames:{}, expressionAttributeValues:{}}
+        let removeExpression = {removeExpressions:[], expressionAttributeNames:{}, expressionAttributeValues:{}}
 
         for(let expression of expressions)
         {
@@ -218,6 +220,12 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
                 addExpression.expressionAttributeNames = Object.assign(addExpression.expressionAttributeNames, expression.expressionAttributeNames)
                 addExpression.expressionAttributeValues = Object.assign(addExpression.expressionAttributeValues, expression.expressionAttributeValues)
             }
+            else if(expression.removeExpressions)
+            {
+                removeExpression.removeExpressions = removeExpression.removeExpressions.concat(expression.removeExpressions)
+                removeExpression.expressionAttributeNames = Object.assign(removeExpression.expressionAttributeNames, expression.expressionAttributeNames)
+                removeExpression.expressionAttributeValues = Object.assign(removeExpression.expressionAttributeValues, expression.expressionAttributeValues)
+            }
         }
         
         return {
@@ -226,7 +234,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
             from: this.visit(ctx[RuleName.OnFromClause]),
             set: setExpression.setExpressions.length > 0 ? setExpression : undefined,
             add: addExpression.addExpressions.length > 0 ? addExpression : undefined,
-            remove: undefined,
+            remove: removeExpression.removeExpressions.length > 0 ? removeExpression : undefined,
             delete: undefined,
             where: this.visit(ctx[RuleName.WhereClause], 'conditionExpression'),
             versionCheck: this.visit(ctx[RuleName.OnWithVersionCheckClause])
@@ -315,7 +323,24 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
 
     [RuleName.OnRemoveClause](ctx)
     {
+        let lhs = ctx.lhs.map(i => i.image)
 
+        let expressions = []
+        let attributeNames = {}
+
+        lhs.forEach((property)=>{
+            //Duplicate property found.
+            let suffix = `___${propertyCollisionIndex++}`
+
+            expressions.push(`#${property}${suffix}`)
+            attributeNames[`#${property}${suffix}`] = property
+        })
+
+        return {
+            removeExpressions: expressions,
+            expressionAttributeNames: attributeNames,
+            expressionAttributeValues: {}
+        }
     }
 
     [RuleName.OnDeleteClause](ctx)

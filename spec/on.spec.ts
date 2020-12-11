@@ -209,6 +209,106 @@ describe('On Statement', function ()
         });
     });
 
+    describe('REMOVE', () =>
+    {    
+        [
+            { statement: 'on 1 from users remove age', 
+              expected: {type: 'on', id: 1, from: 'users', 
+                        set: undefined,
+                        add: undefined,
+                        remove: {removeExpressions: ["#age___1"], expressionAttributeNames: {'#age___1': 'age'}, expressionAttributeValues: {}},
+                        delete: undefined,
+                        where: undefined,
+                        versionCheck: undefined}},
+            { statement: 'on "1" from users remove count, age', 
+              expected: {type: 'on', id: "1", from: 'users', 
+                        set: undefined,
+                        add: undefined,
+                        remove: {removeExpressions: ["#count___1", "#age___2"], expressionAttributeNames: {'#count___1': 'count', '#age___2': 'age'}, expressionAttributeValues: {}},
+                        delete: undefined,
+                        where: undefined,
+                        versionCheck: undefined}},
+            { statement: 'on "1" from users remove count remove age', 
+              expected: {type: 'on', id: "1", from: 'users', 
+                        set: undefined,
+                        add: undefined,
+                        remove: {removeExpressions: ["#count___1", "#age___2"], expressionAttributeNames: {'#count___1': 'count', '#age___2': 'age'}, expressionAttributeValues: {}},
+                        delete: undefined,
+                        where: undefined,
+                        versionCheck: undefined}},
+            { statement: 'on "1" from users remove count remove age remove viewed', 
+              expected: {type: 'on', id: "1", from: 'users', 
+                        set: undefined,
+                        add: undefined,
+                        remove: {removeExpressions: ["#count___1", "#age___2", "#viewed___3"], expressionAttributeNames: {'#count___1': 'count', '#age___2': 'age', '#viewed___3': 'viewed'}, expressionAttributeValues: {}},
+                        delete: undefined,
+                        where: undefined,
+                        versionCheck: undefined}},
+            { statement: 'on "1" from users remove count, age, viewed', 
+              expected: {type: 'on', id: "1", from: 'users', 
+                        set: undefined,
+                        add: undefined,
+                        remove: {removeExpressions: ["#count___1", "#age___2", "#viewed___3"], expressionAttributeNames: {'#count___1': 'count', '#age___2': 'age', '#viewed___3': 'viewed'}, expressionAttributeValues: {}},
+                        delete: undefined,
+                        where: undefined,
+                        versionCheck: undefined}},
+            { statement: 'on "1" from users remove count remove age, viewed', 
+              expected: {type: 'on', id: "1", from: 'users', 
+                        set: undefined,
+                        add: undefined,
+                        remove: {removeExpressions: ["#count___1", "#age___2", "#viewed___3"], expressionAttributeNames: {'#count___1': 'count', '#age___2': 'age', '#viewed___3': 'viewed'}, expressionAttributeValues: {}},
+                        delete: undefined,
+                        where: undefined,
+                        versionCheck: undefined}},
+            { statement: 'on 1 from users remove count, age remove viewed where begins_with(name, "some") with version check', 
+              expected: {type: 'on', id: 1, from: 'users', 
+                        set: undefined,
+                        add: undefined,
+                        remove: {removeExpressions: ["#count___1", "#age___2", "#viewed___3"], expressionAttributeNames: {'#count___1': 'count', '#age___2': 'age', '#viewed___3': 'viewed'}, expressionAttributeValues: {}},
+                        delete: undefined,
+                        where: {conditionExpression: "begins_with(#name,:name)", expressionAttributeNames: {"#name": "name"}, expressionAttributeValues: {":name": "some"}},
+                        versionCheck: true}},
+        ]
+        .forEach(test => 
+        {
+            it(`'${test.statement}' is valid.`, async () =>
+            {
+                resetCollisionIndex()
+
+                let result = parse(test.statement);
+                assert.deepEqual(result, test.expected);
+            })
+        });
+
+        [
+            { statement: 'on 1 from table remove', expected: {error: "MismatchedTokenException", message: ErrorMessage.MISSING_PROPERTY_NAME}},
+            { statement: 'on 1 from table remove 1', expected: {error: "MismatchedTokenException", message: ErrorMessage.MISSING_PROPERTY_NAME}},
+            { statement: 'on 1 from table remove true', expected: {error: "MismatchedTokenException", message: ErrorMessage.MISSING_PROPERTY_NAME}},
+            { statement: 'on 1 from table remove a 1', expected: {error: "NotAllInputParsedException", message: ErrorMessage.UNEXPECTED_TOKEN.replace('?', '1')}},
+            { statement: 'on 1 from table remove a = b', expected: {error: "NotAllInputParsedException", message: ErrorMessage.UNEXPECTED_TOKEN.replace('?', '=')}},
+            { statement: 'on 1 from table remove a,', expected: {error: "MismatchedTokenException", message: ErrorMessage.MISSING_PROPERTY_NAME}}
+        ]
+        .forEach(test => 
+        {
+            it(`'${test.statement}' is invalid because '${test.expected.message}'`, async () =>
+            {
+                let error = undefined;
+                try
+                {
+                    parse(test.statement);
+                }
+                catch(e)
+                {
+                    error = e;
+                }
+    
+                assert.isDefined(error);
+                assert.equal(error.name, test.expected.error);
+                assert.equal(error.message, test.expected.message);
+            })
+        });
+    });
+
     [
         { statement: 'on ', expected: {error: "NoViableAltException", message: ErrorMessage.MISSING_OBJECT_ID}},
         { statement: 'on true', expected: {error: "NoViableAltException", message: ErrorMessage.MISSING_OBJECT_ID}},

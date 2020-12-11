@@ -137,6 +137,7 @@ export class StatementParser extends CstParser
      * Syntax: ON string|number FROM identifier 
      *         (SET identifier=value(, SET identifier=value)*)*
      *         (ADD identifier value(, ADD identifier value)*)*
+     *         (DELETE identifier(, DELETE identifier)*)*
      *         (REMOVE identifier(, REMOVE identifier)*)*
      *         (where expression)?
      *         (with version check)?
@@ -211,11 +212,21 @@ export class StatementParser extends CstParser
     onRemoveClause = this.RULE(RuleName.OnRemoveClause, () => 
                 {
                     this.CONSUME(Token.Remove)
+                    this.CONSUME1(Token.Identifier, {LABEL: 'lhs', ERR_MSG: ErrorMessage.MISSING_PROPERTY_NAME})
+                    this.MANY(()=>{
+                        this.CONSUME(Token.Comma)
+                        this.CONSUME2(Token.Identifier, {LABEL: 'lhs', ERR_MSG: ErrorMessage.MISSING_PROPERTY_NAME})
+                    })
                 })
 
     onDeleteClause = this.RULE(RuleName.OnDeleteClause, () => 
                 {
                     this.CONSUME(Token.Delete)
+                    this.CONSUME1(Token.Identifier, {LABEL: 'lhs', ERR_MSG: ErrorMessage.MISSING_PROPERTY_NAME})
+                    this.MANY(()=>{
+                        this.CONSUME(Token.Comma)
+                        this.CONSUME2(Token.Identifier, {LABEL: 'lhs', ERR_MSG: ErrorMessage.MISSING_PROPERTY_NAME})
+                    })
                 })
 
     onWithVersionCheck = this.RULE(RuleName.OnWithVersionCheckClause, () =>
