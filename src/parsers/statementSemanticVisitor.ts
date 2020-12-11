@@ -221,7 +221,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
             add: undefined,
             remove: undefined,
             delete: undefined,
-            where: this.visit(ctx[RuleName.WhereClause]),
+            where: this.visit(ctx[RuleName.WhereClause], 'conditionExpression'),
             versionCheck: this.visit(ctx[RuleName.OnWithVersionCheckClause])
         }
     }
@@ -269,7 +269,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         lhs.forEach((property, index)=>{
             //Duplicate property found.
             let suffix = `___${propertyCollisionIndex++}`
-            
+
             expressions.push(`#${property}${suffix} = :${property}${suffix}`)
             attributeNames[`#${property}${suffix}`] = property
             attributeValues[`:${property}${suffix}`] = rhs[index]

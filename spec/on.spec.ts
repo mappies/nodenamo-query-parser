@@ -56,6 +56,14 @@ describe('On Statement', function ()
                         delete: undefined,
                         where: undefined,
                         versionCheck: undefined}},
+            { statement: 'on 1 from users set name="some one" where begins_with(name, "some") with version check', 
+              expected: {type: 'on', id: 1, from: 'users', 
+                        set: {setExpressions: ["#name___1 = :name___1"], expressionAttributeNames: {'#name___1': 'name'}, expressionAttributeValues: {':name___1': 'some one'}},
+                        add: undefined,
+                        remove: undefined,
+                        delete: undefined,
+                        where: {conditionExpression: "begins_with(#name,:name)", expressionAttributeNames: {"#name": "name"}, expressionAttributeValues: {":name": "some"}},
+                        versionCheck: true}},
         ]
         .forEach(test => 
         {
