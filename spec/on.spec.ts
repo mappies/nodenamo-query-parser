@@ -309,6 +309,106 @@ describe('On Statement', function ()
         });
     });
 
+    describe.only('DELETE', () =>
+    {    
+        [
+            { statement: 'on 1 from users delete colors "green"', 
+              expected: {type: 'on', id: 1, from: 'users', 
+                        set: undefined,
+                        add: undefined,
+                        remove: undefined,
+                        delete: {deleteExpressions: ["#colors___1 :colors___1"], expressionAttributeNames: {'#colors___1': 'colors'}, expressionAttributeValues: {':colors___1': "green"}},
+                        where: undefined,
+                        versionCheck: undefined}},
+            { statement: 'on "1" from users delete colors "green", numbers 42', 
+              expected: {type: 'on', id: "1", from: 'users', 
+                        set: undefined,
+                        add: undefined,
+                        remove: undefined,
+                        delete: {deleteExpressions: ["#colors___1 :colors___1", "#numbers___2 :numbers___2"], expressionAttributeNames: {'#colors___1': 'colors', '#numbers___2': 'numbers'}, expressionAttributeValues: {':colors___1': "green", ':numbers___2': 42}},
+                        where: undefined,
+                        versionCheck: undefined}},
+            { statement: 'on "1" from users delete colors "green" delete numbers 42', 
+              expected: {type: 'on', id: "1", from: 'users', 
+                        set: undefined,
+                        add: undefined,
+                        remove: undefined,
+                        delete: {deleteExpressions: ["#colors___1 :colors___1", "#numbers___2 :numbers___2"], expressionAttributeNames: {'#colors___1': 'colors', '#numbers___2': 'numbers'}, expressionAttributeValues: {':colors___1': "green", ':numbers___2': 42}},
+                        where: undefined,
+                        versionCheck: undefined}},
+            { statement: 'on "1" from users delete colors "green" delete numbers 42 delete bools true', 
+              expected: {type: 'on', id: "1", from: 'users', 
+                        set: undefined,
+                        add: undefined,
+                        remove: undefined,
+                        delete: {deleteExpressions: ["#colors___1 :colors___1", "#numbers___2 :numbers___2", '#bools___3 :bools___3'], expressionAttributeNames: {'#colors___1': 'colors', '#numbers___2': 'numbers', '#bools___3': 'bools'}, expressionAttributeValues: {':colors___1': "green", ':numbers___2': 42, ':bools___3': true}},
+                        where: undefined,
+                        versionCheck: undefined}},
+            { statement: 'on "1" from users delete colors "green", numbers 42, bools true', 
+              expected: {type: 'on', id: "1", from: 'users', 
+                        set: undefined,
+                        add: undefined,
+                        remove: undefined,
+                        delete: {deleteExpressions: ["#colors___1 :colors___1", "#numbers___2 :numbers___2", '#bools___3 :bools___3'], expressionAttributeNames: {'#colors___1': 'colors', '#numbers___2': 'numbers', '#bools___3': 'bools'}, expressionAttributeValues: {':colors___1': "green", ':numbers___2': 42, ':bools___3': true}},
+                        where: undefined,
+                        versionCheck: undefined}},
+            { statement: 'on "1" from users delete colors "green" delete numbers 42, bools true', 
+              expected: {type: 'on', id: "1", from: 'users', 
+                        set: undefined,
+                        add: undefined,
+                        remove: undefined,
+                        delete: {deleteExpressions: ["#colors___1 :colors___1", "#numbers___2 :numbers___2", '#bools___3 :bools___3'], expressionAttributeNames: {'#colors___1': 'colors', '#numbers___2': 'numbers', '#bools___3': 'bools'}, expressionAttributeValues: {':colors___1': "green", ':numbers___2': 42, ':bools___3': true}},
+                        where: undefined,
+                        versionCheck: undefined}},
+            { statement: 'on 1 from users delete colors "green", numbers 42 delete bools true where begins_with(name, "some") with version check', 
+              expected: {type: 'on', id: 1, from: 'users', 
+                        set: undefined,
+                        add: undefined,
+                        remove: undefined,
+                        delete: {deleteExpressions: ["#colors___1 :colors___1", "#numbers___2 :numbers___2", '#bools___3 :bools___3'], expressionAttributeNames: {'#colors___1': 'colors', '#numbers___2': 'numbers', '#bools___3': 'bools'}, expressionAttributeValues: {':colors___1': "green", ':numbers___2': 42, ':bools___3': true}},
+                        where: {conditionExpression: "begins_with(#name,:name)", expressionAttributeNames: {"#name": "name"}, expressionAttributeValues: {":name": "some"}},
+                        versionCheck: true}},
+        ]
+        .forEach(test => 
+        {
+            it(`'${test.statement}' is valid.`, async () =>
+            {
+                resetCollisionIndex()
+
+                let result = parse(test.statement);
+                assert.deepEqual(result, test.expected);
+            })
+        });
+
+        [
+            { statement: 'on 1 from table delete', expected: {error: "MismatchedTokenException", message: ErrorMessage.MISSING_PROPERTY_NAME}},
+            { statement: 'on 1 from table delete 1', expected: {error: "MismatchedTokenException", message: ErrorMessage.MISSING_PROPERTY_NAME}},
+            { statement: 'on 1 from table delete true', expected: {error: "MismatchedTokenException", message: ErrorMessage.MISSING_PROPERTY_NAME}},
+            { statement: 'on 1 from table delete a', expected: {error: "NoViableAltException", message: ErrorMessage.UNEXPECTED_END_OF_STATEMENT}},
+            { statement: 'on 1 from table delete a = b', expected: {error: "NoViableAltException", message: ErrorMessage.UNRECOGNIZED_COMMAND.replace('?', '=')}},
+            { statement: 'on 1 from table delete a 1,', expected: {error: "MismatchedTokenException", message: ErrorMessage.MISSING_PROPERTY_NAME}}
+        ]
+        .forEach(test => 
+        {
+            it(`'${test.statement}' is invalid because '${test.expected.message}'`, async () =>
+            {
+                let error = undefined;
+                try
+                {
+                    parse(test.statement);
+                }
+                catch(e)
+                {
+                    error = e;
+                }
+    
+                assert.isDefined(error);
+                assert.equal(error.name, test.expected.error);
+                assert.equal(error.message, test.expected.message);
+            })
+        });
+    });
+
     [
         { statement: 'on ', expected: {error: "NoViableAltException", message: ErrorMessage.MISSING_OBJECT_ID}},
         { statement: 'on true', expected: {error: "NoViableAltException", message: ErrorMessage.MISSING_OBJECT_ID}},

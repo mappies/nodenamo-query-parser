@@ -205,6 +205,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         let setExpression = {setExpressions:[], expressionAttributeNames:{}, expressionAttributeValues:{}}
         let addExpression = {addExpressions:[], expressionAttributeNames:{}, expressionAttributeValues:{}}
         let removeExpression = {removeExpressions:[], expressionAttributeNames:{}, expressionAttributeValues:{}}
+        let deleteExpression = {deleteExpressions:[], expressionAttributeNames:{}, expressionAttributeValues:{}}
 
         for(let expression of expressions)
         {
@@ -226,6 +227,12 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
                 removeExpression.expressionAttributeNames = Object.assign(removeExpression.expressionAttributeNames, expression.expressionAttributeNames)
                 removeExpression.expressionAttributeValues = Object.assign(removeExpression.expressionAttributeValues, expression.expressionAttributeValues)
             }
+            else if(expression.deleteExpressions)
+            {
+                deleteExpression.deleteExpressions = deleteExpression.deleteExpressions.concat(expression.deleteExpressions)
+                deleteExpression.expressionAttributeNames = Object.assign(deleteExpression.expressionAttributeNames, expression.expressionAttributeNames)
+                deleteExpression.expressionAttributeValues = Object.assign(deleteExpression.expressionAttributeValues, expression.expressionAttributeValues)
+            }
         }
         
         return {
@@ -235,7 +242,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
             set: setExpression.setExpressions.length > 0 ? setExpression : undefined,
             add: addExpression.addExpressions.length > 0 ? addExpression : undefined,
             remove: removeExpression.removeExpressions.length > 0 ? removeExpression : undefined,
-            delete: undefined,
+            delete: deleteExpression.deleteExpressions.length > 0 ? deleteExpression : undefined,
             where: this.visit(ctx[RuleName.WhereClause], 'conditionExpression'),
             versionCheck: this.visit(ctx[RuleName.OnWithVersionCheckClause])
         }
@@ -345,7 +352,27 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
 
     [RuleName.OnDeleteClause](ctx)
     {
+        let lhs = ctx.lhs.map(i => i.image)
+        let rhs = ctx.rhs.map(i => this.visit(i))
 
+        let expressions = []
+        let attributeNames = {}
+        let attributeValues = {}
+
+        lhs.forEach((property, index)=>{
+            //Duplicate property found.
+            let suffix = `___${propertyCollisionIndex++}`
+
+            expressions.push(`#${property}${suffix} :${property}${suffix}`)
+            attributeNames[`#${property}${suffix}`] = property
+            attributeValues[`:${property}${suffix}`] = rhs[index]
+        })
+
+        return {
+            deleteExpressions: expressions,
+            expressionAttributeNames: attributeNames,
+            expressionAttributeValues: attributeValues
+        }
     }
 
     [RuleName.OnWithVersionCheckClause](ctx)

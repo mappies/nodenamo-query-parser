@@ -223,9 +223,11 @@ export class StatementParser extends CstParser
                 {
                     this.CONSUME(Token.Delete)
                     this.CONSUME1(Token.Identifier, {LABEL: 'lhs', ERR_MSG: ErrorMessage.MISSING_PROPERTY_NAME})
+                    this.SUBRULE1(this.atomicExpression, {LABEL: 'rhs'})
                     this.MANY(()=>{
                         this.CONSUME(Token.Comma)
-                        this.CONSUME2(Token.Identifier, {LABEL: 'lhs', ERR_MSG: ErrorMessage.MISSING_PROPERTY_NAME})
+                        this.CONSUME3(Token.Identifier, {LABEL: 'lhs', ERR_MSG: ErrorMessage.MISSING_PROPERTY_NAME})
+                        this.SUBRULE2(this.atomicExpression, {LABEL: 'rhs'})
                     })
                 })
 
