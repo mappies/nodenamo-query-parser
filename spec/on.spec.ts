@@ -309,7 +309,7 @@ describe('On Statement', function ()
         });
     });
 
-    describe.only('DELETE', () =>
+    describe('DELETE', () =>
     {    
         [
             { statement: 'on 1 from users delete colors "green"', 
@@ -407,6 +407,27 @@ describe('On Statement', function ()
                 assert.equal(error.message, test.expected.message);
             })
         });
+    });
+
+    [
+        { statement: 'on 1 from users set name = "some one" add age 12 remove count delete colors "green" where begins_with(name, "some") with version check', 
+          expected: {type: 'on', id: 1, from: 'users', 
+                     set: {setExpressions: ["#name___1 = :name___1"], expressionAttributeNames: {'#name___1': 'name'}, expressionAttributeValues: {':name___1': 'some one'}},
+                     add: {addExpressions: ["#age___2 :age___2"], expressionAttributeNames: {'#age___2': 'age'}, expressionAttributeValues: {':age___2': 12}},
+                     remove: {removeExpressions: ["#count___3"], expressionAttributeNames: {'#count___3': 'count'}, expressionAttributeValues: {}},
+                     delete: {deleteExpressions: ["#colors___4 :colors___4"], expressionAttributeNames: {'#colors___4': 'colors'}, expressionAttributeValues: {':colors___4': "green"}},
+                     where: {conditionExpression: "begins_with(#name,:name)", expressionAttributeNames: {"#name": "name"}, expressionAttributeValues: {":name": "some"}},
+                     versionCheck: true}},
+    ]
+    .forEach(test => 
+    {
+        it(`'${test.statement}' is valid.`, async () =>
+        {
+            resetCollisionIndex()
+
+            let result = parse(test.statement);
+            assert.deepEqual(result, test.expected);
+        })
     });
 
     [
