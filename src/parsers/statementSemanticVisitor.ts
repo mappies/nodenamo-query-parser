@@ -71,6 +71,10 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         {
             return this.visit(ctx[RuleName.UpdateStatement])
         }
+        else if (ctx[RuleName.OnStatement])
+        {
+            return this.visit(ctx[RuleName.OnStatement])
+        }
         else if(ctx[RuleName.DeleteStatement])
         {
             return this.visit(ctx[RuleName.DeleteStatement])
@@ -179,6 +183,121 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
     }
 
     [RuleName.UpdateWithVersionCheckClause](ctx) 
+    {
+        return true
+    }
+
+    /**
+     * ON Statement
+     * 
+     * Syntax: ON string|number FROM identifier 
+     *         (SET identifier=value(, SET identifier=value)*)*
+     *         (ADD identifier value(, ADD identifier value)*)*
+     *         (REMOVE identifier(, REMOVE identifier)*)*
+     *         (where expression)?
+     *         (with version check)?
+     */
+    [RuleName.OnStatement](ctx)
+    {
+        let expressions = ctx[RuleName.OnExpressionClause].map(i => this.visit(i))
+
+        let setExpression = {setExpressions:[], expressionAttributeNames:{}, expressionAttributeValues:{}}
+
+        for(let expression of expressions)
+        {
+            if(expression.setExpressions)
+            {
+                setExpression.setExpressions = setExpression.setExpressions.concat(expression.setExpressions)
+                setExpression.expressionAttributeNames = Object.assign(setExpression.expressionAttributeNames, expression.expressionAttributeNames)
+                setExpression.expressionAttributeValues = Object.assign(setExpression.expressionAttributeValues, expression.expressionAttributeValues)
+            }
+        }
+
+        return {
+            type: "on",
+            id:  this.visit(ctx[RuleName.OnClause]),
+            from: this.visit(ctx[RuleName.OnFromClause]),
+            set: setExpression,
+            add: undefined,
+            remove: undefined,
+            delete: undefined,
+            where: this.visit(ctx[RuleName.WhereClause]),
+            versionCheck: this.visit(ctx[RuleName.OnWithVersionCheckClause])
+        }
+    }
+
+    [RuleName.OnClause](ctx)
+    {
+        return this.visit(ctx[RuleName.ObjectId])
+    }
+
+    [RuleName.OnFromClause](ctx)
+    {
+        return ctx.Identifier[0].image
+    }
+
+    [RuleName.OnExpressionClause](ctx)
+    {
+        if(ctx[RuleName.OnSetClause])
+        {
+            return this.visit(ctx[RuleName.OnSetClause])
+        }
+        else if(ctx[RuleName.OnAddClause])
+        {
+            return this.visit(ctx[RuleName.OnAddClause])
+        }
+        else if(ctx[RuleName.OnRemoveClause])
+        {
+            return this.visit(ctx[RuleName.OnRemoveClause])
+        }
+        else if(ctx[RuleName.OnDeleteClause])
+        {
+            return this.visit(ctx[RuleName.OnDeleteClause])
+        }
+    }
+
+    [RuleName.OnSetClause](ctx)
+    {
+        let lhs = ctx.lhs.map(i => i.image)
+        let rhs = ctx.rhs.map(i => this.visit(i))
+
+        let expressions = []
+        let attributeNames = {}
+        let attributeValues = {}
+
+
+        lhs.forEach((property, index)=>{
+            //Duplicate property found.
+            let suffix = `___${propertyCollisionIndex++}`
+            
+            expressions.push(`#${property}${suffix} = :${property}${suffix}`)
+            attributeNames[`#${property}${suffix}`] = property
+            attributeValues[`:${property}${suffix}`] = rhs[index]
+        })
+
+        return {
+            setExpressions: expressions,
+            expressionAttributeNames: attributeNames,
+            expressionAttributeValues: attributeValues
+        }
+    }
+
+    [RuleName.OnAddClause](ctx)
+    {
+
+    }
+
+    [RuleName.OnRemoveClause](ctx)
+    {
+
+    }
+
+    [RuleName.OnDeleteClause](ctx)
+    {
+
+    }
+
+    [RuleName.OnWithVersionCheckClause](ctx)
     {
         return true
     }

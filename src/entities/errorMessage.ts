@@ -47,4 +47,8 @@ export class ErrorMessage
     static readonly JSON_MISSING_PROPERTY_VALUE = 'Invalid JSON object. Missing a property value.'
     static readonly JSON_MISSING_CLOSING_CURLY_PARENTHESIS = 'Invalid JSON object. Missing a closing curly parenthesis.'
     static readonly JSON_INVALID_VALUE = 'Invalid JSON value. Expect a string, a number, a boolean, an array, or an object.'
+
+    static readonly ON_MISSING_FROM = 'Missing "FROM" clause from the ON statement.'
+    static readonly OR_MISSING_EXPRESSION = 'Missing an update expression from the ON statement. Expect one of SET, ADD, REMOVE, or DELETE expression.'
+    static readonly ON_SET_MISSING_EQUAL = 'Missing an equal operator from a SET expression.'
 }

@@ -32,6 +32,19 @@ export enum RuleName
     UpdateWithVersionCheckClause = "updateWithVersionCheckClauseRuleName",
 
     /**
+     * ON Statement
+     */
+    OnStatement = "onStatementRuleName",
+    OnClause = "onClauseRuleName",
+    OnFromClause = "onFromClauseRuleName",
+    OnExpressionClause = "onExpressionClauseRuleName",
+    OnAddClause = "onAddClauseRuleName",
+    OnDeleteClause = "onDeleteClauseRuleName",
+    OnRemoveClause = "onRemoveClauseRuleName",
+    OnSetClause = "onSetClauseRuleName",
+    OnWithVersionCheckClause = "onWithVersionCheckClauseRuleName",
+
+    /**
      * CREATE TABLE statement
      */
     CreateTableStatement = "createTableStatementRuleName",

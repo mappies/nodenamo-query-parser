@@ -55,6 +55,10 @@ export class Token
     static readonly And = createToken({ name: "And", pattern: /and\s+/i })
     static readonly Or = createToken({ name: "Or", pattern: /or\s+/i })
     static readonly In = createToken({ name: "In", pattern: /in\s+/i })
+    static readonly On = createToken({ name: "On", pattern: /on\s+/i })
+    static readonly Add = createToken({ name: "Add", pattern: /Add\s+/i })
+    static readonly Remove = createToken({ name: "Remove", pattern: /Remove\s+/i })
+    static readonly Set = createToken({ name: "Set", pattern: /Set\s+/i })
     static readonly Between = createToken({ name: "Between", pattern: /Between/i })
     static readonly WhiteSpace = createToken({name: "WhiteSpace", pattern: /\s+/, group: Lexer.SKIPPED})
     static readonly AttributeExists = createToken({name: "AttributeExists", pattern: /attribute_exists\s*\(/})
@@ -84,6 +88,10 @@ export class Token
         Token.Order,
         Token.Using,
         Token.Resume,
+        Token.On,
+        Token.Add,
+        Token.Remove,
+        Token.Set,
         Token.As,
         Token.Asc,
         Token.Desc,

@@ -31,6 +31,7 @@ export class StatementParser extends CstParser
                             { ALT: () => this.SUBRULE(this.getStatement) },
                             { ALT: () => this.SUBRULE(this.insertStatement) },
                             { ALT: () => this.SUBRULE(this.updateStatement) },
+                            { ALT: () => this.SUBRULE(this.onStatement) },
                             { ALT: () => this.SUBRULE(this.deleteStatement) },
                             { ALT: () => this.SUBRULE(this.createTableStatement) },
                             { ALT: () => this.SUBRULE(this.deleteTableStatement) },
@@ -130,6 +131,90 @@ export class StatementParser extends CstParser
                     this.CONSUME(Token.WithVersionCheck)
                 })
 
+    /**
+     * ON Statement
+     * 
+     * Syntax: ON string|number FROM identifier 
+     *         (SET identifier=value(, SET identifier=value)*)*
+     *         (ADD identifier value(, ADD identifier value)*)*
+     *         (REMOVE identifier(, REMOVE identifier)*)*
+     *         (where expression)?
+     *         (with version check)?
+     */
+    onStatement = this.RULE(RuleName.OnStatement, () =>
+                {
+                    this.SUBRULE(this.onClause)
+                    this.SUBRULE(this.onFromClause)
+                    this.SUBRULE1(this.onExpressionClause)
+                    this.MANY(()=>{
+                        this.SUBRULE2(this.onExpressionClause)
+                    })
+                    this.OPTION1(() => {
+                        this.SUBRULE(this.whereClause)
+                    })
+                    this.OPTION2(() => {
+                        this.SUBRULE(this.onWithVersionCheck)
+                    })
+                })
+
+    onClause = this.RULE(RuleName.OnClause, () =>
+                {
+                    this.CONSUME(Token.On)
+                    this.SUBRULE(this.objectId)
+                })
+
+    onFromClause = this.RULE(RuleName.OnFromClause, () =>
+                {
+                    this.CONSUME(Token.From, {ERR_MSG:ErrorMessage.ON_MISSING_FROM})
+                    this.CONSUME(Token.Identifier, {ERR_MSG: ErrorMessage.MISSING_ENTITY_NAME})
+                })
+
+    onExpressionClause = this.RULE(RuleName.OnExpressionClause, () =>
+                {
+                    this.OR({
+                        DEF: [
+                            {ALT: () => this.SUBRULE(this.onSetClause) },
+                            {ALT: () => this.SUBRULE(this.onAddClause) },
+                            {ALT: () => this.SUBRULE(this.onRemoveClause) },
+                            {ALT: () => this.SUBRULE(this.onDeleteClause) }
+                        ],
+                        ERR_MSG: ErrorMessage.OR_MISSING_EXPRESSION
+                    })
+                })
+
+    onSetClause = this.RULE(RuleName.OnSetClause, () => 
+                {
+                    this.CONSUME(Token.Set)
+                    this.CONSUME1(Token.Identifier, {LABEL: 'lhs', ERR_MSG: ErrorMessage.MISSING_PROPERTY_NAME})
+                    this.CONSUME2(Token.Equal, {ERR_MSG: ErrorMessage.ON_SET_MISSING_EQUAL})
+                    this.SUBRULE1(this.atomicExpression, {LABEL: 'rhs'})
+                    this.MANY(()=>{
+                        this.CONSUME4(Token.Comma)
+                        this.CONSUME5(Token.Identifier, {LABEL: 'lhs', ERR_MSG: ErrorMessage.MISSING_PROPERTY_NAME})
+                        this.CONSUME6(Token.Equal, {ERR_MSG: ErrorMessage.ON_SET_MISSING_EQUAL})
+                        this.SUBRULE(this.atomicExpression, {LABEL: 'rhs'})
+                    })
+                })
+
+    onAddClause = this.RULE(RuleName.OnAddClause, () => 
+                {
+                    this.CONSUME(Token.Add)
+                })
+
+    onRemoveClause = this.RULE(RuleName.OnRemoveClause, () => 
+                {
+                    this.CONSUME(Token.Remove)
+                })
+
+    onDeleteClause = this.RULE(RuleName.OnDeleteClause, () => 
+                {
+                    this.CONSUME(Token.Delete)
+                })
+
+    onWithVersionCheck = this.RULE(RuleName.OnWithVersionCheckClause, () =>
+                {
+                    this.CONSUME(Token.WithVersionCheck)
+                })
     /**
      * DELETE Statement
      * 
