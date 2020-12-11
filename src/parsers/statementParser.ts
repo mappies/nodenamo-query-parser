@@ -199,6 +199,13 @@ export class StatementParser extends CstParser
     onAddClause = this.RULE(RuleName.OnAddClause, () => 
                 {
                     this.CONSUME(Token.Add)
+                    this.CONSUME1(Token.Identifier, {LABEL: 'lhs', ERR_MSG: ErrorMessage.MISSING_PROPERTY_NAME})
+                    this.CONSUME2(Token.Number, {LABEL: 'rhs', ERR_MSG: ErrorMessage.ON_ADD_MISSING_NUMBER})
+                    this.MANY(()=>{
+                        this.CONSUME(Token.Comma)
+                        this.CONSUME3(Token.Identifier, {LABEL: 'lhs', ERR_MSG: ErrorMessage.MISSING_PROPERTY_NAME})
+                        this.CONSUME4(Token.Number, {LABEL: 'rhs', ERR_MSG: ErrorMessage.ON_ADD_MISSING_NUMBER})
+                    })
                 })
 
     onRemoveClause = this.RULE(RuleName.OnRemoveClause, () => 

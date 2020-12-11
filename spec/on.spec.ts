@@ -67,7 +67,7 @@ describe('On Statement', function ()
         ]
         .forEach(test => 
         {
-            it(`SET '${test.statement}' is valid.`, async () =>
+            it(`'${test.statement}' is valid.`, async () =>
             {
                 resetCollisionIndex()
 
@@ -85,6 +85,108 @@ describe('On Statement', function ()
             { statement: 'on 1 from table set a = 1,', expected: {error: "MismatchedTokenException", message: ErrorMessage.MISSING_PROPERTY_NAME}},
             { statement: 'on 1 from table set a = 1, a', expected: {error: "MismatchedTokenException", message: ErrorMessage.ON_SET_MISSING_EQUAL}},
             { statement: 'on 1 from table set a = 1, a =', expected: {error: "NoViableAltException", message: ErrorMessage.UNEXPECTED_END_OF_STATEMENT}}
+        ]
+        .forEach(test => 
+        {
+            it(`'${test.statement}' is invalid because '${test.expected.message}'`, async () =>
+            {
+                let error = undefined;
+                try
+                {
+                    parse(test.statement);
+                }
+                catch(e)
+                {
+                    error = e;
+                }
+    
+                assert.isDefined(error);
+                assert.equal(error.name, test.expected.error);
+                assert.equal(error.message, test.expected.message);
+            })
+        });
+    });
+
+    describe('ADD', () =>
+    {    
+        [
+            { statement: 'on 1 from users add age 12', 
+              expected: {type: 'on', id: 1, from: 'users', 
+                        set: undefined,
+                        add: {addExpressions: ["#age___1 :age___1"], expressionAttributeNames: {'#age___1': 'age'}, expressionAttributeValues: {':age___1': 12}},
+                        remove: undefined,
+                        delete: undefined,
+                        where: undefined,
+                        versionCheck: undefined}},
+            { statement: 'on "1" from users add count 1, age 2', 
+              expected: {type: 'on', id: "1", from: 'users', 
+                        set: undefined,
+                        add: {addExpressions: ["#count___1 :count___1", "#age___2 :age___2"], expressionAttributeNames: {'#count___1': 'count', '#age___2': 'age'}, expressionAttributeValues: {':count___1': 1, ':age___2': 2}},
+                        remove: undefined,
+                        delete: undefined,
+                        where: undefined,
+                        versionCheck: undefined}},
+            { statement: 'on "1" from users add count 100 add age 25', 
+              expected: {type: 'on', id: "1", from: 'users', 
+                        set: undefined,
+                        add: {addExpressions: ["#count___1 :count___1", "#age___2 :age___2"], expressionAttributeNames: {'#count___1': 'count', '#age___2': 'age'}, expressionAttributeValues: {':count___1': 100, ':age___2': 25}},
+                        remove: undefined,
+                        delete: undefined,
+                        where: undefined,
+                        versionCheck: undefined}},
+            { statement: 'on "1" from users add count 100 add age 25 add viewed 1', 
+              expected: {type: 'on', id: "1", from: 'users', 
+                        set: undefined,
+                        add: {addExpressions: ["#count___1 :count___1", "#age___2 :age___2", "#viewed___3 :viewed___3"], expressionAttributeNames: {'#count___1': 'count', '#age___2': 'age', '#viewed___3': 'viewed'}, expressionAttributeValues: {':count___1': 100, ':age___2': 25, ':viewed___3': 1}},
+                        remove: undefined,
+                        delete: undefined,
+                        where: undefined,
+                        versionCheck: undefined}},
+            { statement: 'on "1" from users add count 100, age 25, viewed 1', 
+              expected: {type: 'on', id: "1", from: 'users', 
+                        set: undefined,
+                        add: {addExpressions: ["#count___1 :count___1", "#age___2 :age___2", "#viewed___3 :viewed___3"], expressionAttributeNames: {'#count___1': 'count', '#age___2': 'age', '#viewed___3': 'viewed'}, expressionAttributeValues: {':count___1': 100, ':age___2': 25, ':viewed___3': 1}},
+                        remove: undefined,
+                        delete: undefined,
+                        where: undefined,
+                        versionCheck: undefined}},
+            { statement: 'on "1" from users add count 100 add age 25, viewed 1', 
+              expected: {type: 'on', id: "1", from: 'users', 
+                        set: undefined,
+                        add: {addExpressions: ["#count___1 :count___1", "#age___2 :age___2", "#viewed___3 :viewed___3"], expressionAttributeNames: {'#count___1': 'count', '#age___2': 'age', '#viewed___3': 'viewed'}, expressionAttributeValues: {':count___1': 100, ':age___2': 25, ':viewed___3': 1}},
+                        remove: undefined,
+                        delete: undefined,
+                        where: undefined,
+                        versionCheck: undefined}},
+            { statement: 'on 1 from users add count 100, age 25 add viewed 1 where begins_with(name, "some") with version check', 
+              expected: {type: 'on', id: 1, from: 'users', 
+                        set: undefined,
+                        add: {addExpressions: ["#count___1 :count___1", "#age___2 :age___2", "#viewed___3 :viewed___3"], expressionAttributeNames: {'#count___1': 'count', '#age___2': 'age', '#viewed___3': 'viewed'}, expressionAttributeValues: {':count___1': 100, ':age___2': 25, ':viewed___3': 1}},
+                        remove: undefined,
+                        delete: undefined,
+                        where: {conditionExpression: "begins_with(#name,:name)", expressionAttributeNames: {"#name": "name"}, expressionAttributeValues: {":name": "some"}},
+                        versionCheck: true}},
+        ]
+        .forEach(test => 
+        {
+            it(`'${test.statement}' is valid.`, async () =>
+            {
+                resetCollisionIndex()
+
+                let result = parse(test.statement);
+                assert.deepEqual(result, test.expected);
+            })
+        });
+
+        [
+            { statement: 'on 1 from table add', expected: {error: "MismatchedTokenException", message: ErrorMessage.MISSING_PROPERTY_NAME}},
+            { statement: 'on 1 from table add a', expected: {error: "MismatchedTokenException", message: ErrorMessage.ON_ADD_MISSING_NUMBER}},
+            { statement: 'on 1 from table add a < 1', expected: {error: "MismatchedTokenException", message: ErrorMessage.ON_ADD_MISSING_NUMBER}},
+            { statement: 'on 1 from table add a =', expected: {error: "MismatchedTokenException", message: ErrorMessage.ON_ADD_MISSING_NUMBER}},
+            { statement: 'on 1 from table add a b', expected: {error: "MismatchedTokenException", message: ErrorMessage.ON_ADD_MISSING_NUMBER}},
+            { statement: 'on 1 from table add a true,', expected: {error: "MismatchedTokenException", message: ErrorMessage.ON_ADD_MISSING_NUMBER}},
+            { statement: 'on 1 from table add a 1, b', expected: {error: "MismatchedTokenException", message: ErrorMessage.ON_ADD_MISSING_NUMBER}},
+            { statement: 'on 1 from table add a 1, b =', expected: {error: "MismatchedTokenException", message: ErrorMessage.ON_ADD_MISSING_NUMBER}}
         ]
         .forEach(test => 
         {

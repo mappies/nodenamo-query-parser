@@ -51,4 +51,5 @@ export class ErrorMessage
     static readonly ON_MISSING_FROM = 'Missing "FROM" clause from the ON statement.'
     static readonly OR_MISSING_EXPRESSION = 'Missing an update expression from the ON statement. Expect one of SET, ADD, REMOVE, or DELETE expression.'
     static readonly ON_SET_MISSING_EQUAL = 'Missing an equal operator from a SET expression.'
+    static readonly ON_ADD_MISSING_NUMBER = 'Missing a number from an ADD expression.'
 }

@@ -202,6 +202,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         let expressions = ctx[RuleName.OnExpressionClause].map(i => this.visit(i))
 
         let setExpression = {setExpressions:[], expressionAttributeNames:{}, expressionAttributeValues:{}}
+        let addExpression = {addExpressions:[], expressionAttributeNames:{}, expressionAttributeValues:{}}
 
         for(let expression of expressions)
         {
@@ -211,14 +212,20 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
                 setExpression.expressionAttributeNames = Object.assign(setExpression.expressionAttributeNames, expression.expressionAttributeNames)
                 setExpression.expressionAttributeValues = Object.assign(setExpression.expressionAttributeValues, expression.expressionAttributeValues)
             }
+            else if(expression.addExpressions)
+            {
+                addExpression.addExpressions = addExpression.addExpressions.concat(expression.addExpressions)
+                addExpression.expressionAttributeNames = Object.assign(addExpression.expressionAttributeNames, expression.expressionAttributeNames)
+                addExpression.expressionAttributeValues = Object.assign(addExpression.expressionAttributeValues, expression.expressionAttributeValues)
+            }
         }
-
+        
         return {
             type: "on",
             id:  this.visit(ctx[RuleName.OnClause]),
             from: this.visit(ctx[RuleName.OnFromClause]),
-            set: setExpression,
-            add: undefined,
+            set: setExpression.setExpressions.length > 0 ? setExpression : undefined,
+            add: addExpression.addExpressions.length > 0 ? addExpression : undefined,
             remove: undefined,
             delete: undefined,
             where: this.visit(ctx[RuleName.WhereClause], 'conditionExpression'),
@@ -265,7 +272,6 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         let attributeNames = {}
         let attributeValues = {}
 
-
         lhs.forEach((property, index)=>{
             //Duplicate property found.
             let suffix = `___${propertyCollisionIndex++}`
@@ -284,7 +290,27 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
 
     [RuleName.OnAddClause](ctx)
     {
+        let lhs = ctx.lhs.map(i => i.image)
+        let rhs = ctx.rhs.map(i => Number(i.image))
 
+        let expressions = []
+        let attributeNames = {}
+        let attributeValues = {}
+
+        lhs.forEach((property, index)=>{
+            //Duplicate property found.
+            let suffix = `___${propertyCollisionIndex++}`
+
+            expressions.push(`#${property}${suffix} :${property}${suffix}`)
+            attributeNames[`#${property}${suffix}`] = property
+            attributeValues[`:${property}${suffix}`] = rhs[index]
+        })
+
+        return {
+            addExpressions: expressions,
+            expressionAttributeNames: attributeNames,
+            expressionAttributeValues: attributeValues
+        }
     }
 
     [RuleName.OnRemoveClause](ctx)
