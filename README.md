@@ -73,6 +73,45 @@ INSERT {id:2,title:"some thing",price:21,status:true} INTO books WHERE attribute
 }
 ```
 
+### LIST Statement
+
+#### Syntax
+
+**LIST** _projections_ **FROM** _[table](#import)_ **USING** _indexName_ **BY** _hashRange_ **FILTER** _[filterExpressions](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#DDB-Query-request-FilterExpression)_ **RESUME** lastEvaluatedKey **ORDER** _order_ **LIMIT** _number_ **STRONGLY CONSISTENT*
+ 
+where:
+* `projections` is a list of properties to return.  Use `*` to return all properties.
+* `indexName` is the name of a GSI.
+* `hashRange` is a value to search against a hash property. It can be optionally followed by a comma and a value to search against a range property.
+* `order` is `ASC` or `DESC`
+* `strongly consistent` can be used to request a consistent read.
+
+### Example
+
+```
+LIST * FROM users BY "name" , "timestamp" FILTER email = "someone@example.com" ORDER asc LIMIT 10 STRONGLY CONSISTENT
+```
+
+### Output
+
+```javascript
+{
+  type: 'list',
+  projections: undefined,
+  from: 'users',
+  using: undefined,
+  by: { hash: 'name', range: 'timestamp' },
+  filter: {
+    expressionAttributeNames: { '#email': 'email' },
+    expressionAttributeValues: { ':email': 'someone@example.com' },
+    filterExpression: '#email = :email'
+  },
+  resume: undefined,
+  order: 1,
+  limit: 10,
+  stronglyConsistent: true
+}
+```
 
 ### FIND Statement
 
@@ -116,3 +155,7 @@ FIND id, name, email FROM users USING users-gsi WHERE name = "some one" FILTER e
   stronglyConsistent: true
 }
 ```
+
+
+<a name='import'/>
+### IMPORT statement
