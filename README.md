@@ -73,11 +73,35 @@ INSERT {id:2,title:"some thing",price:21,status:true} INTO books WHERE attribute
 }
 ```
 
+### GET Statement
+
+
+#### Syntax
+
+**GET** _id_ **FROM** _[table](#import)_ **STRONGLY CONSISTENT**
+
+### Example
+
+```
+GET 42 FROM users STRONGLY CONSISTENT
+```
+
+### Output
+
+```javascript
+{
+  type: 'get', 
+  id: 42, 
+  from: 'users', 
+  stronglyConsistent: true
+}
+```
+
 ### LIST Statement
 
 #### Syntax
 
-**LIST** _projections_ **FROM** _[table](#import)_ **USING** _indexName_ **BY** _hashRange_ **FILTER** _[filterExpressions](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#DDB-Query-request-FilterExpression)_ **RESUME** lastEvaluatedKey **ORDER** _order_ **LIMIT** _number_ **STRONGLY CONSISTENT*
+**LIST** _projections_ **FROM** _[table](#import)_ **USING** _indexName_ **BY** _hashRange_ **FILTER** _[filterExpressions](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#DDB-Query-request-FilterExpression)_ **RESUME** lastEvaluatedKey **ORDER** _order_ **LIMIT** _number_ **STRONGLY CONSISTENT**
  
 where:
 * `projections` is a list of properties to return.  Use `*` to return all properties.
@@ -117,7 +141,7 @@ LIST * FROM users BY "name" , "timestamp" FILTER email = "someone@example.com" O
 
 #### Syntax
 
-**FIND** _projections_ **FROM** _[table](#import)_ **USING** _indexName_ **WHERE** _[keyConditions](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#DDB-Query-request-KeyConditions)_ **FILTER** _[filterExpressions](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#DDB-Query-request-FilterExpression)_ **RESUME** lastEvaluatedKey **ORDER** _order_ **LIMIT** _number_ **STRONGLY CONSISTENT*
+**FIND** _projections_ **FROM** _[table](#import)_ **USING** _indexName_ **WHERE** _[keyConditions](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#DDB-Query-request-KeyConditions)_ **FILTER** _[filterExpressions](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#DDB-Query-request-FilterExpression)_ **RESUME** lastEvaluatedKey **ORDER** _order_ **LIMIT** _number_ **STRONGLY CONSISTENT**
  
 where:
 * `projections` is a list of properties to return.  Use `*` to return all properties.
