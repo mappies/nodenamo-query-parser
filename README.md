@@ -180,6 +180,33 @@ FIND id, name, email FROM users USING users-gsi WHERE name = "some one" FILTER e
 }
 ```
 
+### DELETE Statement
+
+
+#### Syntax
+
+**DELETE** _id_ **FROM** _[table](#import)_ **WHERE** _[conditionExpression](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_DeleteItem.html#DDB-DeleteItem-request-ConditionExpression)_
+
+### Example
+
+```
+DELETE 42 FROM books WHERE deleted <> true
+```
+
+### Output
+
+```javascript
+{
+  type: 'delete',
+  id: 42,
+  from: 'books',
+  where: {
+    expression: '#deleted <> :deleted',
+    expressionAttributeNames: { '#deleted': 'deleted' },
+    expressionAttributeValues: { ':deleted': true }
+  }
+}
+```
 
 <a name='import'/>
 ### IMPORT statement
