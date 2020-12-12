@@ -2,6 +2,7 @@
 
 [Nodenamo Query Language](#nql) Parser
 
+
 ## Usage
 
 ### Example
@@ -42,6 +43,24 @@ console.log(statement)
 
 ## Nodenamo Query Language
 
+
+
+## Table of Content
+
+* [INSERT](#insert)
+* [GET](#get)
+* [LIST](#list)
+* [FIND](#find)
+* [UPDATE](#update)
+* [ON](#on)
+* [DELETE](#delete)
+* [IMPORT](#import)
+* [UNLOAD](#unload)
+* [CREATE TABLE](#createTable)
+* [DELETE TABLE](#deleteTable)
+* [SHOW TABLES](#showTables)
+* [EXPLAIN](#explain)
+
 <a name="insert"/>
 
 ### INSERT Statement
@@ -73,6 +92,9 @@ INSERT {id:2,title:"some thing",price:21,status:true} INTO books WHERE attribute
 }
 ```
 
+
+<a name="get"/>
+
 ### GET Statement
 
 
@@ -96,6 +118,8 @@ GET 42 FROM users STRONGLY CONSISTENT
   stronglyConsistent: true
 }
 ```
+
+<a name="list"/>
 
 ### LIST Statement
 
@@ -136,6 +160,8 @@ LIST * FROM users BY "name" , "timestamp" FILTER email = "someone@example.com" O
   stronglyConsistent: true
 }
 ```
+
+<a name="find"/>
 
 ### FIND Statement
 
@@ -180,6 +206,8 @@ FIND id, name, email FROM users USING users-gsi WHERE name = "some one" FILTER e
 }
 ```
 
+
+<a name="on"/>
 
 ### ON Statement
 
@@ -226,6 +254,8 @@ ON 42 FROM users SET lastViewed = "today" ADD count 1 WHERE published = true WIT
 ```
 
 
+<a name="delete"/>
+
 ### DELETE Statement
 
 
@@ -255,4 +285,5 @@ DELETE 42 FROM books WHERE deleted <> true
 ```
 
 <a name='import'/>
+
 ### IMPORT statement
