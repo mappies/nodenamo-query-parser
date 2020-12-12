@@ -72,3 +72,47 @@ INSERT {id:2,title:"some thing",price:21,status:true} INTO books WHERE attribute
   }
 }
 ```
+
+
+### FIND Statement
+
+#### Syntax
+
+**FIND** _projections_ **FROM** _[table](#import)_ **USING** _indexName_ **WHERE** _[keyConditions](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#DDB-Query-request-KeyConditions)_ **FILTER** _[filterExpressions](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#DDB-Query-request-FilterExpression)_ **RESUME** lastEvaluatedKey **ORDER** _order_ **LIMIT** _number_ **STRONGLY CONSISTENT*
+ 
+where:
+* `projections` is a list of properties to return.  Use `*` to return all properties.
+* `indexName` is the name of a GSI.
+* `order` is `ASC` or `DESC`
+* `strongly consistent` can be used to request a consistent read.
+
+### Example
+
+```
+FIND id, name, email FROM users USING users-gsi WHERE name = "some one" FILTER email = "someone@example.com" RESUME token ORDER desc LIMIT 2 STRONGLY CONSISTENT
+```
+
+### Output
+
+```javascript
+{
+  type: 'find',
+  projections: [ 'id', 'name', 'email' ],
+  from: 'users',
+  using: 'users-gsi',
+  where: {
+    expressionAttributeNames: { '#name': 'name' },
+    expressionAttributeValues: { ':name': 'some one' },
+    keyConditions: '#name = :name'
+  },
+  filter: {
+    expressionAttributeNames: { '#email': 'email' },
+    expressionAttributeValues: { ':email': 'someone@example.com' },
+    filterExpression: '#email = :email'
+  },
+  resume: 'token',
+  order: -1,
+  limit: 2,
+  stronglyConsistent: true
+}
+```
