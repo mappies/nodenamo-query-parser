@@ -180,6 +180,52 @@ FIND id, name, email FROM users USING users-gsi WHERE name = "some one" FILTER e
 }
 ```
 
+
+### ON Statement
+
+
+#### Syntax
+
+**ON** _id_ **FROM** _[table](#import)_ **SET**_[setExpression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.UpdateExpressions.html#Expressions.UpdateExpressions.SET)_ **ADD** _[addExpression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.UpdateExpressions.html#Expressions.UpdateExpressions.ADD)_ **DELETE** _[deleteExpression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.UpdateExpressions.html#Expressions.UpdateExpressions.DELETE)_ **REMOVE** _[removeExpression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.UpdateExpressions.html#Expressions.UpdateExpressions.REMOVE)_ _[conditionExpression](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_UpdateItem.html#DDB-UpdateItem-request-ConditionExpression)_ **WITH VERSION CHECK**
+
+where:
+* `WITH VERSION CHECK` can be used to request a version check.
+
+### Example
+
+```
+ON 42 FROM users SET lastViewed = "today" ADD count 1 WHERE published = true WITH VERSION CHECK
+```
+
+### Output
+
+```javascript
+{
+  type: 'on',
+  id: 42,
+  from: 'users',
+  set: {
+    setExpressions: [ '#lastViewed___1 = :lastViewed___1' ],
+    expressionAttributeNames: { '#lastViewed___1': 'lastViewed' },
+    expressionAttributeValues: { ':lastViewed___1': 'today' }
+  },
+  add: {
+    addExpressions: [ '#count___2 :count___2' ],
+    expressionAttributeNames: { '#count___2': 'count' },
+    expressionAttributeValues: { ':count___2': 1 }
+  },
+  remove: undefined,
+  delete: undefined,
+  where: {
+    expressionAttributeNames: { '#published': 'published' },
+    expressionAttributeValues: { ':published': true },
+    conditionExpression: '#published = :published'
+  },
+  versionCheck: true
+}
+```
+
+
 ### DELETE Statement
 
 
