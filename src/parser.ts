@@ -17,6 +17,7 @@ export { IShowTablesStatement } from './interfaces/IShowTablesStatement';
 export { IUnloadTableStatement } from './interfaces/IUnloadTableStatement';
 export { IImportStatement } from './interfaces/IImportStatement';
 export { IExplainStatement } from './interfaces/IExplainStatement';
+export { IOnStatement } from './interfaces/IOnStatement'
 
 let lexer = new Lexer(Token.AllTokens);
 let parser = new StatementParser();

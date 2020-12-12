@@ -13,6 +13,7 @@ import { IShowTablesStatement } from '../interfaces/IShowTablesStatement';
 import { IUnloadTableStatement } from '../interfaces/IUnloadTableStatement';
 import { IImportStatement } from '../interfaces/IImportStatement';
 import { IExplainStatement } from '../interfaces/IExplainStatement';
+import { IOnStatement } from '../interfaces/IOnStatement';
 
 const statementParser = new StatementParser()
 const BaseSQLVisitor = statementParser.getBaseCstVisitorConstructor()
@@ -198,7 +199,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
      *         (where expression)?
      *         (with version check)?
      */
-    [RuleName.OnStatement](ctx)
+    [RuleName.OnStatement](ctx): IOnStatement
     {
         let expressions = ctx[RuleName.OnExpressionClause].map(i => this.visit(i))
 
