@@ -241,6 +241,43 @@ FIND id, name, email FROM users USING users-gsi WHERE name = "some one" FILTER e
 ```
 
 
+
+
+<a name="update"/>
+
+### UPDATE Statement
+
+
+#### Syntax
+
+**UPDATE** _[jsonObject](https://www.json.org/json-en.html)_ **FROM** _[table](#import)_ **WHERE** _[conditionExpression](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_DeleteItem.html#DDB-DeleteItem-request-ConditionExpression)_ **WITH VERSION CHECK**
+
+where:
+* `WITH VERSION CHECK` can be used to request a version check.
+
+### Example
+
+```
+UPDATE {id:1,name:"new name"} FROM users WHERE attribute_not_exists(id) WITH VERSION CHECK
+```
+
+### Output
+
+```javascript
+{
+  type: 'update',
+  object: { id: 1, name: 'new name' },
+  from: 'users',
+  where: {
+    expressionAttributeNames: { '#id': 'id' },
+    expressionAttributeValues: {},
+    conditionExpression: 'attribute_not_exists(#id)'
+  },
+  versionCheck: true
+}
+```
+
+
 <a name="on"/>
 
 ### ON Statement
