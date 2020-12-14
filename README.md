@@ -410,7 +410,7 @@ DELETE TABLE FOR users
 
 
 
-<a name="showTable"/>
+<a name="showTables"/>
 
 ### SHOW TABLES Statement
 
@@ -432,3 +432,39 @@ SHOW TABLES
   type: 'show_tables',
 }
 ```
+
+
+
+
+<a name="explain"/>
+
+### EXPLAIN Statement
+
+
+#### Syntax
+
+**Explain** statement
+
+where:
+* `statement` is one of nodenamo query language stattements.
+
+### Example
+
+```
+EXPLAIN INSERT {id:1,name:"some one"} INTO users
+```
+
+### Output
+
+```javascript
+{
+  type: 'explain',
+  statement: {
+    type: 'insert',
+    object: { id: 1, name: 'some one' },
+    into: 'users',
+    where: undefined
+  }
+}
+```
+
