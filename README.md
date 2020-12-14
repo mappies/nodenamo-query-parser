@@ -47,6 +47,7 @@ console.log(statement)
 
 ## Table of Content
 
+* [IMPORT](#import)
 * [INSERT](#insert)
 * [GET](#get)
 * [LIST](#list)
@@ -54,12 +55,48 @@ console.log(statement)
 * [UPDATE](#update)
 * [ON](#on)
 * [DELETE](#delete)
-* [IMPORT](#import)
 * [UNLOAD](#unload)
 * [CREATE TABLE](#createTable)
 * [DELETE TABLE](#deleteTable)
 * [SHOW TABLES](#showTables)
 * [EXPLAIN](#explain)
+
+
+<a name='import'/>
+
+### IMPORT statement
+
+#### Syntax
+
+**IMPORT** _class_ **FROM** _"path"_
+
+**IMPORT** _class_ as alias **FROM** _"path"_
+
+**IMPORT** _{class}_ **FROM** _"path"_
+
+**IMPORT** _{class as alias}_ **FROM** _"path"_
+
+where:
+* `class` is the exported class decorated with [nodenamo](https://github.com/mappies/nodenamo)'s `@DBTable`
+* `alias` is an alias to be referenced to the imported class from subsequent statements.
+* `path` is the path to the file or a package containing the `class` to import.
+ 
+ 
+### Example
+
+```
+IMPORT usersTable as users FROM "./usersTable.ts"
+```
+
+### Output
+
+```javascript
+{
+  type: 'import',
+  entity: [ { name: 'usersTable', as: 'users', default: true } ],
+  from: './usersTable.ts'
+}
+```
 
 <a name="insert"/>
 
@@ -284,6 +321,3 @@ DELETE 42 FROM books WHERE deleted <> true
 }
 ```
 
-<a name='import'/>
-
-### IMPORT statement
