@@ -378,3 +378,31 @@ CREATE TABLE FOR users WITH CAPACITY OF 123, 456
   withCapacityOf: { readCapacity: 123, writeCapacity: 456 }
 }
 ```
+
+
+<a name="deleteTable"/>
+
+### DELETE TABLE Statement
+
+
+#### Syntax
+
+**DELETE TABLE FOR** _name_
+
+where:
+* `name` is the imported class name or its alias.
+
+### Example
+
+```
+DELETE TABLE FOR users
+```
+
+### Output
+
+```javascript
+{
+  type: 'delete_table',
+  for: 'users'
+}
+```
