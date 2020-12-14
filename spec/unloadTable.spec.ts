@@ -5,7 +5,7 @@ import { parse } from '../src/parser';
 describe('Unload Table Statement', function () 
 {
     [
-        { statement: 'UNLOAD TABLE user', expected: {type: 'remove_table', name: 'user'}}
+        { statement: 'UNLOAD TABLE user', expected: {type: 'unload_table', name: 'user'}}
     ]
     .forEach(test => 
     {

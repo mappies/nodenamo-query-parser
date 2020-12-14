@@ -991,7 +991,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
     [RuleName.UnloadTableStatement](ctx): IUnloadTableStatement
     {
         return {
-            type: "remove_table",
+            type: "unload_table",
             name: this.visit(ctx[RuleName.UnloadTableClause])
         }
     }
