@@ -406,3 +406,29 @@ DELETE TABLE FOR users
   for: 'users'
 }
 ```
+
+
+
+
+<a name="showTable"/>
+
+### SHOW TABLES Statement
+
+
+#### Syntax
+
+**SHOW TABLES**
+
+### Example
+
+```
+SHOW TABLES
+```
+
+### Output
+
+```javascript
+{
+  type: 'show_tables',
+}
+```
