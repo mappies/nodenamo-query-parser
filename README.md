@@ -55,7 +55,7 @@ console.log(statement)
 * [UPDATE](#update)
 * [ON](#on)
 * [DELETE](#delete)
-* [UNLOAD](#unload)
+* [UNLOAD TABLE](#unloadTable)
 * [CREATE TABLE](#createTable)
 * [DELETE TABLE](#deleteTable)
 * [SHOW TABLES](#showTables)
@@ -69,11 +69,8 @@ console.log(statement)
 #### Syntax
 
 **IMPORT** _class_ **FROM** _"path"_
-
-**IMPORT** _class_ as alias **FROM** _"path"_
-
+**IMPORT** _class_ **AS** alias **FROM** _"path"_
 **IMPORT** _{class}_ **FROM** _"path"_
-
 **IMPORT** _{class as alias}_ **FROM** _"path"_
 
 where:
@@ -321,3 +318,31 @@ DELETE 42 FROM books WHERE deleted <> true
 }
 ```
 
+
+
+<a name="unload"/>
+
+### UNLOAD TABLE Statement
+
+
+#### Syntax
+
+**UNLOAD TABLE** _name_ 
+
+where:
+* `name` is the imported class name or its alias.
+
+### Example
+
+```
+UNLOAD TABLE users
+```
+
+### Output
+
+```javascript
+{ 
+  type: 'unload_table', 
+  name: 'users' 
+}
+```
