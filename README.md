@@ -320,7 +320,7 @@ DELETE 42 FROM books WHERE deleted <> true
 
 
 
-<a name="unload"/>
+<a name="unloadTable"/>
 
 ### UNLOAD TABLE Statement
 
@@ -344,5 +344,37 @@ UNLOAD TABLE users
 { 
   type: 'unload_table', 
   name: 'users' 
+}
+```
+
+
+
+<a name="createTable"/>
+
+### CREATE TABLE Statement
+
+
+#### Syntax
+
+**CREATE TABLE FOR** _name_ **WITH CAPACITY OF** readCapacityNumber, writeCapacityNumber
+
+where:
+* `name` is the imported class name or its alias.
+* `readCapacityNumber` is the desired read capacity for the table.
+* `writeCapacityNumber` is the desired write capacity for the table.
+
+### Example
+
+```
+CREATE TABLE FOR users WITH CAPACITY OF 123, 456
+```
+
+### Output
+
+```javascript
+{
+  type: 'create_table',
+  for: 'users',
+  withCapacityOf: { readCapacity: 123, writeCapacity: 456 }
 }
 ```
