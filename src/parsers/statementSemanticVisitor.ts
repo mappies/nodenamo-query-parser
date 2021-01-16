@@ -461,12 +461,12 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
 
     [RuleName.FindResumeClause](ctx)
     {
-        return ctx.Identifier[0].image;
+        return this.removeEnclosingDoubleQuotes(ctx.String[0].image);
     }
 
     [RuleName.FindOrderClause](ctx)
     {
-        return ctx.Desc ? -1 : 1;
+        return ctx.Desc ? false : true;
     }
 
     [RuleName.FindLimitClause](ctx)

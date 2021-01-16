@@ -1,11 +1,16 @@
 {
   "name": "nodenamo-query-parser",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A query parser for nodenamo",
-  "main": "index.js",
+  "main": "dist/parser.js",
+  "typings": "dist/parser",
+  "files": [
+    "dist/*"
+  ],
   "scripts": {
     "test": "cd spec && mocha --require ts-node/register *.ts",
-    "start": "./node_modules/.bin/ts-node src/parser.ts"
+    "start": "./node_modules/.bin/ts-node src/parser.ts",
+    "build": "tsc --outDir dist/"
   },
   "repository": {
     "type": "git",

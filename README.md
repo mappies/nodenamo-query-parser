@@ -33,7 +33,7 @@ console.log(statement)
     filterExpression: '#enabled = :enabled'
   },
   resume: undefined,
-  order: 1,
+  order: true,
   limit: 10,
   stronglyConsistent: undefined
 }
@@ -159,7 +159,7 @@ GET 42 FROM users STRONGLY CONSISTENT
 
 #### Syntax
 
-**LIST** _projections_ **FROM** _[table](#import)_ **USING** _indexName_ **BY** _hashRange_ **FILTER** _[filterExpressions](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#DDB-Query-request-FilterExpression)_ **RESUME** lastEvaluatedKey **ORDER** _order_ **LIMIT** _number_ **STRONGLY CONSISTENT**
+**LIST** _projections_ **FROM** _[table](#import)_ **USING** _indexName_ **BY** _hashRange_ **FILTER** _[filterExpressions](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#DDB-Query-request-FilterExpression)_ **RESUME** "lastEvaluatedKey" **ORDER** _order_ **LIMIT** _number_ **STRONGLY CONSISTENT**
  
 where:
 * `projections` is a list of properties to return.  Use `*` to return all properties.
@@ -189,7 +189,7 @@ LIST * FROM users BY "name" , "timestamp" FILTER email = "someone@example.com" O
     filterExpression: '#email = :email'
   },
   resume: undefined,
-  order: 1,
+  order: true,
   limit: 10,
   stronglyConsistent: true
 }
@@ -201,7 +201,7 @@ LIST * FROM users BY "name" , "timestamp" FILTER email = "someone@example.com" O
 
 #### Syntax
 
-**FIND** _projections_ **FROM** _[table](#import)_ **USING** _indexName_ **WHERE** _[keyConditions](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#DDB-Query-request-KeyConditions)_ **FILTER** _[filterExpressions](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#DDB-Query-request-FilterExpression)_ **RESUME** lastEvaluatedKey **ORDER** _order_ **LIMIT** _number_ **STRONGLY CONSISTENT**
+**FIND** _projections_ **FROM** _[table](#import)_ **USING** _indexName_ **WHERE** _[keyConditions](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#DDB-Query-request-KeyConditions)_ **FILTER** _[filterExpressions](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#DDB-Query-request-FilterExpression)_ **RESUME** "lastEvaluatedKey" **ORDER** _order_ **LIMIT** _number_ **STRONGLY CONSISTENT**
  
 where:
 * `projections` is a list of properties to return.  Use `*` to return all properties.
@@ -212,7 +212,7 @@ where:
 ### Example
 
 ```
-FIND id, name, email FROM users USING users-gsi WHERE name = "some one" FILTER email = "someone@example.com" RESUME token ORDER desc LIMIT 2 STRONGLY CONSISTENT
+FIND id, name, email FROM users USING users-gsi WHERE name = "some one" FILTER email = "someone@example.com" resume "token" ORDER desc LIMIT 2 STRONGLY CONSISTENT
 ```
 
 ### Output
@@ -234,7 +234,7 @@ FIND id, name, email FROM users USING users-gsi WHERE name = "some one" FILTER e
     filterExpression: '#email = :email'
   },
   resume: 'token',
-  order: -1,
+  order: false,
   limit: 2,
   stronglyConsistent: true
 }

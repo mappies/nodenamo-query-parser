@@ -339,7 +339,7 @@ export class StatementParser extends CstParser
     findResumeClause = this.RULE(RuleName.FindResumeClause, () =>
                 {
                     this.CONSUME(Token.Resume)
-                    this.CONSUME(Token.Identifier, {ERR_MSG:ErrorMessage.FIND_MISSING_RESUME})
+                    this.CONSUME(Token.String, {ERR_MSG:ErrorMessage.FIND_MISSING_RESUME})
                 })
 
     findOrderClause = this.RULE(RuleName.FindOrderClause, () =>
