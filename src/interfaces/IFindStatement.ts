@@ -8,7 +8,7 @@ export interface IFindStatement extends IStatement
     where: {keyConditions:string, expressionAttributeValues?:object, expressionAttributeNames?:object}
     filter: {filterExpression?:string, expressionAttributeValues?:object, expressionAttributeNames?:object}
     resume: string
-    order: number
+    order: boolean
     limit: number
     stronglyConsistent: boolean
 }

@@ -869,7 +869,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
     {
         return {
             type: "import",
-            entity: this.visit(ctx[RuleName.ImportClause]),
+            entities: this.visit(ctx[RuleName.ImportClause]),
             from: this.visit(ctx[RuleName.ImportFromClause])
         }
     }

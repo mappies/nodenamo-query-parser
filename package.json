@@ -1,6 +1,6 @@
 {
   "name": "nodenamo-query-parser",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "A query parser for nodenamo",
   "main": "dist/parser.js",
   "typings": "dist/parser",

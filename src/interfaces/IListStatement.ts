@@ -8,7 +8,7 @@ export interface IListStatement extends IStatement
     by: {hash:string, range:string}
     filter: {filterExpression?:string, expressionAttributeValues?:object, expressionAttributeNames?:object}
     resume: string
-    order: number
+    order: boolean
     limit: number
     stronglyConsistent: boolean
 }
