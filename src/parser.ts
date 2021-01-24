@@ -3,6 +3,7 @@ import { Token } from './entities/token';
 import { IStatement } from './interfaces/IStatement';
 import { StatementParser } from './parsers/statementParser';
 import { StatementSemanticVisitor } from './parsers/statementSemanticVisitor';
+import { RuleName } from './entities/ruleName';
 
 export { IStatement } from './interfaces/IStatement';
 export { IUpdateStatement } from './interfaces/IUpdateStatement';
@@ -34,6 +35,17 @@ export function parse(text): IStatement
     }
 
     return new StatementSemanticVisitor().visit(cst)
+}
+
+export function suggest(text): string[]
+{
+    let lex = lexer.tokenize(text + ' ');
+
+    if(lex.errors.length > 0) return [];
+
+    let suggestions = parser.computeContentAssist(RuleName.Statement, lex.tokens);
+
+    return [...new Set(suggestions.map(suggestion => suggestion.nextTokenType.LABEL).sort())];
 }
 
 export function parseExpression(text) 
