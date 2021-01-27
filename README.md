@@ -60,6 +60,7 @@ console.log(statement)
 * [DELETE TABLE](#deleteTable)
 * [SHOW TABLES](#showTables)
 * [EXPLAIN](#explain)
+* [DESCRIBE](#describe)
 
 
 <a name='import'/>
@@ -505,3 +506,31 @@ EXPLAIN INSERT {id:1,name:"some one"} INTO users
 }
 ```
 
+
+
+<a name="describe"/>
+
+### DESCRIBE Statement
+
+
+#### Syntax
+
+**Describe** _name_
+
+where:
+* `name` is the imported class name or its alias.
+
+### Example
+
+```
+DESCRIBE users
+```
+
+### Output
+
+```javascript
+{
+  type: 'describe',
+  name: 'users'
+}
+```

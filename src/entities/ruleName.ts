@@ -9,6 +9,11 @@ export enum RuleName
     ExplainStatement = 'explainStatementRuleName',
 
     /**
+     * DESCRIBE Statement
+     */
+    DescribeStatement = "describeStatementRuleName",
+
+    /**
      * INSERT Statement
      */
     InsertStatement = "insertStatementRuleName",

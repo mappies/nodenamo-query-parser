@@ -13,6 +13,7 @@ export class Token
     static readonly Delete = createToken({ name: "Delete", label: "delete", pattern: /Delete\s+/i,})
     static readonly Where = createToken({ name: "Where", label: "where", pattern: /Where/i })
     static readonly Find = createToken({ name: "Find", label: "find", pattern: /Find/i })
+    static readonly Describe = createToken({ name: "Describe", label: "describe", pattern: /Describe/i })
     static readonly Import = createToken({ name: "Import", label: "import", pattern: /Import/i })
     static readonly Insert = createToken({ name: "Insert", label: "insert", pattern: /Insert\s+/i })
     static readonly Into = createToken({ name: "Into", label: "into", pattern: /Into\s+/i })
@@ -93,6 +94,7 @@ export class Token
         Token.Remove,
         Token.Set,
         Token.As,
+        Token.Describe,
         Token.Asc,
         Token.Desc,
         Token.Star,

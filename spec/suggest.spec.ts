@@ -4,7 +4,7 @@ import {suggest} from '../src/parser';
 describe('Suggest', function () 
 {
     [
-        { statement: '', expectedSuggestions: ["create table", "delete", "delete table", "explain", "find", "get", "import", "insert", "list", "on", "show tables", "unload table", "update"]},
+        { statement: '', expectedSuggestions: ["create table", "delete", "delete table", "describe", "explain", "find", "get", "import", "insert", "list", "on", "show tables", "unload table", "update"]},
         { statement: 'find *', expectedSuggestions: ['from']},
         { statement: 'find * from table', expectedSuggestions: ['filter', 'limit', 'order', 'resume', 'strongly consistent', 'using', 'where']},
         { statement: 'find * from table filter', expectedSuggestions: ['(', 'attribute_exists', 'attribute_not_exists', 'attribute_type', 'begins_with', 'identifier', 'not', 'size']},

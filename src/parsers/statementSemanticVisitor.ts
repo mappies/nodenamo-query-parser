@@ -14,6 +14,7 @@ import { IUnloadTableStatement } from '../interfaces/IUnloadTableStatement';
 import { IImportStatement } from '../interfaces/IImportStatement';
 import { IExplainStatement } from '../interfaces/IExplainStatement';
 import { IOnStatement } from '../interfaces/IOnStatement';
+import { IDescribeStatement } from '../interfaces/IDescribeStatement';
 
 const statementParser = new StatementParser()
 const BaseSQLVisitor = statementParser.getBaseCstVisitorConstructor()
@@ -99,6 +100,23 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         else if (ctx[RuleName.UnloadTableStatement])
         {
             return this.visit(ctx[RuleName.UnloadTableStatement])
+        }
+        else if (ctx[RuleName.DescribeStatement])
+        {
+            return this.visit(ctx[RuleName.DescribeStatement])
+        }
+    }
+
+    /**
+     * DESCRIBE Statement
+     * 
+     * Syntax: DESCRIBE identifier 
+     */
+    [RuleName.DescribeStatement](ctx): IDescribeStatement
+    {
+        return {
+            type: "describe",
+            name: ctx.Identifier[0].image
         }
     }
 

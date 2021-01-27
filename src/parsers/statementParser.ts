@@ -37,10 +37,23 @@ export class StatementParser extends CstParser
                             { ALT: () => this.SUBRULE(this.deleteTableStatement) },
                             { ALT: () => this.SUBRULE(this.importStatement) },
                             { ALT: () => this.SUBRULE(this.showTablesStatement) },
-                            { ALT: () => this.SUBRULE(this.unloadTableStatement) }
+                            { ALT: () => this.SUBRULE(this.unloadTableStatement) },
+                            { ALT: () => this.SUBRULE(this.describeStatement) }
                         ]
                     })
                 });
+
+    /**
+     * DESCRIBE Statement
+     * 
+     * Syntax: DESCRIBE identifier 
+     */
+    describeStatement = this.RULE(RuleName.DescribeStatement, () =>
+                {
+                    this.CONSUME(Token.Describe)
+                    this.CONSUME(Token.Identifier, {ERR_MSG: ErrorMessage.MISSING_ENTITY_NAME})
+                })
+
     /**
      * INSERT Statement
      * 
