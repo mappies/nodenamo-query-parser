@@ -15,6 +15,7 @@ import { IImportStatement } from '../interfaces/IImportStatement';
 import { IExplainStatement } from '../interfaces/IExplainStatement';
 import { IOnStatement } from '../interfaces/IOnStatement';
 import { IDescribeStatement } from '../interfaces/IDescribeStatement';
+import { ReturnValue } from '../parser';
 
 const statementParser = new StatementParser()
 const BaseSQLVisitor = statementParser.getBaseCstVisitorConstructor()
@@ -178,7 +179,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
     /**
      * UPDATE Statement
      * 
-     * Syntax: UPDATE jsonObject FROM identifier (where expression)?  (with version check)?
+     * Syntax: UPDATE jsonObject FROM identifier (where expression)? (returning NONE|ALLOLD|ALLNEW)? (with version check)?
      */
     [RuleName.UpdateStatement](ctx): IUpdateStatement
     {
@@ -187,7 +188,8 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
             object: this.visit(ctx[RuleName.UpdateClause]),
             from: this.visit(ctx[RuleName.UpdateFromClause]),
             where: this.visit(ctx[RuleName.WhereClause], 'conditionExpression'),
-            versionCheck: this.visit(ctx[RuleName.UpdateWithVersionCheckClause])
+            versionCheck: this.visit(ctx[RuleName.UpdateWithVersionCheckClause]),
+            returnValue: this.visit(ctx[RuleName.ReturningClause])
         }
     }
 
@@ -215,6 +217,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
      *         (DELETE identifier(, DELETE identifier)*)*
      *         (REMOVE identifier(, REMOVE identifier)*)*
      *         (where expression)?
+     *         (returning NONE|ALLOLD|ALLNEW)? 
      *         (with version check)?
      */
     [RuleName.OnStatement](ctx): IOnStatement
@@ -263,6 +266,7 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
             remove: removeExpression.removeExpressions.length > 0 ? removeExpression : undefined,
             delete: deleteExpression.deleteExpressions.length > 0 ? deleteExpression : undefined,
             where: this.visit(ctx[RuleName.WhereClause], 'conditionExpression'),
+            returnValue: this.visit(ctx[RuleName.ReturningClause]),
             versionCheck: this.visit(ctx[RuleName.OnWithVersionCheckClause])
         }
     }
@@ -1122,6 +1126,14 @@ export class StatementSemanticVisitor extends BaseSQLVisitor
         {
             return Number(ctx.Number[0].image)
         }
+    }
+
+    /**
+     * Returning
+     */
+    [RuleName.ReturningClause](ctx) 
+    {
+        return ctx.AllNew ? ReturnValue.AllNew : (ctx.AllOld ? ReturnValue.AllOld : ReturnValue.None)
     }
 
     /**

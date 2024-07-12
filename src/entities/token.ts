@@ -31,6 +31,10 @@ export class Token
     static readonly As = createToken({ name: "As", label: "as", pattern: /As\s+/i })
     static readonly Asc = createToken({ name: "Asc", label: "asc", pattern: /\sAsc\W+/i })
     static readonly Desc = createToken({ name: "Desc", label: "desc", pattern:/\sDesc\W+/i })
+    static readonly Returning = createToken({ name: "Returning", label: "returning", pattern: /Returning/i })
+    static readonly None = createToken({ name: "None", label: "none", pattern:/None/i })
+    static readonly AllNew = createToken({ name: "AllNew", label: "allnew", pattern:/AllNew/i })
+    static readonly AllOld = createToken({ name: "AllOld", label: "allold", pattern:/allold/i })
     static readonly Star = createToken({ name: "Star", label: "*", pattern: /\*/ })
 
     static readonly Identifier = createToken({ name: "Identifier", label: "identifier", pattern: /[a-zA-Z][\w\-\.]*/ })
@@ -97,6 +101,10 @@ export class Token
         Token.Describe,
         Token.Asc,
         Token.Desc,
+        Token.Returning,
+        Token.None,
+        Token.AllNew,
+        Token.AllOld,
         Token.Star,
         Token.By,
         Token.Limit,
