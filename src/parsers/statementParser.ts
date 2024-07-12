@@ -113,7 +113,7 @@ export class StatementParser extends CstParser
     /**
      * UPDATE Statement
      * 
-     * Syntax: UPDATE jsonObject FROM identifier (where expression)?  (with version check)?
+     * Syntax: UPDATE jsonObject FROM identifier (where expression)? (returning NONE|ALLOLD|ALLNEW)? (with version check)? 
      */
     updateStatement = this.RULE(RuleName.UpdateStatement, () =>
                 {
@@ -123,6 +123,9 @@ export class StatementParser extends CstParser
                         this.SUBRULE(this.whereClause)
                     })
                     this.OPTION2(() => {
+                        this.SUBRULE(this.returningClause)
+                    })
+                    this.OPTION3(() => {
                         this.SUBRULE(this.updateWithVersionCheckClause)
                     })
                 })
@@ -153,6 +156,7 @@ export class StatementParser extends CstParser
      *         (DELETE identifier(, DELETE identifier)*)*
      *         (REMOVE identifier(, REMOVE identifier)*)*
      *         (where expression)?
+     *         (returning NONE|ALLOLD|ALLNEW)? 
      *         (with version check)?
      */
     onStatement = this.RULE(RuleName.OnStatement, () =>
@@ -167,6 +171,9 @@ export class StatementParser extends CstParser
                         this.SUBRULE(this.whereClause)
                     })
                     this.OPTION2(() => {
+                        this.SUBRULE(this.returningClause)
+                    })
+                    this.OPTION3(() => {
                         this.SUBRULE(this.onWithVersionCheck)
                     })
                 })
@@ -836,7 +843,25 @@ export class StatementParser extends CstParser
                                     ERR_MSG: ErrorMessage.MISSING_OBJECT_ID
                                 })
                             })
+    /**
+     * Returning
+     */
+    returningClause = this.RULE(RuleName.ReturningClause, () =>
+                            {
+                                this.CONSUME(Token.Returning)
+                                this.OR({
+                                    DEF: [
+                                        {ALT: ()=>this.CONSUME(Token.None, {LABEL: 'None'})},
+                                        {ALT: ()=>this.CONSUME(Token.AllNew, {LABEL: 'AllNew'})},
+                                        {ALT: ()=>this.CONSUME(Token.AllOld, {LABEL: 'AllOld'})},
+                                    ],
+                                    ERR_MSG: ErrorMessage.RETURNING_MISSING_VALUE
+                                });
+                            })
 
+    /**
+     * Constructor
+     */           
     constructor(tokenVocabulary: TokenVocabulary = Token.AllTokens, config?: IParserConfig)
     {
         super(tokenVocabulary, Object.assign({errorMessageProvider: new ParserErrorProvider()}, config))

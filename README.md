@@ -251,15 +251,16 @@ FIND id, name, email FROM users USING users-gsi WHERE name = "some one" FILTER e
 
 #### Syntax
 
-**UPDATE** _[jsonObject](https://www.json.org/json-en.html)_ **FROM** _[table](#import)_ **WHERE** _[conditionExpression](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_DeleteItem.html#DDB-DeleteItem-request-ConditionExpression)_ **WITH VERSION CHECK**
+**UPDATE** _[jsonObject](https://www.json.org/json-en.html)_ **FROM** _[table](#import)_ **WHERE** _[conditionExpression](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_DeleteItem.html#DDB-DeleteItem-request-ConditionExpression)_ **RETURNING** _returnValue_ **WITH VERSION CHECK**
 
 where:
 * `WITH VERSION CHECK` can be used to request a version check.
+* `returnValue` is `NONE`, `ALLNEW`, or `ALLOLD`
 
 ### Example
 
 ```
-UPDATE {id:1,name:"new name"} FROM users WHERE attribute_not_exists(id) WITH VERSION CHECK
+UPDATE {id:1,name:"new name"} FROM users WHERE attribute_not_exists(id) RETURNING ALLOLD WITH VERSION CHECK
 ```
 
 ### Output
@@ -274,7 +275,8 @@ UPDATE {id:1,name:"new name"} FROM users WHERE attribute_not_exists(id) WITH VER
     expressionAttributeValues: {},
     conditionExpression: 'attribute_not_exists(#id)'
   },
-  versionCheck: true
+  versionCheck: true,
+  returning: AllNew
 }
 ```
 
@@ -286,10 +288,11 @@ UPDATE {id:1,name:"new name"} FROM users WHERE attribute_not_exists(id) WITH VER
 
 #### Syntax
 
-**ON** _id_ **FROM** _[table](#import)_ **SET**_[setExpression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.UpdateExpressions.html#Expressions.UpdateExpressions.SET)_ **ADD** _[addExpression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.UpdateExpressions.html#Expressions.UpdateExpressions.ADD)_ **DELETE** _[deleteExpression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.UpdateExpressions.html#Expressions.UpdateExpressions.DELETE)_ **REMOVE** _[removeExpression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.UpdateExpressions.html#Expressions.UpdateExpressions.REMOVE)_ _[conditionExpression](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_UpdateItem.html#DDB-UpdateItem-request-ConditionExpression)_ **WITH VERSION CHECK**
+**ON** _id_ **FROM** _[table](#import)_ **SET**_[setExpression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.UpdateExpressions.html#Expressions.UpdateExpressions.SET)_ **ADD** _[addExpression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.UpdateExpressions.html#Expressions.UpdateExpressions.ADD)_ **DELETE** _[deleteExpression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.UpdateExpressions.html#Expressions.UpdateExpressions.DELETE)_ **REMOVE** _[removeExpression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.UpdateExpressions.html#Expressions.UpdateExpressions.REMOVE)_ _[conditionExpression](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_UpdateItem.html#DDB-UpdateItem-request-ConditionExpression)_ **RETURNING** _returnValue_ **WITH VERSION CHECK**
 
 where:
 * `WITH VERSION CHECK` can be used to request a version check.
+* `returnValue` is `NONE`, `ALLNEW`, or `ALLOLD`
 
 ### Example
 

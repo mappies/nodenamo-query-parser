@@ -121,6 +121,11 @@ export enum RuleName
     WhereClause = "whereClauseRuleName",
 
     /**
+     * Returning clause
+     */
+    ReturningClause = "returningClauseRuleName",
+
+    /**
      * Expression
      */
     Expression = "expressionRuleName",

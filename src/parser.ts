@@ -4,7 +4,6 @@ import { IStatement } from './interfaces/IStatement';
 import { StatementParser } from './parsers/statementParser';
 import { StatementSemanticVisitor } from './parsers/statementSemanticVisitor';
 import { RuleName } from './entities/ruleName';
-import { IDescribeStatement } from './interfaces/IDescribeStatement';
 
 export { IStatement } from './interfaces/IStatement';
 export { IUpdateStatement } from './interfaces/IUpdateStatement';
@@ -21,6 +20,7 @@ export { IImportStatement } from './interfaces/IImportStatement';
 export { IExplainStatement } from './interfaces/IExplainStatement';
 export { IOnStatement } from './interfaces/IOnStatement'
 export { IDescribeStatement } from './interfaces/IDescribeStatement'
+export { ReturnValue } from './interfaces/returnValue';
 
 let lexer = new Lexer(Token.AllTokens);
 let parser = new StatementParser();

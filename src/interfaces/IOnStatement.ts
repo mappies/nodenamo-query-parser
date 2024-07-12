@@ -1,4 +1,5 @@
 import { IStatement } from './IStatement';
+import { ReturnValue } from './returnValue';
 
 export interface IOnStatement extends IStatement
 {
@@ -10,4 +11,5 @@ export interface IOnStatement extends IStatement
     delete: {deleteExpressions:string[], expressionAttributeNames?:object, expressionAttributeValues?:object}
     where: {conditionExpression?:string, expressionAttributeValues?:object, expressionAttributeNames?:object}
     versionCheck: boolean
+    returnValue: ReturnValue
 }

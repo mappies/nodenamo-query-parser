@@ -29,6 +29,8 @@ export class ErrorMessage
     static readonly FIND_MISSING_ORDER = 'Missing a sorting order (ASC or DESC) after ORDER.'
     static readonly FIND_MISSING_RESUME = 'Missing a lastEvaluatedKey after RESUME'
 
+    static readonly RETURNING_MISSING_VALUE = 'Missing a returning value (None, AllNew, or AllOld) after RETURNING.'
+
     static readonly LIST_MISSING_BY_HASH = 'Missing a hash property value after BY.'
     static readonly LIST_MISSING_BY_RANGE = 'Missing a range property value after BY.'
 

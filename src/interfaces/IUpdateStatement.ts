@@ -1,4 +1,5 @@
 import { IStatement } from './IStatement';
+import { ReturnValue } from './returnValue';
 
 export interface IUpdateStatement extends IStatement
 {
@@ -6,4 +7,5 @@ export interface IUpdateStatement extends IStatement
     from:string
     where:{conditionExpression?:string, expressionAttributeValues?:object, expressionAttributeNames?:object}
     versionCheck:boolean
+    returnValue: ReturnValue
 }
